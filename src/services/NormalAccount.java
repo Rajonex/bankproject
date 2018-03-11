@@ -2,13 +2,13 @@ package services;
 
 public class NormalAccount extends BankAccount {
 
-    public NormalAccount(int ownerId)
+    public NormalAccount(int ownerId, double percentage)
     {
-        super(ownerId);
+        super(ownerId, percentage);
     }
 
-    public NormalAccount(double balance, int ownerId)
+    public NormalAccount(double balance, int ownerId, double percentage)
     {
-        super(balance, ownerId);
+        super(balance, ownerId, percentage);
     }
 }

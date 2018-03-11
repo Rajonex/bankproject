@@ -2,13 +2,13 @@ package services;
 
 public class BankAccount extends Service {
 
-    public BankAccount(int ownerId)
+    public BankAccount(int ownerId, double percentage)
     {
-        super(ownerId);
+        super(ownerId, percentage);
     }
 
-    public BankAccount(double balance, int ownerId)
+    public BankAccount(double balance, int ownerId, double percentage)
     {
-        super(balance, ownerId);
+        super(balance, ownerId, percentage);
     }
 }

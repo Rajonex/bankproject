@@ -3,6 +3,7 @@ package services;
 import history.History;
 import messages.Ack;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public class Service implements Product {
@@ -12,19 +13,25 @@ public class Service implements Product {
     protected double balance; // balance
     protected int ownerId; // owner id - client id
     private static int number = 0; // unique number for all objects of class Service
+    private LocalDate localDate;
+    double percentage;
 
-    public Service(int ownerId) {
+    public Service(int ownerId, double percentage) {
         id = number++;
         balance = 0;
         history = new History();
         this.ownerId = ownerId;
+        this.percentage = percentage;
+        localDate = LocalDate.now();
     }
 
-    public Service(double balance, int ownerId) {
+    public Service(double balance, int ownerId, double percentage) {
         id = number++;
         this.balance = balance;
         history = new History();
         this.ownerId = ownerId;
+        this.percentage = percentage;
+        localDate = LocalDate.now();
     }
 
     /**
@@ -35,12 +42,45 @@ public class Service implements Product {
         return id;
     }
 
+
+    /**
+     * Getter
+     * @return owner id of this service
+     */
+    public int getOwnerId() {
+        return ownerId;
+    }
+
     /**
      * Getter
      * @return balance of this service
      */
     public double getBalance() {
         return balance;
+    }
+
+    /**
+     * Getter
+     * @return date of the creation
+     */
+    public LocalDate getLocalDate() {
+        return localDate;
+    }
+
+    /**
+     * Getter
+     * @return percentage of service
+     */
+    public double getPercentage() {
+        return percentage;
+    }
+
+    /**
+     * Setter
+     * @param percentage percentage of service
+     */
+    public void setPercentage(double percentage) {
+        this.percentage = percentage;
     }
 
     /**

@@ -4,15 +4,15 @@ import operations.Interest;
 
 public class Credit extends ConnectedAccount {
 
-    public Credit(BankAccount bankAccount, int ownerId)
+    public Credit(BankAccount bankAccount, int ownerId, double percentage)
     {
-        super(bankAccount, ownerId);
+        super(bankAccount, ownerId, percentage);
         canBeNegative = true;
     }
 
-    public Credit(BankAccount bankAccount, double balance, int ownerId)
+    public Credit(BankAccount bankAccount, double balance, int ownerId, double percentage)
     {
-        super(bankAccount, balance, ownerId);
+        super(bankAccount, balance, ownerId, percentage);
         canBeNegative = true;
     }
 
