@@ -5,16 +5,16 @@ public class DebetAccount extends BankAccount {
 
 
 
-    public DebetAccount(int ownerId, double limit)
+    public DebetAccount(int ownerId, double limit, double percentage)
     {
-        super(ownerId);
+        super(ownerId, percentage);
         canBeNegative = true;
         this.limit = limit;
     }
 
-    public DebetAccount(double balance, int ownerId, double limit)
+    public DebetAccount(double balance, int ownerId, double limit, double percentage)
     {
-        super(balance, ownerId);
+        super(balance, ownerId, percentage);
         canBeNegative = true;
         this.limit = limit;
     }
