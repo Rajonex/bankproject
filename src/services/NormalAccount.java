@@ -11,4 +11,11 @@ public class NormalAccount extends BankAccount {
     {
         super(balance, ownerId, percentage);
     }
+
+    public NormalAccount(BankAccount bankAccount)
+    {
+        super(bankAccount.balance, bankAccount.ownerId, bankAccount.percentage);
+        canBeNegative = true;
+        history = bankAccount.history;
+    }
 }

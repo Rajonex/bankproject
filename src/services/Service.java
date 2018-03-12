@@ -6,8 +6,8 @@ import messages.Ack;
 import java.time.LocalDate;
 import java.util.List;
 
-public class Service implements Product {
-    private History history; // history of this service
+public abstract class Service implements Product {
+    protected History history; // history of this service
     private int id; // id this service object
     protected boolean canBeNegative; // information if the value can be negative
     protected double balance; // balance
@@ -38,6 +38,7 @@ public class Service implements Product {
      * Getter
      * @return id object of this service
      */
+    @Override
     public int getId() {
         return id;
     }
@@ -47,9 +48,11 @@ public class Service implements Product {
      * Getter
      * @return owner id of this service
      */
+    @Override
     public int getOwnerId() {
         return ownerId;
     }
+
 
     /**
      * Getter
