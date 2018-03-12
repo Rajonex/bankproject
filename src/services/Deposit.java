@@ -1,6 +1,5 @@
 package services;
 
-import operations.Interest;
 
 public class Deposit extends ConnectedAccount {
 

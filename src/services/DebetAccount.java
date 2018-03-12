@@ -19,6 +19,14 @@ public class DebetAccount extends BankAccount {
         this.limit = limit;
     }
 
+    public DebetAccount(BankAccount bankAccount, double limit)
+    {
+        super(bankAccount.balance, bankAccount.ownerId, bankAccount.percentage);
+        canBeNegative = true;
+        this.limit = limit;
+        history = bankAccount.history;
+    }
+
     /**
      * Decreasing balance, it can't be lower than limit which is setting in constructor
      * @param value value subtracted from balance

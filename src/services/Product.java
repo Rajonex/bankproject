@@ -16,4 +16,16 @@ public interface Product {
      * @return feedback of the success of the operation
      */
     public boolean decreaseBalance(double value);
+
+    /**
+     * Getter
+     * @return owner id of this service
+     */
+    public int getOwnerId();
+
+    /**
+     * Getter
+     * @return id object of this service
+     */
+    public int getId();
 }
