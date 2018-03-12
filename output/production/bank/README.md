@@ -1,2 +1,0 @@
-# bankproject
-Bank Simulation
