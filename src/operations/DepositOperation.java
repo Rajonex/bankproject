@@ -11,6 +11,14 @@ import services.Deposit;
 //lokata
 public class DepositOperation {
 
+	/**
+	 * Changing the interest system
+	 * @param deposit = the deposit
+	 * @param newPercentage = new interest system
+	 * @param bankHistory = history of the operation
+	 * @param description = description of the operation
+	 * @return true if the percentage is changed
+	 */
 	public static boolean changePercentage(Deposit deposit, double newPercentage, History bankHistory,
 			String description) {
 		double oldPercentage = deposit.getPercentage();
@@ -25,6 +33,16 @@ public class DepositOperation {
 		return true;
 	}
 
+	/**
+	 * Creating new deposit
+	 * @param bankAccount = a bank account for which it is created
+	 * @param value = the value which is payed to the deposit
+	 * @param ownerId = id of the owner of the bank account
+	 * @param percentage = interest system
+	 * @param bankHistory = history of operations made
+	 * @param description = description of the operation
+	 * @return return the deposit if it is created, null otherwise
+	 */
 	public static Deposit createDeposit(BankAccount bankAccount, double value, int ownerId, double percentage,
 			History bankHistory, String description)
 
@@ -48,12 +66,12 @@ public class DepositOperation {
 
 	/**
 	 * Setting deposits value to zero, not destroying object
-	 * 
-	 * @param deposit
-	 * @param bankAccount
-	 * @param description
-	 * @param bankHistory
-	 * @return
+	 * Not adding the percentage  to the value of the deposit
+	 * @param deposit = the deposit
+	 * @param bankAccount = bank account from which the deposit was created
+	 * @param description = description of the operation
+	 * @param bankHistory = history of the transactions
+	 * @return return true if the deposit is set to zero
 	 */
 	public static boolean breakUpDeposit(Deposit deposit, String description, History bankHistory) {
 		BankAccount bankAccount = deposit.getBankAccount();
@@ -72,6 +90,15 @@ public class DepositOperation {
 		return false;
 	}
 
+	/**
+	 * Setting deposit value to zero, not destroying the object
+	 * Adding the percentage to the value of the deposit
+	 * @param deposit = the deposit
+	 * @param bankAccount = bank account from which the deposit was created
+	 * @param description = description of the operation
+	 * @param bankHistory = history of the transactions
+	 * @return return true if the deposit is set to zero
+	 */
 	public static boolean solveDeposit(Deposit deposit, String description, History bankHistory) {
 
 		BankAccount bankAccount = deposit.getBankAccount();
