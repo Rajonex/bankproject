@@ -4,9 +4,10 @@ public class Client
 {
     private String firstName;
     private String lastName;
+    private String pesel;
     // TODO : long
     private int id;
-    private generatedId = 0;
+    private static generatedId = 0;
 
     /**
      * Getter
@@ -69,10 +70,50 @@ public class Client
      * @param firstName
      * @param lastName
      */
-    public Client(String firstName, String lastName)
+    public Client(String firstName, String lastName, String pesel)
     {
         this.firstName = firstName;
         this.lastName = lastName;
+        this.pesel = pesel;
         this.id = generatedId++;
+    }
+
+    /**
+     * Method to compare one object with another
+     * @param object
+     * @return
+     */
+    public boolean equals(Object object)
+    {
+        if (this == object)
+            return true;
+        if (object == null || getClass() != object.getClass())
+            return false;
+        if (!super.equals(object))
+            return false;
+
+        Client client = (Client) object;
+
+        if (!firstName.equals(client.firstName))
+            return false;
+        if (!lastName.equals(client.lastName))
+            return false;
+        if (!pesel.equals(client.pesel))
+            return false;
+
+        return true;
+    }
+
+    /**
+     * Unique code of the object based on its attributes
+     * @return
+     */
+    public int hashCode()
+    {
+        int result = super.hashCode();
+        result = 31 * result + firstName.hashCode();
+        result = 31 * result + lastName.hashCode();
+        result = 31 * result + pesel.hashCode();
+        return result;
     }
 }

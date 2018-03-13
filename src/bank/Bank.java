@@ -15,5 +15,4 @@ public class Bank
 
     private History history;
 
-
 }
