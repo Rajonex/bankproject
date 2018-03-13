@@ -11,12 +11,12 @@ import java.time.LocalDate;
 
 public class BankAccountOperation{
     /**
-     *
-     * @param bankAccount
-     * @param value
-     * @param description
-     * @param bankHistory
-     * @return
+     * Payment to a bank account
+     * @param bankAccount = the bank account which gets the payment
+     * @param value = value of the payment
+     * @param description = description of the operation
+     * @param bankHistory = history of the operation
+     * @return return true if the payment is made
      */
     public static boolean payment(BankAccount bankAccount, double value, String description, History bankHistory)
     {
@@ -28,25 +28,27 @@ public class BankAccountOperation{
     }
 
     /**
-     *
-     * @param bankAccount
-     * @param value
-     * @param description
-     * @param bankHistory
-     * @return
+     * Withdrawing a payment from the bank account
+     * @param bankAccount = bank account which makes the payment
+     * @param value = value of the payment
+     * @param description = description of the operation
+     * @param bankHistory = history of the operation
+     * @return return true if it is succesful, false otherwise
      */
     public static boolean withdraw(BankAccount bankAccount, double value, String description, History bankHistory)
     {
         if(bankAccount.decreaseBalance(value))
         {
-            Ack ack = new Ack(bankAccount, null, TypeOperation.WITHDRAWN, LocalDate.now(), description);
+            Ack ack = new Ack(null, bankAccount, TypeOperation.WITHDRAWN, LocalDate.now(), description);
+            bankAccount.addToHistory(ack);
+            bankHistory.add(ack);
             return true;
         }
         return false;
     }
 
     /**
-     *
+     * Transfering money from one bank account to the other
      * @param bankAccountFrom account from which it is withdrawn
      * @param bankAccountTo account to which it is payment
      * @param value value of transfer
@@ -68,9 +70,11 @@ public class BankAccountOperation{
     }
 
     /**
-     *
-     * @param bankAccount
-     * @return true if state of account is positive, if account is on debet it returns false
+     * Increase bank balance by the interest system rate
+     * @param bankAccount = bank account which balance is to be increased
+     * @param description = description of the operation
+     * @param bankHistory = history of the operation
+     * @return return true if succesful, false otherwise
      */
     public static boolean payPercentage(BankAccount bankAccount, String description, History bankHistory)
     {
@@ -89,12 +93,12 @@ public class BankAccountOperation{
     }
 
     /**
-     *
-     * @param bankAccount
-     * @param newPercentage
-     * @param bankHistory
-     * @param description
-     * @return
+     * Changing the interest system
+     * @param bankAccount = the bank account which wants to change the interest system
+     * @param newPercentage = new interest system
+     * @param bankHistory = history of the operation
+     * @param description = description of the operation
+     * @return true if the interest system is changed
      */
     public static boolean changePercentage(BankAccount bankAccount, double newPercentage, History bankHistory, String description)
     {
@@ -107,13 +111,13 @@ public class BankAccountOperation{
     }
 
     /**
-     *
-     * @param ownerId
-     * @param limit
-     * @param percentage
-     * @param bankHistory
-     * @param description
-     * @return
+     * Creating a new debet account
+     * @param ownerId = ID of the owner which wants to create the account
+     * @param limit = limit for the account
+     * @param percentage = interest system
+     * @param bankHistory = history of the operation
+     * @param description = description of the operation
+     * @return created account
      */
     public static DebetAccount createDebetAccount(int ownerId, double limit, double percentage, History bankHistory, String description)
     {
@@ -125,12 +129,12 @@ public class BankAccountOperation{
     }
 
     /**
-     *
-     * @param ownerId
-     * @param percentage
-     * @param bankHistory
-     * @param description
-     * @return
+     * Creating a normal bank account
+     * @param ownerId = id of the owner which wants to create the account
+     * @param percentage = interest system
+     * @param bankHistory = history of the operation
+     * @param description = description of the operation
+     * @return return created account
      */
     public static NormalAccount createNormalAccount(int ownerId, double percentage, History bankHistory, String description)
     {
@@ -142,12 +146,12 @@ public class BankAccountOperation{
     }
 
     /**
-     *
-     * @param bankAccount
-     * @param limit
-     * @param bankHistory
-     * @param description
-     * @return
+     * Change existing account to a debet account
+     * @param bankAccount = bank account to be changed
+     * @param limit = limit of the debet
+     * @param bankHistory = history of the operation
+     * @param description = description of the operation
+     * @return return true if the account is created
      */
     public static boolean makeAccountDebet(BankAccount bankAccount, double limit, History bankHistory, String description)
     {
@@ -159,18 +163,22 @@ public class BankAccountOperation{
     }
 
     /**
-     *
-     * @param bankAccount
-     * @param bankHistory
-     * @param description
-     * @return
+     * change existing debet account to a normal account
+     * @param bankAccount = bank account to be changed
+     * @param bankHistory = history of the operation
+     * @param description = description of the operation
+     * @return return true if the account is created
      */
     public static boolean makeAccountNormal(BankAccount bankAccount, History bankHistory, String description)
     {
+    	if(bankAccount.getBalance()>0)
+    	{
         bankAccount = new NormalAccount(bankAccount);
         Ack ack = new Ack(bankAccount, null, TypeOperation.MAKE_NORMAL, LocalDate.now(), description);
         bankAccount.addToHistory(ack);
         bankHistory.add(ack);
         return true;
+    	}
+    	return false;
     }
 }
