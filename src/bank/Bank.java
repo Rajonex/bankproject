@@ -1,7 +1,19 @@
 package bank;
 
-public class Bank {
-    private String testString;
-    private double testDouble;
-    private boolean testBoolean;
+import clients.Client;
+import history.History;
+import services.*;
+
+public class Bank
+{
+    private List<Client> clients;
+
+    private List<Credit> credits;
+    private List<Deposit> deposits;
+    private List<NormalAccount> normalAccounts;
+    private List<DebetAccount> debetAccounts;
+
+    private History history;
+
+
 }
