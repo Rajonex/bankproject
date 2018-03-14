@@ -322,74 +322,86 @@ public class Bank
         return credits.stream().filter(account -> account.getId() == id).findFirst().get();
     }
 
-    // -------------------------------------------------------------------------------- Transfers
+    // -------------------------------------------------------------------------------- BankAccountOperations
 
     /**
      * Transfer money from one account to another
      *
-     * @param fromId unique id of account where money are taking from
-     * @param toId   unique id of account where money are transferring to
-     * @param value  value of transferring money between accounts
+     * @param accountFromId unique id of account where money are taking from
+     * @param accountToId   unique id of account where money are transferring to
+     * @param value         value of transferring money between accounts
      * @return true if transfer succeeded
      */
-    public boolean transfer(int fromId, int toId, double value)
+    public boolean transfer(int accountFromId, int accountToId, double value)
     {
         // check if accountFrom exists in bank
-        if (ifAccountExists(fromId))
+        if (ifAccountExists(accountFromId) && ifAccountExists(accountToId))
         {
-            BankAccount bankAccountFrom = getBankAccountById(fromId);
+            BankAccount bankAccountFrom = getBankAccountById(accountFromId);
+            BankAccount bankAccountTo = getBankAccountById(accountToId);
 
-            // check if accountTo exists in bank
-            if (ifAccountExists(toId))
-            {
-                BankAccount bankAccountTo = getBankAccountById(toId);
+            String description = "money successfully transferred from account: " + accountFromId + " to: " + accountToId + ", with amount of " + value;
+            boolean ifSucceeded = BankAccountOperation.transferFromTo(bankAccountFrom, bankAccountTo, value, description, bankHistory);
 
-                String description = "money successfully transferred from account: " + fromId + " to: " + toId + ", with amount of " + value;
-                boolean ifSucceeded = BankAccountOperation.transferFromTo(bankAccountFrom, bankAccountTo, value, description, bankHistory);
+            if (ifSucceeded)
+                return true;
+            //else
+            //TODO - ack (przelew się nie powiódł)
 
-                if (ifSucceeded)
-                    return true;
-                //TODO - else ack (przelew się nie powiódł)
-            }
-
-            // check if creditTo exists
-            else if (ifCreditExists(toId))
-            {
-                Credit creditTo = getCreditById(toId);
-
-                //TODO - if this Ack needed
-                String descriptionForBankAck = "money successfully transferred from account: " + fromId + " to credit: " + toId + ", value = " + value;
-                String descriptionForAccountWithdraw = "money successfully withdrawn from account: " + fromId + ", value = " + value;
-                String descriptionForCreditPaymentOk = "money successfully transfer to credit: " + toId + ", value = " + value;
-
-                boolean ifWithdrawSucceeded = BankAccountOperation.withdraw(bankAccountFrom, value, descriptionForAccountWithdraw, bankHistory);
-                if (ifWithdrawSucceeded)
-                {
-                    // money withdrawn, lets transfer them into credit
-                    boolean ifTransferCreditSucceeded = CreditOperation.transfer(creditTo, value, descriptionForCreditPaymentOk, bankHistory);
-                    if (ifWithdrawSucceeded)
-                    {
-                        // everything alright, return true
-                        return true;
-                    }
-                    else
-                    {
-
-                    }
-                    //TODO - else cannot transfer money into credit
-                }
-                //TODO - else ack cannot withdrw money from account
-
-                // payment to credit
-
-                // check if credit is full?
-            }
         }
 
         return false;
     }
 
-    //TODO - przelew (BA<->BA, BA->CO, DO->BA)
+    /**
+     * Payment money into account
+     *
+     * @param accountId unique id of account
+     * @param value     value of transferring money
+     * @return true if payment succeeded
+     */
+    public boolean payment(int accountId, double value)
+    {
+        if (ifAccountExists(accountId))
+        {
+            BankAccount bankAccount = getBankAccountById(accountId);
+
+            String description = "money successfully transferred to account: " + accountId + ", with amount of " + value;
+            boolean ifSucceeded = BankAccountOperation.payment(bankAccount, value, description, bankHistory);
+
+            if (ifSucceeded)
+                return true;
+            //TODO - else ack
+        }
+
+        return false;
+    }
+
+    /**
+     * Withdraw money from account
+     *
+     * @param accountId unique id of account
+     * @param value     value of transferring money
+     * @return true if withdraw succeeded
+     */
+    public boolean withdraw(int accountId, double value)
+    {
+        if (ifAccountExists(accountId))
+        {
+            BankAccount bankAccount = getBankAccountById(accountId);
+
+            String description = "money successfully withdrwn from account: " + accountId + ", with amount of " + value;
+            boolean ifSucceeded = BankAccountOperation.withdraw(bankAccount, value, description, bankHistory);
+
+            if (ifSucceeded)
+                return true;
+            //TODO - else ack
+        }
+
+        return false;
+    }
+
+    //TODO - spłata raty kredytu
     //TODO - wpłata (BA, CO)
     //TODO - wypłata (BA, DO)
     //TODO - changePercentage (BA, CO, DO)
@@ -398,6 +410,7 @@ public class Bank
     // TODO - payPercentage (BA, CO)
 
     // TODO - ack if Operation methods fail?
+    // TODO - payPercentage mechanism
 }
 
 /*
