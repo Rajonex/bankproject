@@ -32,7 +32,6 @@ public class Bank
         bankAccounts = new ArrayList<>();
 
         bankHistory = new History();
-
     }
 
     /**
@@ -109,6 +108,8 @@ public class Bank
         return false;
     }
 
+    // -------------------------------------------------------------------------------- BankAccount
+
     /**
      * Creating new normal Account for client with specified id, percentage and adding it to normalAccounts list.
      *
@@ -131,7 +132,29 @@ public class Bank
         }
 
         return false;
+    }
 
+    /**
+     * Changing account type from normal to debet one.
+     *
+     * @param accountId account's unique id.
+     * @param limit     limit of debet account.
+     * @return true if operation succeeded
+     */
+    public boolean makeAccountDebet(int accountId, double limit)
+    {
+        if (ifAccountExists(accountId))
+        {
+            BankAccount bankAccount = getBankAccountById(accountId);
+            Client client = getClientById(bankAccount.getOwnerId());
+            String description = "Client " + client + " account changed to debet account with " + limit + " limit";
+            boolean ifSucceeded = BankAccountOperation.makeAccountDebet(bankAccount, limit, bankHistory, description);
+
+            if (ifSucceeded)
+                return true;
+        }
+
+        return false;
     }
 
     /**
@@ -160,7 +183,32 @@ public class Bank
     }
 
     /**
+     * Changing account type from debet to normal one.
+     *
+     * @param accountId account's unique id
+     * @return true if operation succeeded
+     */
+    public boolean makeAccountNormal(int accountId)
+    {
+        if (ifAccountExists(accountId))
+        {
+            BankAccount bankAccount = getBankAccountById(accountId);
+            Client client = getClientById(bankAccount.getOwnerId());
+            String description = "Client " + client + " account changed to normal account";
+            boolean ifSucceeded = BankAccountOperation.makeAccountNormal(bankAccount, bankHistory, description);
+
+            if (ifSucceeded)
+                return true;
+            //else
+            // TODO - create ack that operation failed?
+        }
+
+        return false;
+    }
+
+    /**
      * Checking if account with specified id exists
+     *
      * @param accountId account id
      * @return true if account exists
      */
@@ -171,12 +219,13 @@ public class Bank
 
     /**
      * Checking if client's specific account exists
+     *
      * @param clientId client's unique id
      * @return
      */
     private boolean ifClientAccountExists(int clientId)
     {
-        if(ifClientExists(clientId))
+        if (ifClientExists(clientId))
             return bankAccounts.stream().filter(account -> account.getOwnerId() == clientId).findFirst().isPresent();
         else
             return false;
@@ -184,6 +233,7 @@ public class Bank
 
     /**
      * Getting specified bankAccount by id
+     *
      * @param accountId bankAccount's unique id
      * @return bankAccount with specified in param id
      */
@@ -191,6 +241,8 @@ public class Bank
     {
         return bankAccounts.stream().filter(account -> account.getId() == accountId).findFirst().get();
     }
+
+    // -------------------------------------------------------------------------------- Deposit
 
     /**
      * Creating new client's deposit. Client must have BankAccount to create new deposit.
@@ -204,26 +256,28 @@ public class Bank
     public boolean addNewDeposit(int accountId, double value, int ownerId, double percentage)
     {
         // check if client and its account exists
-        if(ifClientAccountExists(ownerId))
+        if (ifClientAccountExists(ownerId))
         {
             Client client = getClientById(ownerId);
-            String description = "New " + client.getFirstName() + " " + client.getLastName() + " deposit with " + value + " and " + percentage*100 + " created";
+            String description = "New " + client.getFirstName() + " " + client.getLastName() + " deposit with " + value + " and " + percentage * 100 + " created";
             Deposit deposit = DepositOperation.createDeposit(getBankAccountById(accountId), value, ownerId, percentage, bankHistory, description);
 
             boolean ifSucceeded = deposits.add(deposit);
 
-            if(ifSucceeded)
+            if (ifSucceeded)
                 return true;
         }
 
         return false;
     }
 
+    // -------------------------------------------------------------------------------- Credit
+
     /**
      * Creating new client's credit. Client must have BankAccount to create new credit.
      *
      * @param accountId  client's bankAccount's id
-     * @param balance      deposit's value
+     * @param balance    deposit's value
      * @param ownerId    client's id
      * @param percentage percentage of deposit
      * @return true if credit created with success
@@ -231,39 +285,119 @@ public class Bank
     public boolean addNewCredit(int accountId, double balance, int ownerId, double percentage)
     {
         // check if client and its account exists
-        if(ifClientAccountExists(ownerId))
+        if (ifClientAccountExists(ownerId))
         {
             Client client = getClientById(ownerId);
-            String description = "New " + client.getFirstName() + " " + client.getLastName() + " credit with " + balance + " and " + percentage*100 + " created";
+            String description = "New " + client.getFirstName() + " " + client.getLastName() + " credit with " + balance + " and " + percentage * 100 + " created";
             Credit credit = CreditOperation.createCredit(getBankAccountById(accountId), balance, ownerId, percentage, bankHistory, description);
 
             boolean ifSucceeded = credits.add(credit);
 
-            if(ifSucceeded)
+            if (ifSucceeded)
                 return true;
         }
 
         return false;
     }
 
-    // BankAccountOperation (All ?)
-    // TODO - change from normal to debet account
-    // TODO - change from debet to normal account
+    /**
+     * Checking if credit with specified id exists
+     *
+     * @param id unique id of credit
+     * @return true if credit exists
+     */
+    private boolean ifCreditExists(int id)
+    {
+        return credits.stream().filter(credit -> credit.getId() == id).findFirst().isPresent();
+    }
 
-    // CreditOperation
-    // TODO - payOfCredit
-    // TODO - transfer
+    /**
+     * Getting specified credit by id
+     *
+     * @param id credit's unique id
+     * @return credit with specified in param id
+     */
+    private Credit getCreditById(int id)
+    {
+        return credits.stream().filter(account -> account.getId() == id).findFirst().get();
+    }
 
-    // DepositOperation
-    // TODO - breakUpDeposit
-    // TODO - solveDeposit
+    // -------------------------------------------------------------------------------- Transfers
 
-    // All
-    // TODO - payment (BA)
-    // TODO - withdraw (BA)
-    // TODO - transferFromTo (BA)
+    /**
+     * Transfer money from one account to another
+     *
+     * @param fromId unique id of account where money are taking from
+     * @param toId   unique id of account where money are transferring to
+     * @param value  value of transferring money between accounts
+     * @return true if transfer succeeded
+     */
+    public boolean transfer(int fromId, int toId, double value)
+    {
+        // check if accountFrom exists in bank
+        if (ifAccountExists(fromId))
+        {
+            BankAccount bankAccountFrom = getBankAccountById(fromId);
+
+            // check if accountTo exists in bank
+            if (ifAccountExists(toId))
+            {
+                BankAccount bankAccountTo = getBankAccountById(toId);
+
+                String description = "money successfully transferred from account: " + fromId + " to: " + toId + ", with amount of " + value;
+                boolean ifSucceeded = BankAccountOperation.transferFromTo(bankAccountFrom, bankAccountTo, value, description, bankHistory);
+
+                if (ifSucceeded)
+                    return true;
+                //TODO - else ack (przelew się nie powiódł)
+            }
+
+            // check if creditTo exists
+            else if (ifCreditExists(toId))
+            {
+                Credit creditTo = getCreditById(toId);
+
+                //TODO - if this Ack needed
+                String descriptionForBankAck = "money successfully transferred from account: " + fromId + " to credit: " + toId + ", value = " + value;
+                String descriptionForAccountWithdraw = "money successfully withdrawn from account: " + fromId + ", value = " + value;
+                String descriptionForCreditPaymentOk = "money successfully transfer to credit: " + toId + ", value = " + value;
+
+                boolean ifWithdrawSucceeded = BankAccountOperation.withdraw(bankAccountFrom, value, descriptionForAccountWithdraw, bankHistory);
+                if (ifWithdrawSucceeded)
+                {
+                    // money withdrawn, lets transfer them into credit
+                    boolean ifTransferCreditSucceeded = CreditOperation.transfer(creditTo, value, descriptionForCreditPaymentOk, bankHistory);
+                    if (ifWithdrawSucceeded)
+                    {
+                        // everything alright, return true
+                        return true;
+                    }
+                    else
+                    {
+
+                    }
+                    //TODO - else cannot transfer money into credit
+                }
+                //TODO - else ack cannot withdrw money from account
+
+                // payment to credit
+
+                // check if credit is full?
+            }
+        }
+
+        return false;
+    }
+
+    //TODO - przelew (BA<->BA, BA->CO, DO->BA)
+    //TODO - wpłata (BA, CO)
+    //TODO - wypłata (BA, DO)
+    //TODO - changePercentage (BA, CO, DO)
+
+    // Many
     // TODO - payPercentage (BA, CO)
-    // TODO - changePercentage (BA, CO, DO)
+
+    // TODO - ack if Operation methods fail?
 }
 
 /*
