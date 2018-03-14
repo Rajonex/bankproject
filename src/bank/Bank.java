@@ -2,9 +2,16 @@ package bank;
 
 import clients.Client;
 import history.History;
-import services.*;
 import messages.Ack;
-import messages.TypeOpeartion;
+import messages.BankAck;
+import messages.TypeOperation;
+import services.Credit;
+import services.DebetAccount;
+import services.Deposit;
+import services.NormalAccount;
+
+import java.time.LocalDate;
+import java.util.List;
 
 public class Bank
 {
@@ -32,8 +39,8 @@ public class Bank
             if(ifSucceeded == true)
             {
                 // creating ack
-                Ack ack = new Ack(null, null, TypeOperation.ADD_NEW_CLIENT, LocalDate.now(), "New client created");
-                bankHistory.addToHistory(ack);
+                Ack ack = new BankAck(null, null, client, TypeOperation.ADD_NEW_CLIENT, LocalDate.now(), "New client created");
+                bankHistory.add(ack);
 
                 return true;
             }
@@ -66,7 +73,7 @@ public class Bank
             {
                 // creating ack
                 Ack ack = new Ack(null, null, TypeOperation.DELETE_CLIENT, LocalDate.now(), "Client deleted");
-                bankHistory.addToHistory(ack);
+                bankHistory.add(ack);
 
                 return true;
             }

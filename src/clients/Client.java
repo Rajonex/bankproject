@@ -48,7 +48,7 @@ public class Client
      * Getter
      * @return id
      */
-    public int getId()
+    public long getId()
     {
         return id;
     }
