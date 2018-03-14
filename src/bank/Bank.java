@@ -6,10 +6,9 @@ import messages.Ack;
 import messages.BankAck;
 import messages.TypeOperation;
 import operations.BankAccountOperation;
-import services.Credit;
-import services.DebetAccount;
-import services.Deposit;
-import services.NormalAccount;
+import operations.CreditOperation;
+import operations.DepositOperation;
+import services.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -21,8 +20,7 @@ public class Bank
 
     private List<Credit> credits;
     private List<Deposit> deposits;
-    private List<NormalAccount> normalAccounts;
-    private List<DebetAccount> debetAccounts;
+    private List<BankAccount> bankAccounts;
 
     private History bankHistory;
 
@@ -31,8 +29,7 @@ public class Bank
         clients = new ArrayList<>();
         credits = new ArrayList<>();
         deposits = new ArrayList<>();
-        normalAccounts = new ArrayList<>();
-        debetAccounts = new ArrayList<>();
+        bankAccounts = new ArrayList<>();
 
         bankHistory = new History();
 
@@ -70,7 +67,7 @@ public class Bank
      * @param id unique id of every client
      * @return true if succeeded
      */
-    private boolean ifClientExist(int id)
+    private boolean ifClientExists(int id)
     {
         return clients.stream().filter(client -> client.getId() == id).findFirst().isPresent();
     }
@@ -89,13 +86,13 @@ public class Bank
     /**
      * Removing Client with specified id from bank
      *
-     * @param id client id
+     * @param id client unique id
      * @return true if succeeded
      */
     public boolean deleteClientById(int id)
     {
         // check if client exists
-        if (ifClientExist(id))
+        if (ifClientExists(id))
         {
             Client client = getClientById(id);
             boolean ifSucceeded = clients.removeIf(cl -> cl.getId() == id);
@@ -115,19 +112,19 @@ public class Bank
     /**
      * Creating new normal Account for client with specified id, percentage and adding it to normalAccounts list.
      *
-     * @param ownerId    client's id
+     * @param ownerId    client's unique id
      * @param percentage account's percentage
      * @return true if opeartion succeeded
      */
     public boolean addNewNormalAccount(int ownerId, double percentage)
     {
         // check if ownerId is correct and if client with this id exists
-        if (ownerId >= 0 && ifClientExist(ownerId))
+        if (ownerId >= 0 && ifClientExists(ownerId))
         {
             String description = "Client " + getClientById(ownerId) + " added new account with " + percentage * 100 + " percentage";
 
             NormalAccount normalAccount = BankAccountOperation.createNormalAccount(ownerId, percentage, bankHistory, description);
-            boolean ifSucceeded = normalAccounts.add(normalAccount);
+            boolean ifSucceeded = bankAccounts.add(normalAccount);
 
             if (ifSucceeded)
                 return true;
@@ -140,7 +137,7 @@ public class Bank
     /**
      * Creating new debetAccount for client with specified id, limit, percentage and adding it to debetAccounts list.
      *
-     * @param ownerId    client's id
+     * @param ownerId    client's unique id
      * @param limit      account's limit
      * @param percentage account's percentage
      * @return true if operation succeeded
@@ -148,14 +145,101 @@ public class Bank
     public boolean addNewDebetAccount(int ownerId, double limit, double percentage)
     {
         // check if ownerId is correct and if client with this id exists
-        if (ownerId >= 0 && ifClientExist(ownerId))
+        if (ownerId >= 0 && ifClientExists(ownerId))
         {
             String description = "Client " + getClientById(ownerId) + " added new debet account with " + limit + " and " + percentage * 100 + " percentage";
 
             DebetAccount debetAccount = BankAccountOperation.createDebetAccount(ownerId, limit, percentage, bankHistory, description);
-            boolean ifSucceeded = debetAccounts.add(debetAccount);
+            boolean ifSucceeded = bankAccounts.add(debetAccount);
 
             if (ifSucceeded)
+                return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Checking if account with specified id exists
+     * @param accountId account id
+     * @return true if account exists
+     */
+    private boolean ifAccountExists(int accountId)
+    {
+        return bankAccounts.stream().filter(account -> account.getId() == accountId).findFirst().isPresent();
+    }
+
+    /**
+     * Checking if client's specific account exists
+     * @param clientId client's unique id
+     * @return
+     */
+    private boolean ifClientAccountExists(int clientId)
+    {
+        if(ifClientExists(clientId))
+            return bankAccounts.stream().filter(account -> account.getOwnerId() == clientId).findFirst().isPresent();
+        else
+            return false;
+    }
+
+    /**
+     * Getting specified bankAccount by id
+     * @param accountId bankAccount's unique id
+     * @return bankAccount with specified in param id
+     */
+    private BankAccount getBankAccountById(int accountId)
+    {
+        return bankAccounts.stream().filter(account -> account.getId() == accountId).findFirst().get();
+    }
+
+    /**
+     * Creating new client's deposit. Client must have BankAccount to create new deposit.
+     *
+     * @param accountId  client's bankAccount's id
+     * @param value      deposit's value
+     * @param ownerId    client's id
+     * @param percentage percentage of deposit
+     * @return true if deposit created with success
+     */
+    public boolean addNewDeposit(int accountId, double value, int ownerId, double percentage)
+    {
+        // check if client and its account exists
+        if(ifClientAccountExists(ownerId))
+        {
+            Client client = getClientById(ownerId);
+            String description = "New " + client.getFirstName() + " " + client.getLastName() + " deposit with " + value + " and " + percentage*100 + " created";
+            Deposit deposit = DepositOperation.createDeposit(getBankAccountById(accountId), value, ownerId, percentage, bankHistory, description);
+
+            boolean ifSucceeded = deposits.add(deposit);
+
+            if(ifSucceeded)
+                return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Creating new client's credit. Client must have BankAccount to create new credit.
+     *
+     * @param accountId  client's bankAccount's id
+     * @param balance      deposit's value
+     * @param ownerId    client's id
+     * @param percentage percentage of deposit
+     * @return true if credit created with success
+     */
+    public boolean addNewCredit(int accountId, double balance, int ownerId, double percentage)
+    {
+        // check if client and its account exists
+        if(ifClientAccountExists(ownerId))
+        {
+            Client client = getClientById(ownerId);
+            String description = "New " + client.getFirstName() + " " + client.getLastName() + " credit with " + balance + " and " + percentage*100 + " created";
+            Credit credit = CreditOperation.createCredit(getBankAccountById(accountId), balance, ownerId, percentage, bankHistory, description);
+
+            boolean ifSucceeded = credits.add(credit);
+
+            if(ifSucceeded)
                 return true;
         }
 
@@ -167,12 +251,10 @@ public class Bank
     // TODO - change from debet to normal account
 
     // CreditOperation
-    // TODO - addNewCreditAccount
     // TODO - payOfCredit
     // TODO - transfer
 
     // DepositOperation
-    // TODO - addNewDepositAccount
     // TODO - breakUpDeposit
     // TODO - solveDeposit
 
@@ -203,3 +285,6 @@ else{
 }
 }
  */
+
+
+// TODO - correct struktura.png file
