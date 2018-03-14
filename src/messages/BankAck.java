@@ -7,38 +7,39 @@ import java.time.LocalDate;
 
 public class BankAck extends Ack
 {
-    private Client client;
+    // TODO - change to long to extend range
+    private int clientId;
 
     /**
      * Getters
      * @return
      */
-    public Client getClient()
+    public int getClientId()
     {
-        return client;
+        return clientId;
     }
 
     /**
      * Setter
-     * @param client
+     * @param clientId
      */
-    public void setClient(Client client)
+    public void setClientId(int clientId)
     {
-        this.client = client;
+        this.clientId = clientId;
     }
 
     /**
      * Constructor
      * @param product1
      * @param product2
-     * @param client
+     * @param clientId
      * @param typeOperation
      * @param localDate
      * @param description
      */
-    public BankAck(Product product1, Product product2, Client client, TypeOperation typeOperation, LocalDate localDate, String description)
+    public BankAck(Product product1, Product product2, int clientId, TypeOperation typeOperation, LocalDate localDate, String description)
     {
         super(product1, product2, typeOperation, localDate, description);
-        this.client = client;
+        this.clientId = clientId;
     }
 }

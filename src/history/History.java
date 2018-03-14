@@ -2,6 +2,7 @@ package history;
 
 import messages.Ack;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class History

@@ -5,8 +5,9 @@ public class Client
     private String firstName;
     private String lastName;
     private String pesel;
-    private long id;
-    private static long generatedId = 0;
+    // TODO - change to long to extend range
+    private int id;
+    private static int generatedId = 0;
 
     /**
      * Getter
@@ -48,7 +49,7 @@ public class Client
      * Getter
      * @return id
      */
-    public long getId()
+    public int getId()
     {
         return id;
     }
@@ -57,7 +58,7 @@ public class Client
      * Setter
      * @param id
      */
-    public void setId(long id)
+    public void setId(int id)
     {
         this.id = id;
     }
