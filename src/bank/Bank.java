@@ -390,7 +390,7 @@ public class Bank
         {
             BankAccount bankAccount = getBankAccountById(accountId);
 
-            String description = "money successfully withdrwn from account: " + accountId + ", with amount of " + value;
+            String description = "money successfully withdrawn from account: " + accountId + ", with amount of " + value;
             boolean ifSucceeded = BankAccountOperation.withdraw(bankAccount, value, description, bankHistory);
 
             if (ifSucceeded)
@@ -401,37 +401,67 @@ public class Bank
         return false;
     }
 
-    //TODO - spłata raty kredytu
-    //TODO - wpłata (BA, CO)
-    //TODO - wypłata (BA, DO)
+    private boolean deleteCreditById(int id)
+    {
+        // check if client exists
+        if (ifCreditExists(id))
+        {
+            Credit credit = getCreditById(id);
+            Client client = getClientById(credit.getOwnerId());
+            boolean ifSucceeded = credits.removeIf(cr -> cr.getId() == id);
+            if (ifSucceeded)
+            {
+                // creating ack
+                Ack ack = new BankAck(credit, null, id, TypeOperation.DELETE_CREDIT, LocalDate.now(), "Credit of id: " + id + " of client " + client + " deleted");
+                bankHistory.add(ack);
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean payCreditRate(int creditId, double value)
+    {
+        if (ifCreditExists(creditId))
+        {
+            Credit credit = getCreditById(creditId);
+            String description = "rate transferred to credit's account with id " + creditId + ", value = " + value;
+            boolean ifSucceeded = CreditOperation.transfer(credit, value, description, bankHistory);
+
+            if (ifSucceeded)
+            {
+                // credit still must be payed by client
+                return true;
+            }
+            else
+            {
+                // credit is payed off
+                Client client = getClientById(credit.getOwnerId());
+                String creditPayedOff = "credit of client " + client + " is payed off and can be removed";
+                boolean ifPayOffSucceeded = CreditOperation.payOfCredit(credit, description, bankHistory);
+
+                if(ifPayOffSucceeded)
+                {
+                    deleteCreditById(creditId);
+                    return true;
+                }
+                //TODO - else now money or something wrong happend
+            }
+        }
+
+        return false;
+    }
+
+    public boolean
+    //TODO - wypłata (BA, DO - sprawdzić czas, wtedy można wypłacić)
     //TODO - changePercentage (BA, CO, DO)
 
     // Many
-    // TODO - payPercentage (BA, CO)
+    //TODO - payPercentage (BA, CO)
 
-    // TODO - ack if Operation methods fail?
-    // TODO - payPercentage mechanism
+    //TODO - ack if Operation methods fail?
+    //TODO - payPercentage mechanism
+    //TODO - correct struktura.png file
 }
-
-/*
-Uwagi od Zosi:
-TODO - jak masz w CreditOperation metode transfer to pamiętaj, że jeżeli ta metoda Ci zwróci false tzn, że kredytu już jest mniej niż rata, którą próbuje klient wpłacić i wtedy trzeba wywołać metode payOfCredit
-TODO - w skrócie mówiąc musisz zrobić tak:
-if(CreditOperation.transfer(...))
-{
-// spłacono ratę
-}
-else{
-// nie spłacono raty
-if(CreditOperation.payOfCredit(...))
-{
-// spłacono kredyt do końca, można go usunąć
-}
-else{
-// brak środków na koncie aby spłacić ratę kredytu albo cholera wie co się wydarzyło
-}
-}
- */
-
-
-// TODO - correct struktura.png file
