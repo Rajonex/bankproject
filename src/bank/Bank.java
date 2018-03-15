@@ -401,6 +401,12 @@ public class Bank
         return false;
     }
 
+    /**
+     * Removing specified by id credit from bank
+     *
+     * @param id unique credit's id
+     * @return true if operation succeeded
+     */
     private boolean deleteCreditById(int id)
     {
         // check if client exists
@@ -434,15 +440,14 @@ public class Bank
             {
                 // credit still must be payed by client
                 return true;
-            }
-            else
+            } else
             {
                 // credit is payed off
                 Client client = getClientById(credit.getOwnerId());
                 String creditPayedOff = "credit of client " + client + " is payed off and can be removed";
                 boolean ifPayOffSucceeded = CreditOperation.payOfCredit(credit, description, bankHistory);
 
-                if(ifPayOffSucceeded)
+                if (ifPayOffSucceeded)
                 {
                     deleteCreditById(creditId);
                     return true;
@@ -454,14 +459,108 @@ public class Bank
         return false;
     }
 
-    public boolean
-    //TODO - wypłata (BA, DO - sprawdzić czas, wtedy można wypłacić)
+    /**
+     * Checking if deposit with specified id exists
+     *
+     * @param id unique id of checking deposit
+     * @return true if deposit exists in bank
+     */
+    private boolean ifDepositExists(int id)
+    {
+        return deposits.stream().filter(deposit -> deposit.getId() == id).findFirst().isPresent();
+    }
+
+    /**
+     * Getting deposit by specified id
+     *
+     * @param id unique deposit's id
+     * @return specified deposit
+     */
+    private Deposit getDepositById(int id)
+    {
+        return deposits.stream().filter(deposit -> deposit.getId() == id).findFirst().get();
+    }
+
+    /**
+     * Removing specified by id deposit from bank
+     *
+     * @param id unique deposit's id
+     * @return true if operation succeeded
+     */
+    private boolean deleteDepositById(int id)
+    {
+        // check if client exists
+        if (ifDepositExists(id))
+        {
+            Deposit deposit = getDepositById(id);
+            Client client = getClientById(deposit.getOwnerId());
+            boolean ifSucceeded = deposits.removeIf(dp -> dp.getId() == id);
+            if (ifSucceeded)
+            {
+                // creating ack
+                Ack ack = new BankAck(deposit, null, id, TypeOperation.DELETE_DEPOSIT, LocalDate.now(), "Deposit of id: " + id + " of client " + client + " deleted");
+                bankHistory.add(ack);
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Withdrawing money from deposit. If it has expired it can be solved, otherwise
+     * deposit break up.
+     *
+     * @param depositId deposit unique id
+     * @return true if operation succeeded
+     */
+    public boolean withdrawFromDeposit(int depositId)
+    {
+        // checking if deposit exists in bank
+        if (ifDepositExists(depositId))
+        {
+            Deposit deposit = getDepositById(depositId);
+            Client client = getClientById(deposit.getOwnerId());
+            if(deposit.isExpired())
+            {
+                // deposit has expired
+                String description = "deposit " + depositId + " of client " + client + " is solved";
+                boolean ifSucceeded = DepositOperation.solveDeposit(deposit, description, bankHistory);
+
+                if(ifSucceeded)
+                {
+                    return true;
+                }
+                //TODO - else ACK - wrong
+            }
+            else
+            {
+                //deposit will be broken up
+                String description = "deposit " + depositId + " of client " + client + " is broken up";
+                boolean ifSucceeded = DepositOperation.breakUpDeposit(deposit, description, bankHistory);
+
+                if(ifSucceeded)
+                {
+                    return true;
+                }
+                //TODO - else ACK - wrong
+            }
+        }
+
+        return false;
+    }
+
     //TODO - changePercentage (BA, CO, DO)
 
     // Many
     //TODO - payPercentage (BA, CO)
 
-    //TODO - ack if Operation methods fail?
+    //TODO - ack if Operation methods fail?`
     //TODO - payPercentage mechanism
     //TODO - correct struktura.png file
+
+    //TODO - bank jako singleton ?
+    //TODO - własne wyjątki
+
 }
