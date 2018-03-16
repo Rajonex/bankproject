@@ -1,21 +1,22 @@
-package bank;
+package main.java.bank;
 
-import clients.Client;
-import history.History;
-import messages.Ack;
-import messages.BankAck;
-import messages.TypeOperation;
-import operations.BankAccountOperation;
-import operations.CreditOperation;
-import operations.DepositOperation;
-import services.*;
+import main.java.clients.Client;
+import main.java.history.History;
+import main.java.messages.Ack;
+import main.java.services.*;
+import main.java.messages.BankAck;
+import main.java.messages.TypeOperation;
+import main.java.operations.BankAccountOperation;
+import main.java.operations.CreditOperation;
+import main.java.operations.DepositOperation;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Bank
-{
+import static com.sun.org.apache.xml.internal.serializer.utils.Utils.messages;
+
+public class Bank {
     private List<Client> clients;
 
     private List<Credit> credits;
@@ -24,8 +25,7 @@ public class Bank
 
     private History bankHistory;
 
-    public Bank()
-    {
+    public Bank() {
         clients = new ArrayList<>();
         credits = new ArrayList<>();
         deposits = new ArrayList<>();
@@ -40,15 +40,12 @@ public class Bank
      * @param client cannot be null and must be unique
      * @return true if operation succeeded
      */
-    public boolean addNewClient(Client client)
-    {
+    public boolean addNewClient(Client client) {
         // test if list contains client and client is not a null
-        if (client != null && !(clients.contains(client)))
-        {
+        if (client != null && !(clients.contains(client))) {
             // adding to list and return true if operation succeeded
             boolean ifSucceeded = clients.add(client);
-            if (ifSucceeded)
-            {
+            if (ifSucceeded) {
                 // creating ack
                 Ack ack = new BankAck(null, null, client.getId(), TypeOperation.ADD_NEW_CLIENT, LocalDate.now(), "New client " + client + " created");
                 bankHistory.add(ack);
@@ -66,8 +63,7 @@ public class Bank
      * @param id unique id of every client
      * @return true if succeeded
      */
-    private boolean ifClientExists(int id)
-    {
+    private boolean ifClientExists(int id) {
         return clients.stream().filter(client -> client.getId() == id).findFirst().isPresent();
     }
 
@@ -77,8 +73,7 @@ public class Bank
      * @param id unique id of every client
      * @return
      */
-    private Client getClientById(int id)
-    {
+    private Client getClientById(int id) {
         return clients.stream().filter(cl -> cl.getId() == id).findFirst().get();
     }
 
@@ -88,15 +83,12 @@ public class Bank
      * @param id client unique id
      * @return true if succeeded
      */
-    public boolean deleteClientById(int id)
-    {
+    public boolean deleteClientById(int id) {
         // check if client exists
-        if (ifClientExists(id))
-        {
+        if (ifClientExists(id)) {
             Client client = getClientById(id);
             boolean ifSucceeded = clients.removeIf(cl -> cl.getId() == id);
-            if (ifSucceeded)
-            {
+            if (ifSucceeded) {
                 // creating ack
                 Ack ack = new BankAck(null, null, id, TypeOperation.DELETE_CLIENT, LocalDate.now(), "Client " + client + " deleted");
                 bankHistory.add(ack);
@@ -117,11 +109,9 @@ public class Bank
      * @param percentage account's percentage
      * @return true if opeartion succeeded
      */
-    public boolean addNewNormalAccount(int ownerId, double percentage)
-    {
+    public boolean addNewNormalAccount(int ownerId, double percentage) {
         // check if ownerId is correct and if client with this id exists
-        if (ownerId >= 0 && ifClientExists(ownerId))
-        {
+        if (ownerId >= 0 && ifClientExists(ownerId)) {
             String description = "Client " + getClientById(ownerId) + " added new account with " + percentage * 100 + " percentage";
 
             NormalAccount normalAccount = BankAccountOperation.createNormalAccount(ownerId, percentage, bankHistory, description);
@@ -141,10 +131,8 @@ public class Bank
      * @param limit     limit of debet account.
      * @return true if operation succeeded
      */
-    public boolean makeAccountDebet(int accountId, double limit)
-    {
-        if (ifAccountExists(accountId))
-        {
+    public boolean makeAccountDebet(int accountId, double limit) {
+        if (ifAccountExists(accountId)) {
             BankAccount bankAccount = getBankAccountById(accountId);
             Client client = getClientById(bankAccount.getOwnerId());
             String description = "Client " + client + " account changed to debet account with " + limit + " limit";
@@ -165,11 +153,9 @@ public class Bank
      * @param percentage account's percentage
      * @return true if operation succeeded
      */
-    public boolean addNewDebetAccount(int ownerId, double limit, double percentage)
-    {
+    public boolean addNewDebetAccount(int ownerId, double limit, double percentage) {
         // check if ownerId is correct and if client with this id exists
-        if (ownerId >= 0 && ifClientExists(ownerId))
-        {
+        if (ownerId >= 0 && ifClientExists(ownerId)) {
             String description = "Client " + getClientById(ownerId) + " added new debet account with " + limit + " and " + percentage * 100 + " percentage";
 
             DebetAccount debetAccount = BankAccountOperation.createDebetAccount(ownerId, limit, percentage, bankHistory, description);
@@ -188,10 +174,8 @@ public class Bank
      * @param accountId account's unique id
      * @return true if operation succeeded
      */
-    public boolean makeAccountNormal(int accountId)
-    {
-        if (ifAccountExists(accountId))
-        {
+    public boolean makeAccountNormal(int accountId) {
+        if (ifAccountExists(accountId)) {
             BankAccount bankAccount = getBankAccountById(accountId);
             Client client = getClientById(bankAccount.getOwnerId());
             String description = "Client " + client + " account changed to normal account";
@@ -212,8 +196,7 @@ public class Bank
      * @param accountId account id
      * @return true if account exists
      */
-    private boolean ifAccountExists(int accountId)
-    {
+    private boolean ifAccountExists(int accountId) {
         return bankAccounts.stream().filter(account -> account.getId() == accountId).findFirst().isPresent();
     }
 
@@ -223,8 +206,7 @@ public class Bank
      * @param clientId client's unique id
      * @return
      */
-    private boolean ifClientAccountExists(int clientId)
-    {
+    private boolean ifClientAccountExists(int clientId) {
         if (ifClientExists(clientId))
             return bankAccounts.stream().filter(account -> account.getOwnerId() == clientId).findFirst().isPresent();
         else
@@ -237,8 +219,7 @@ public class Bank
      * @param accountId bankAccount's unique id
      * @return bankAccount with specified in param id
      */
-    private BankAccount getBankAccountById(int accountId)
-    {
+    private BankAccount getBankAccountById(int accountId) {
         return bankAccounts.stream().filter(account -> account.getId() == accountId).findFirst().get();
     }
 
@@ -253,11 +234,9 @@ public class Bank
      * @param percentage percentage of deposit
      * @return true if deposit created with success
      */
-    public boolean addNewDeposit(int accountId, double value, int ownerId, double percentage)
-    {
+    public boolean addNewDeposit(int accountId, double value, int ownerId, double percentage) {
         // check if client and its account exists
-        if (ifClientAccountExists(ownerId))
-        {
+        if (ifClientAccountExists(ownerId)) {
             Client client = getClientById(ownerId);
             String description = "New " + client.getFirstName() + " " + client.getLastName() + " deposit with " + value + " and " + percentage * 100 + " created";
             Deposit deposit = DepositOperation.createDeposit(getBankAccountById(accountId), value, ownerId, percentage, bankHistory, description);
@@ -282,11 +261,9 @@ public class Bank
      * @param percentage percentage of deposit
      * @return true if credit created with success
      */
-    public boolean addNewCredit(int accountId, double balance, int ownerId, double percentage)
-    {
+    public boolean addNewCredit(int accountId, double balance, int ownerId, double percentage) {
         // check if client and its account exists
-        if (ifClientAccountExists(ownerId))
-        {
+        if (ifClientAccountExists(ownerId)) {
             Client client = getClientById(ownerId);
             String description = "New " + client.getFirstName() + " " + client.getLastName() + " credit with " + balance + " and " + percentage * 100 + " created";
             Credit credit = CreditOperation.createCredit(getBankAccountById(accountId), balance, ownerId, percentage, bankHistory, description);
@@ -306,8 +283,7 @@ public class Bank
      * @param id unique id of credit
      * @return true if credit exists
      */
-    private boolean ifCreditExists(int id)
-    {
+    private boolean ifCreditExists(int id) {
         return credits.stream().filter(credit -> credit.getId() == id).findFirst().isPresent();
     }
 
@@ -317,8 +293,7 @@ public class Bank
      * @param id credit's unique id
      * @return credit with specified in param id
      */
-    private Credit getCreditById(int id)
-    {
+    private Credit getCreditById(int id) {
         return credits.stream().filter(account -> account.getId() == id).findFirst().get();
     }
 
@@ -332,11 +307,9 @@ public class Bank
      * @param value         value of transferring money between accounts
      * @return true if transfer succeeded
      */
-    public boolean transfer(int accountFromId, int accountToId, double value)
-    {
+    public boolean transfer(int accountFromId, int accountToId, double value) {
         // check if accountFrom exists in bank
-        if (ifAccountExists(accountFromId) && ifAccountExists(accountToId))
-        {
+        if (ifAccountExists(accountFromId) && ifAccountExists(accountToId)) {
             BankAccount bankAccountFrom = getBankAccountById(accountFromId);
             BankAccount bankAccountTo = getBankAccountById(accountToId);
 
@@ -360,10 +333,8 @@ public class Bank
      * @param value     value of transferring money
      * @return true if payment succeeded
      */
-    public boolean payment(int accountId, double value)
-    {
-        if (ifAccountExists(accountId))
-        {
+    public boolean payment(int accountId, double value) {
+        if (ifAccountExists(accountId)) {
             BankAccount bankAccount = getBankAccountById(accountId);
 
             String description = "money successfully transferred to account: " + accountId + ", with amount of " + value;
@@ -384,10 +355,8 @@ public class Bank
      * @param value     value of transferring money
      * @return true if withdraw succeeded
      */
-    public boolean withdraw(int accountId, double value)
-    {
-        if (ifAccountExists(accountId))
-        {
+    public boolean withdraw(int accountId, double value) {
+        if (ifAccountExists(accountId)) {
             BankAccount bankAccount = getBankAccountById(accountId);
 
             String description = "money successfully withdrawn from account: " + accountId + ", with amount of " + value;
@@ -407,16 +376,13 @@ public class Bank
      * @param id unique credit's id
      * @return true if operation succeeded
      */
-    private boolean deleteCreditById(int id)
-    {
+    private boolean deleteCreditById(int id) {
         // check if client exists
-        if (ifCreditExists(id))
-        {
+        if (ifCreditExists(id)) {
             Credit credit = getCreditById(id);
             Client client = getClientById(credit.getOwnerId());
             boolean ifSucceeded = credits.removeIf(cr -> cr.getId() == id);
-            if (ifSucceeded)
-            {
+            if (ifSucceeded) {
                 // creating ack
                 Ack ack = new BankAck(credit, null, id, TypeOperation.DELETE_CREDIT, LocalDate.now(), "Credit of id: " + id + " of client " + client + " deleted");
                 bankHistory.add(ack);
@@ -428,27 +394,22 @@ public class Bank
         return false;
     }
 
-    public boolean payCreditRate(int creditId, double value)
-    {
-        if (ifCreditExists(creditId))
-        {
+    public boolean payCreditRate(int creditId, double value) {
+        if (ifCreditExists(creditId)) {
             Credit credit = getCreditById(creditId);
             String description = "rate transferred to credit's account with id " + creditId + ", value = " + value;
             boolean ifSucceeded = CreditOperation.transfer(credit, value, description, bankHistory);
 
-            if (ifSucceeded)
-            {
+            if (ifSucceeded) {
                 // credit still must be payed by client
                 return true;
-            } else
-            {
+            } else {
                 // credit is payed off
                 Client client = getClientById(credit.getOwnerId());
                 String creditPayedOff = "credit of client " + client + " is payed off and can be removed";
                 boolean ifPayOffSucceeded = CreditOperation.payOfCredit(credit, description, bankHistory);
 
-                if (ifPayOffSucceeded)
-                {
+                if (ifPayOffSucceeded) {
                     deleteCreditById(creditId);
                     return true;
                 }
@@ -465,8 +426,7 @@ public class Bank
      * @param id unique id of checking deposit
      * @return true if deposit exists in bank
      */
-    private boolean ifDepositExists(int id)
-    {
+    private boolean ifDepositExists(int id) {
         return deposits.stream().filter(deposit -> deposit.getId() == id).findFirst().isPresent();
     }
 
@@ -476,8 +436,7 @@ public class Bank
      * @param id unique deposit's id
      * @return specified deposit
      */
-    private Deposit getDepositById(int id)
-    {
+    private Deposit getDepositById(int id) {
         return deposits.stream().filter(deposit -> deposit.getId() == id).findFirst().get();
     }
 
@@ -487,16 +446,13 @@ public class Bank
      * @param id unique deposit's id
      * @return true if operation succeeded
      */
-    private boolean deleteDepositById(int id)
-    {
+    private boolean deleteDepositById(int id) {
         // check if client exists
-        if (ifDepositExists(id))
-        {
+        if (ifDepositExists(id)) {
             Deposit deposit = getDepositById(id);
             Client client = getClientById(deposit.getOwnerId());
             boolean ifSucceeded = deposits.removeIf(dp -> dp.getId() == id);
-            if (ifSucceeded)
-            {
+            if (ifSucceeded) {
                 // creating ack
                 Ack ack = new BankAck(deposit, null, id, TypeOperation.DELETE_DEPOSIT, LocalDate.now(), "Deposit of id: " + id + " of client " + client + " deleted");
                 bankHistory.add(ack);
@@ -515,32 +471,26 @@ public class Bank
      * @param depositId deposit unique id
      * @return true if operation succeeded
      */
-    public boolean withdrawFromDeposit(int depositId)
-    {
+    public boolean withdrawFromDeposit(int depositId) {
         // checking if deposit exists in bank
-        if (ifDepositExists(depositId))
-        {
+        if (ifDepositExists(depositId)) {
             Deposit deposit = getDepositById(depositId);
             Client client = getClientById(deposit.getOwnerId());
-            if (deposit.isExpired())
-            {
+            if (deposit.isExpired()) {
                 // deposit has expired
                 String description = "deposit " + depositId + " of client " + client + " is solved";
                 boolean ifSucceeded = DepositOperation.solveDeposit(deposit, description, bankHistory);
 
-                if (ifSucceeded)
-                {
+                if (ifSucceeded) {
                     return true;
                 }
                 //TODO - else ACK - wrong
-            } else
-            {
+            } else {
                 //deposit will be broken up
                 String description = "deposit " + depositId + " of client " + client + " is broken up";
                 boolean ifSucceeded = DepositOperation.breakUpDeposit(deposit, description, bankHistory);
 
-                if (ifSucceeded)
-                {
+                if (ifSucceeded) {
                     return true;
                 }
                 //TODO - else ACK - wrong
@@ -557,15 +507,12 @@ public class Bank
      * @param newPercentage new value of percentage
      * @return true if operation succeeded
      */
-    public boolean changeAccountPercentage(int accountId, double newPercentage)
-    {
-        if (ifAccountExists(accountId))
-        {
+    public boolean changeAccountPercentage(int accountId, double newPercentage) {
+        if (ifAccountExists(accountId)) {
             BankAccount bankAccount = getBankAccountById(accountId);
             boolean ifSucceeded = BankAccountOperation.changePercentage(bankAccount, newPercentage, bankHistory, "");
 
-            if (ifSucceeded)
-            {
+            if (ifSucceeded) {
                 return true;
             }
         }
@@ -580,8 +527,7 @@ public class Bank
      * @param newPercentage new value of percentage
      * @return true if operation succeeded
      */
-    public boolean changeCreditPercentage(int creditId, double newPercentage)
-    {
+    public boolean changeCreditPercentage(int creditId, double newPercentage) {
         return false;
     }
 

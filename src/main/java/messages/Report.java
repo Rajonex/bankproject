@@ -1,6 +1,5 @@
-package messages;
+package main.java.messages;
 
-public class Report
-{
+public class Report {
     private TypeOperation typeOperation;
 }

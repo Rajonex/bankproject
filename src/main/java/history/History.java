@@ -1,37 +1,35 @@
-package history;
+package main.java.history;
 
-import messages.Ack;
+import main.java.messages.Ack;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class History
-{
+public class History {
     List<Ack> historyList;
 
-    public History()
-    {
+    public History() {
         historyList = new ArrayList<Ack>();
     }
 
     /**
      * adding new ACK to list - history
+     *
      * @param obj
      * @return true if operation succeeded
      */
-    public boolean add(Ack obj)
-    {
+    public boolean add(Ack obj) {
         return historyList.add(obj);
     }
 
     /**
      * return list of ACKs
-     *
+     * <p>
      * TODO return non-editable version of list
+     *
      * @return list of ACKs
      */
-    public List<Ack> returnList()
-    {
+    public List<Ack> returnList() {
         return historyList;
     }
 

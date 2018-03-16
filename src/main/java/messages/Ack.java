@@ -1,7 +1,6 @@
-package messages;
+package main.java.messages;
 
-import services.Product;
-import services.Service;
+import main.java.services.Product;
 
 import java.time.LocalDate;
 

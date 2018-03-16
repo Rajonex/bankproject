@@ -1,12 +1,11 @@
-package bank;
+package main.java.bank;
 
-import messages.Report;
+import main.java.messages.Report;
 
 import java.util.List;
 
 public class Reporting {
-    public List<Report> createReportsAboveValue(double value)
-    {
+    public List<Report> createReportsAboveValue(double value) {
         return null;
     }
 

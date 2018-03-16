@@ -1,10 +1,9 @@
-package services;
-
-import messages.Ack;
+package main.java.services;
 
 public interface Product {
     /**
      * Increasing balance
+     *
      * @param value value added to balance
      * @return feedback of the success of the operation
      */
@@ -12,6 +11,7 @@ public interface Product {
 
     /**
      * Decreasing balance, considering kind of account
+     *
      * @param value value subtracted from balance
      * @return feedback of the success of the operation
      */
@@ -19,12 +19,14 @@ public interface Product {
 
     /**
      * Getter
+     *
      * @return owner id of this service
      */
     public int getOwnerId();
 
     /**
      * Getter
+     *
      * @return id object of this service
      */
     public int getId();

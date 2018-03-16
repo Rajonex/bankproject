@@ -1,4 +1,4 @@
-package services;
+package main.java.services;
 
 
 import java.time.LocalDate;
@@ -11,8 +11,7 @@ public class Deposit extends ConnectedAccount {
      *
      * @return duration of deposit in months
      */
-    public long getDuration()
-    {
+    public long getDuration() {
         return duration;
     }
 
@@ -21,8 +20,7 @@ public class Deposit extends ConnectedAccount {
      *
      * @param duration duration of deposit in months
      */
-    public void setDuration(long duration)
-    {
+    public void setDuration(long duration) {
         this.duration = duration;
     }
 
@@ -41,8 +39,7 @@ public class Deposit extends ConnectedAccount {
      *
      * @return true if deposit has expired
      */
-    public boolean isExpired()
-    {
+    public boolean isExpired() {
         return getLocalDate().plusMonths(getDuration()).isBefore(LocalDate.now());
     }
 }

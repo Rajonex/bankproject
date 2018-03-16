@@ -1,12 +1,12 @@
 package main.java.services;
 
-import history.History;
-import messages.Ack;
+import main.java.history.History;
+import main.java.messages.Ack;
 
 import java.time.LocalDate;
 import java.util.List;
 
-public abstract class Service implements services.Product {
+public abstract class Service implements Product {
     protected History history; // history of this service
     private int id; // id this service object
     protected boolean canBeNegative; // information if the value can be negative
@@ -35,6 +35,7 @@ public abstract class Service implements services.Product {
 
     /**
      * Getter
+     *
      * @return id object of this service
      */
     @Override
@@ -45,6 +46,7 @@ public abstract class Service implements services.Product {
 
     /**
      * Getter
+     *
      * @return owner id of this service
      */
     @Override
@@ -55,6 +57,7 @@ public abstract class Service implements services.Product {
 
     /**
      * Getter
+     *
      * @return balance of this service
      */
     public double getBalance() {
@@ -63,6 +66,7 @@ public abstract class Service implements services.Product {
 
     /**
      * Getter
+     *
      * @return date of the creation
      */
     public LocalDate getLocalDate() {
@@ -71,6 +75,7 @@ public abstract class Service implements services.Product {
 
     /**
      * Getter
+     *
      * @return percentage of service
      */
     public double getPercentage() {
@@ -79,6 +84,7 @@ public abstract class Service implements services.Product {
 
     /**
      * Setter
+     *
      * @param percentage percentage of service
      */
     public void setPercentage(double percentage) {
@@ -87,6 +93,7 @@ public abstract class Service implements services.Product {
 
     /**
      * Increasing balance
+     *
      * @param value value added to balance
      * @return feedback of the success of the operation
      */
@@ -98,13 +105,13 @@ public abstract class Service implements services.Product {
 
     /**
      * Decreasing balance, considering kind of account
+     *
      * @param value value subtracted from balance
      * @return feedback of the success of the operation
      */
     @Override
     public boolean decreaseBalance(double value) {
-        if(balance-value < 0 && canBeNegative == false)
-        {
+        if (balance - value < 0 && canBeNegative == false) {
             return false;
         }
         balance -= value;
@@ -113,6 +120,7 @@ public abstract class Service implements services.Product {
 
     /**
      * Operation adding element to history of this object
+     *
      * @param ack one field of the history
      * @return feedback of the success of the operation
      */
@@ -122,6 +130,7 @@ public abstract class Service implements services.Product {
 
     /**
      * Showing whole history of this object
+     *
      * @return history of object, in form of list
      */
     public List<Ack> showHistory() {
