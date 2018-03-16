@@ -74,6 +74,7 @@ public class Client
     {
         this.firstName = firstName;
         this.lastName = lastName;
+        //TODO - liczba znaków pesel
         this.pesel = pesel;
         this.id = generatedId++;
     }
