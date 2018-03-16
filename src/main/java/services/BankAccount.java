@@ -1,4 +1,6 @@
-package services;
+package main.java.services;
+
+import main.java.services.Service;
 
 public class BankAccount extends Service {
 

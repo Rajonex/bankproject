@@ -1,4 +1,4 @@
-package services;
+package main.java.services;
 
 import history.History;
 import messages.Ack;
@@ -6,18 +6,17 @@ import messages.Ack;
 import java.time.LocalDate;
 import java.util.List;
 
-public abstract class Service implements Product {
+public abstract class Service implements services.Product {
     protected History history; // history of this service
     private int id; // id this service object
     protected boolean canBeNegative; // information if the value can be negative
     protected double balance; // balance
     protected int ownerId; // owner id - client id
-    private static int number = 0; // unique number for all objects of class Service
     private LocalDate localDate;
     double percentage;
 
     public Service(int ownerId, double percentage) {
-        id = number++;
+        id = IdGenerator.generateServiceId();
         balance = 0;
         history = new History();
         this.ownerId = ownerId;
@@ -26,7 +25,7 @@ public abstract class Service implements Product {
     }
 
     public Service(double balance, int ownerId, double percentage) {
-        id = number++;
+        id = IdGenerator.generateServiceId();
         this.balance = balance;
         history = new History();
         this.ownerId = ownerId;
