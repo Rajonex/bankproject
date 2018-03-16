@@ -522,25 +522,24 @@ public class Bank
         {
             Deposit deposit = getDepositById(depositId);
             Client client = getClientById(deposit.getOwnerId());
-            if(deposit.isExpired())
+            if (deposit.isExpired())
             {
                 // deposit has expired
                 String description = "deposit " + depositId + " of client " + client + " is solved";
                 boolean ifSucceeded = DepositOperation.solveDeposit(deposit, description, bankHistory);
 
-                if(ifSucceeded)
+                if (ifSucceeded)
                 {
                     return true;
                 }
                 //TODO - else ACK - wrong
-            }
-            else
+            } else
             {
                 //deposit will be broken up
                 String description = "deposit " + depositId + " of client " + client + " is broken up";
                 boolean ifSucceeded = DepositOperation.breakUpDeposit(deposit, description, bankHistory);
 
-                if(ifSucceeded)
+                if (ifSucceeded)
                 {
                     return true;
                 }
@@ -551,12 +550,47 @@ public class Bank
         return false;
     }
 
+    /**
+     * Changing percentage of account
+     *
+     * @param accountId     unique account id
+     * @param newPercentage new value of percentage
+     * @return true if operation succeeded
+     */
+    public boolean changeAccountPercentage(int accountId, double newPercentage)
+    {
+        if (ifAccountExists(accountId))
+        {
+            BankAccount bankAccount = getBankAccountById(accountId);
+            boolean ifSucceeded = BankAccountOperation.changePercentage(bankAccount, newPercentage, bankHistory, "");
+
+            if (ifSucceeded)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Changing percentage of credit
+     *
+     * @param creditId      unique credit id
+     * @param newPercentage new value of percentage
+     * @return true if operation succeeded
+     */
+    public boolean changeCreditPercentage(int creditId, double newPercentage)
+    {
+        return false;
+    }
+
     //TODO - changePercentage (BA, CO, DO)
 
     // Many
     //TODO - payPercentage (BA, CO)
 
-    //TODO - ack if Operation methods fail?`
+    //TODO - ack if Operation methods fail?
     //TODO - payPercentage mechanism
     //TODO - correct struktura.png file
 
