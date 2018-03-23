@@ -1,11 +1,10 @@
-package test.java.operations;
+package operations;
 
-import main.java.history.History;
-import main.java.operations.BankAccountOperation;
+import history.History;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import main.java.services.BankAccount;
+import services.BankAccount;
 
 public class BankAccountOperationTest {
     private History history;

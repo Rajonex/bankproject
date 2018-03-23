@@ -1,10 +1,11 @@
-package main.java.operations;
+package operations;
 
-import main.java.history.History;
-import main.java.messages.Ack;
-import main.java.messages.TypeOperation;
-import main.java.services.BankAccount;
-import main.java.services.Deposit;
+
+import history.History;
+import messages.Ack;
+import messages.TypeOperation;
+import services.BankAccount;
+import services.Deposit;
 
 import java.time.LocalDate;
 

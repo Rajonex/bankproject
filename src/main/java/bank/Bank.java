@@ -1,20 +1,19 @@
-package main.java.bank;
+package bank;
 
-import main.java.clients.Client;
-import main.java.history.History;
-import main.java.messages.Ack;
-import main.java.services.*;
-import main.java.messages.BankAck;
-import main.java.messages.TypeOperation;
-import main.java.operations.BankAccountOperation;
-import main.java.operations.CreditOperation;
-import main.java.operations.DepositOperation;
+
+import clients.Client;
+import history.History;
+import messages.Ack;
+import messages.BankAck;
+import messages.TypeOperation;
+import operations.BankAccountOperation;
+import operations.CreditOperation;
+import operations.DepositOperation;
+import services.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.sun.org.apache.xml.internal.serializer.utils.Utils.messages;
 
 public class Bank {
     private List<Client> clients;

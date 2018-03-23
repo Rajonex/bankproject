@@ -1,4 +1,4 @@
-package main.java.messages;
+package messages;
 
 public class Report {
     private TypeOperation typeOperation;

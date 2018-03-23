@@ -1,7 +1,8 @@
-package main.java.services;
+package services;
 
-import main.java.history.History;
-import main.java.messages.Ack;
+
+import history.History;
+import messages.Ack;
 
 import java.time.LocalDate;
 import java.util.List;

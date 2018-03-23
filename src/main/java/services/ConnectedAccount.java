@@ -1,4 +1,4 @@
-package main.java.services;
+package services;
 
 public class ConnectedAccount extends Service {
     protected BankAccount bankAccount;

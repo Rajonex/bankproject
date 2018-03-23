@@ -1,7 +1,7 @@
-package main.java.messages;
+package messages;
 
-import main.java.services.Product;
-import main.java.messages.Ack;
+
+import services.Product;
 
 import java.time.LocalDate;
 
@@ -37,7 +37,7 @@ public class BankAck extends Ack {
      * @param localDate
      * @param description
      */
-    public BankAck(Product product1, Product product2, int clientId, TypeOperation typeOperation, LocalDate localDate, String description) {
+    public BankAck(Product product1, Product product2, int clientId,TypeOperation typeOperation, LocalDate localDate, String description) {
         super(product1, product2, typeOperation, localDate, description);
         this.clientId = clientId;
     }

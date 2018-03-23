@@ -1,4 +1,4 @@
-package main.java.services;
+package services;
 
 public class IdGenerator {
     private static int serviceId = 0;

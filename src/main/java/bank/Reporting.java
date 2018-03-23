@@ -1,6 +1,7 @@
-package main.java.bank;
+package bank;
 
-import main.java.messages.Report;
+
+import messages.Report;
 
 import java.util.List;
 

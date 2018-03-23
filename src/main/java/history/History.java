@@ -1,6 +1,7 @@
-package main.java.history;
+package history;
 
-import main.java.messages.Ack;
+
+import messages.Ack;
 
 import java.util.ArrayList;
 import java.util.List;

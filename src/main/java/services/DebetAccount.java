@@ -1,7 +1,10 @@
-package main.java.services;
+package services;
 
 
-public class DebetAccount extends BankAccount {
+import services.BankAccount;
+
+public class DebetAccount extends BankAccount
+{
     private double limit; // it has minus value and it is max debet value
 
 

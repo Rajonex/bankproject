@@ -1,14 +1,13 @@
-package main.java.operations;
+package operations;
 
-import main.java.history.History;
-import main.java.messages.Ack;
-import main.java.messages.TypeOperation;
-import main.java.services.BankAccount;
-import main.java.services.Credit;
+
+import history.History;
+import messages.Ack;
+import messages.TypeOperation;
+import services.BankAccount;
+import services.Credit;
 
 import java.time.LocalDate;
-
-import static com.sun.org.apache.xml.internal.serializer.utils.Utils.messages;
 
 public class CreditOperation {
 
