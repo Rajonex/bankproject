@@ -530,6 +530,16 @@ public class Bank {
         return false;
     }
 
+    /**
+     * Getting list of bank history
+     *
+     * @return bank history
+     */
+    public List<Ack> getBankHistory()
+    {
+        return bankHistory.returnList();
+    }
+
     //TODO - changePercentage (BA, CO, DO)
 
     // Many

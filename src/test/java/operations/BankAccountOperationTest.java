@@ -18,6 +18,6 @@ public class BankAccountOperationTest {
     public void testCreatingAccount() {
         BankAccount account = BankAccountOperation.createNormalAccount(0, 10, history, "test");
         BankAccount normalAccount = new BankAccount(0, 10);
-        Assert.assertEquals(normalAccount, account);
+        Assert.assertEquals(normalAccount.getOwnerId(), account.getOwnerId());
     }
 }

@@ -13,6 +13,7 @@ services\NormalAccount.class
 services\ConnectedAccount.class
 messages\TypeOperation.class
 services\Deposit.class
+services\IdGenerator.class
 operations\CreditOperation.class
 operations\DepositOperation.class
 clients\Client.class
