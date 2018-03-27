@@ -1,7 +1,6 @@
 package operations;
 
 
-import history.History;
 import messages.Ack;
 import messages.TypeOperation;
 import services.BankAccount;
@@ -17,21 +16,16 @@ public class DepositOperation {
      *
      * @param deposit       = the deposit
      * @param newPercentage = new interest system
-     * @param bankHistory   = history of the operation
      * @param description   = description of the operation
      * @return true if the percentage is changed
      */
-    public static boolean changePercentage(Deposit deposit, double newPercentage, History bankHistory,
-                                           String description) {
+    public static boolean changePercentage(Deposit deposit, double newPercentage, String description) {
         double oldPercentage = deposit.getPercentage();
         // BankAccount bankAccount = deposit.getBankAccount();
-
         deposit.setPercentage(newPercentage);
-
         Ack ack = new Ack(deposit, null, TypeOperation.CHANGE_PERCENTAGE, LocalDate.now(),
                 "Change percentage from " + oldPercentage * 100 + " to " + newPercentage * 100 + ". " + description);
         deposit.addToHistory(ack);
-        bankHistory.add(ack);
         return true;
     }
 
@@ -42,12 +36,10 @@ public class DepositOperation {
      * @param value       = the value which is payed to the deposit
      * @param ownerId     = id of the owner of the bank account
      * @param percentage  = interest system
-     * @param bankHistory = history of operations made
      * @param description = description of the operation
      * @return return the deposit if it is created, null otherwise
      */
-    public static Deposit createDeposit(BankAccount bankAccount, double value, int ownerId, double percentage,
-                                        History bankHistory, String description)
+    public static Deposit createDeposit(BankAccount bankAccount, double value, int ownerId, double percentage, String description)
 
     {
         if (bankAccount.decreaseBalance(value)) {
@@ -56,10 +48,8 @@ public class DepositOperation {
             Ack ack = new Ack(deposit, null, TypeOperation.CREATE_ACCOUNT, LocalDate.now(), description);
             Ack ackBankAccount = new Ack(bankAccount, deposit, TypeOperation.TRANSFER, LocalDate.now(), description);
             deposit.addToHistory(ack);
-            bankHistory.add(ack);
 
             deposit.addToHistory(ackBankAccount);
-            bankHistory.add(ackBankAccount);
             bankAccount.addToHistory(ackBankAccount);
 
             return deposit;
@@ -72,12 +62,10 @@ public class DepositOperation {
      * Not adding the percentage  to the value of the deposit
      *
      * @param deposit     = the deposit
-     * @param bankAccount = bank account from which the deposit was created
      * @param description = description of the operation
-     * @param bankHistory = history of the transactions
      * @return return true if the deposit is set to zero
      */
-    public static boolean breakUpDeposit(Deposit deposit, String description, History bankHistory) {
+    public static boolean breakUpDeposit(Deposit deposit, String description) {
         BankAccount bankAccount = deposit.getBankAccount();
         double value = deposit.getBalance();
 
@@ -87,7 +75,6 @@ public class DepositOperation {
             Ack ack = new Ack(deposit, bankAccount, TypeOperation.TRANSFER, LocalDate.now(), description);
             deposit.addToHistory(ack);
             bankAccount.addToHistory(ack);
-            bankHistory.add(ack);
             return true;
         }
 
@@ -99,12 +86,10 @@ public class DepositOperation {
      * Adding the percentage to the value of the deposit
      *
      * @param deposit     = the deposit
-     * @param bankAccount = bank account from which the deposit was created
      * @param description = description of the operation
-     * @param bankHistory = history of the transactions
      * @return return true if the deposit is set to zero
      */
-    public static boolean solveDeposit(Deposit deposit, String description, History bankHistory) {
+    public static boolean solveDeposit(Deposit deposit, String description) {
 
         BankAccount bankAccount = deposit.getBankAccount();
 
@@ -118,7 +103,6 @@ public class DepositOperation {
             Ack ack = new Ack(deposit, bankAccount, TypeOperation.TRANSFER, LocalDate.now(), description);
             deposit.addToHistory(ack);
             bankAccount.addToHistory(ack);
-            bankHistory.add(ack);
 
             return true;
         }
