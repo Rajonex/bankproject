@@ -90,14 +90,11 @@ public class DepositOperation {
      * @return return true if the deposit is set to zero
      */
     public static boolean solveDeposit(Deposit deposit, String description) {
-
         BankAccount bankAccount = deposit.getBankAccount();
-
         double value = deposit.getBalance();
 
         if (deposit.decreaseBalance(value)) {
             double newValue = value + value * deposit.getPercentage();
-
             bankAccount.increaseBalance(newValue);
 
             Ack ack = new Ack(deposit, bankAccount, TypeOperation.TRANSFER, LocalDate.now(), description);
