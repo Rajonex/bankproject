@@ -1,2 +1,6 @@
+services\CreditTest.class
+services\NormalAccountTest.class
+services\DebetAccountTest.class
 bank\BankTest.class
 operations\BankAccountOperationTest.class
+services\DepositTest.class

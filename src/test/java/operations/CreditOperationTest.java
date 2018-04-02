@@ -1,14 +1,10 @@
 package operations;
 
-import messages.Ack;
-import messages.TypeOperation;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import services.BankAccount;
 import services.Credit;
-
-import java.time.LocalDate;
 
 public class CreditOperationTest {
 
