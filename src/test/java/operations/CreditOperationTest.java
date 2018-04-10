@@ -1,5 +1,6 @@
 package operations;
 
+import interests.InterestsMechanism;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -13,8 +14,8 @@ public class CreditOperationTest {
 
     @BeforeClass
     static public void newBankAccountTest() {
-        bankAccount = new BankAccount(1000, 0, 10.0);
-        credit = new Credit(bankAccount, 100, 0, 10.0);
+        bankAccount = new BankAccount(1000, 0);
+        credit = new Credit(bankAccount, 100, 0);
     }
 
     @Test
@@ -22,11 +23,10 @@ public class CreditOperationTest {
         CreditOperation creditOperationTest = new CreditOperation();
         double balanceTest = bankAccount.getBalance();
         int ownerIdTest = bankAccount.getOwnerId();
-        double percentageTest = bankAccount.getPercentage();
 
         String descriptionTest = "JUnit Test";
 
-        Credit newCreditTest = creditOperationTest.createCredit(bankAccount, balanceTest, ownerIdTest, percentageTest, descriptionTest);
+        Credit newCreditTest = creditOperationTest.createCredit(bankAccount, balanceTest, ownerIdTest, descriptionTest);
         Assert.assertNotNull(newCreditTest);
 
     }
@@ -35,12 +35,12 @@ public class CreditOperationTest {
     @Test
     public void changePercentageTest() {
         CreditOperation creditOperationTest = new CreditOperation();
-        double newPercentageTest = 5.0;
+        InterestsMechanism newPercentageTest = bankAccount.getInterestsMechanism();
         String descriptionTest = "JUnit Test";
 
         creditOperationTest.changePercentage(credit, newPercentageTest, descriptionTest);
 
-        Assert.assertEquals(newPercentageTest, credit.getPercentage(), 0.0);
+        Assert.assertEquals(newPercentageTest, credit.getInterestsMechanism());
 
     }
 
@@ -49,7 +49,7 @@ public class CreditOperationTest {
         CreditOperation creditOperationTest = new CreditOperation();
 
         double balanceTest = credit.getBalance(); //stary balance
-        double percentageTest = credit.getPercentage(); // procent
+        double percentageTest = credit.getInterests(); // procent
         String descriptionTest = "JUnit Test";
 
         double payedTest = balanceTest * percentageTest; //suma o jaka powinien wzrosnac kredit

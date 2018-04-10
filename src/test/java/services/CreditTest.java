@@ -12,8 +12,8 @@ public class CreditTest {
     @Before
     public void init()
     {
-        BankAccount bankAccount = new BankAccount(1, 1.0);
-        credit = new Credit(bankAccount, -100.0, 1, 1.0);
+        BankAccount bankAccount = new BankAccount(1);
+        credit = new Credit(bankAccount, -100.0, 1);
     }
 
     @Test

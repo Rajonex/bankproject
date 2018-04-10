@@ -3,13 +3,13 @@ package services;
 
 public class Credit extends ConnectedAccount {
 
-    public Credit(BankAccount bankAccount, int ownerId, double percentage) {
-        super(bankAccount, ownerId, percentage);
+    public Credit(BankAccount bankAccount, int ownerId) {
+        super(bankAccount, ownerId);
         canBeNegative = true;
     }
 
-    public Credit(BankAccount bankAccount, double balance, int ownerId, double percentage) {
-        super(bankAccount, balance, ownerId, percentage);
+    public Credit(BankAccount bankAccount, double balance, int ownerId) {
+        super(bankAccount, balance, ownerId);
         canBeNegative = true;
     }
 

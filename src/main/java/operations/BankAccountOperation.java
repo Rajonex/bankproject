@@ -1,6 +1,7 @@
 package operations;
 
 
+import interests.InterestsMechanism;
 import messages.Ack;
 import messages.TypeOperation;
 import services.BankAccount;
@@ -21,6 +22,7 @@ public class BankAccountOperation {
     public static boolean payment(BankAccount bankAccount, double value, String description) {
         bankAccount.increaseBalance(value);
         Ack ack = new Ack(bankAccount, null, TypeOperation.PAYMENT, LocalDate.now(), description);
+        bankAccount.addToHistory(ack);
         return true;
     }
 
@@ -71,7 +73,7 @@ public class BankAccountOperation {
         boolean flag = false;
         double balance = bankAccount.getBalance();
         if (balance > 0) {
-            bankAccount.increaseBalance(balance * bankAccount.getPercentage());
+            bankAccount.increaseBalance(bankAccount.getInterests());
             flag = true;
             Ack ack = new Ack(bankAccount, null, TypeOperation.PAY_PERCENTAGE, LocalDate.now(), description);
             bankAccount.addToHistory(ack);
@@ -84,14 +86,17 @@ public class BankAccountOperation {
      * Changing the interest system
      *
      * @param bankAccount   = the bank account which wants to change the interest system
-     * @param newPercentage = new interest system
+     *
      * @param description   = description of the operation
      * @return true if the interest system is changed
      */
-    public static boolean changePercentage(BankAccount bankAccount, double newPercentage, String description) {
-        double oldPercentage = bankAccount.getPercentage();
-        bankAccount.setPercentage(newPercentage);
-        Ack ack = new Ack(bankAccount, null, TypeOperation.CHANGE_PERCENTAGE, LocalDate.now(), "Change percentage from " + oldPercentage * 100 + " to " + newPercentage * 100 + ". " + description);
+    public static boolean changePercentage(BankAccount bankAccount, InterestsMechanism mechanism, String description) {
+
+        InterestsMechanism oldMechanism = bankAccount.getInterestsMechanism();
+        bankAccount.setInterestsMechanism(mechanism);
+
+
+        Ack ack = new Ack(bankAccount, null, TypeOperation.CHANGE_PERCENTAGE, LocalDate.now(), "Change percentage from " + oldMechanism  + " to " + mechanism + ". " + description);
         bankAccount.addToHistory(ack);
         return true;
     }
@@ -101,12 +106,11 @@ public class BankAccountOperation {
      *
      * @param ownerId     = ID of the owner which wants to create the account
      * @param limit       = limit for the account
-     * @param percentage  = interest system
      * @param description = description of the operation
      * @return created account
      */
-    public static DebetAccount createDebetAccount(int ownerId, double limit, double percentage, String description) {
-        DebetAccount debetAccount = new DebetAccount(ownerId, limit, percentage);
+    public static DebetAccount createDebetAccount(int ownerId, double limit, String description) {
+        DebetAccount debetAccount = new DebetAccount(ownerId, limit);
         Ack ack = new Ack(debetAccount, null, TypeOperation.CREATE_ACCOUNT, LocalDate.now(), description);
         return debetAccount;
     }
@@ -115,12 +119,11 @@ public class BankAccountOperation {
      * Creating a normal bank account
      *
      * @param ownerId     = id of the owner which wants to create the account
-     * @param percentage  = interest system
      * @param description = description of the operation
      * @return return created account
      */
-    public static NormalAccount createNormalAccount(int ownerId, double percentage, String description) {
-        NormalAccount normalAccount = new NormalAccount(ownerId, percentage);
+    public static NormalAccount createNormalAccount(int ownerId, String description) {
+        NormalAccount normalAccount = new NormalAccount(ownerId);
         Ack ack = new Ack(normalAccount, null, TypeOperation.CREATE_ACCOUNT, LocalDate.now(), description);
         normalAccount.addToHistory(ack);
         return normalAccount;

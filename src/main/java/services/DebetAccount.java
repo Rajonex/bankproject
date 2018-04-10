@@ -8,20 +8,20 @@ public class DebetAccount extends BankAccount
     private double limit; // it has minus value and it is max debet value
 
 
-    public DebetAccount(int ownerId, double limit, double percentage) {
-        super(ownerId, percentage);
+    public DebetAccount(int ownerId, double limit) {
+        super(ownerId);
         canBeNegative = true;
         this.limit = limit;
     }
 
-    public DebetAccount(double balance, int ownerId, double limit, double percentage) {
-        super(balance, ownerId, percentage);
+    public DebetAccount(double balance, int ownerId, double limit) {
+        super(balance, ownerId);
         canBeNegative = true;
         this.limit = limit;
     }
 
     public DebetAccount(BankAccount bankAccount, double limit) {
-        super(bankAccount.balance, bankAccount.ownerId, bankAccount.percentage);
+        super(bankAccount.balance, bankAccount.ownerId);
         canBeNegative = true;
         this.limit = limit;
         history = bankAccount.history;

@@ -2,6 +2,8 @@ package services;
 
 
 import history.History;
+import interests.InterestA;
+import interests.InterestsMechanism;
 import messages.Ack;
 
 import java.time.LocalDate;
@@ -15,25 +17,40 @@ public abstract class Service implements Product {
     protected int ownerId; // owner id - client id
     private LocalDate localDate;
     double percentage;
+    protected InterestsMechanism interestsMechanism;
 
-    public Service(int ownerId, double percentage) {
+    public Service(int ownerId) {
         id = IdGenerator.generateServiceId();
         balance = 0;
         history = new History();
         this.ownerId = ownerId;
         this.percentage = percentage;
         localDate = LocalDate.now();
+        interestsMechanism = new InterestA();
     }
 
-    public Service(double balance, int ownerId, double percentage) {
+    public Service(double balance, int ownerId) {
         id = IdGenerator.generateServiceId();
         this.balance = balance;
         history = new History();
         this.ownerId = ownerId;
         this.percentage = percentage;
         localDate = LocalDate.now();
+        interestsMechanism = new InterestA();
     }
 
+    public InterestsMechanism getInterestsMechanism() {
+        return interestsMechanism;
+    }
+
+    public void setInterestsMechanism(InterestsMechanism interestsMechanism) {
+        this.interestsMechanism = interestsMechanism;
+    }
+
+    public double getInterests()
+    {
+        return interestsMechanism.interests(this);
+    }
     /**
      * Getter
      *
@@ -72,24 +89,6 @@ public abstract class Service implements Product {
      */
     public LocalDate getLocalDate() {
         return localDate;
-    }
-
-    /**
-     * Getter
-     *
-     * @return percentage of service
-     */
-    public double getPercentage() {
-        return percentage;
-    }
-
-    /**
-     * Setter
-     *
-     * @param percentage percentage of service
-     */
-    public void setPercentage(double percentage) {
-        this.percentage = percentage;
     }
 
     /**

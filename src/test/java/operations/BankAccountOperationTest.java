@@ -1,5 +1,6 @@
 package operations;
 
+import interests.InterestsMechanism;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -13,7 +14,7 @@ public class BankAccountOperationTest {
 
     @BeforeClass
     static public void newBankAccountTest() {
-        bankAccount = new BankAccount(1000, 0, 10.0);
+        bankAccount = new BankAccount(1000, 0);
     }
 
 
@@ -22,10 +23,9 @@ public class BankAccountOperationTest {
         BankAccountOperation bankAccountOperationTest = new BankAccountOperation();
         int ownerIdTest = bankAccount.getOwnerId();
         double limitTest = 1000.0;
-        double percentageTest = bankAccount.getPercentage();
         String descriptionTest = "JUnit Test";
 
-        DebetAccount newDebetAccount = bankAccountOperationTest.createDebetAccount(ownerIdTest, limitTest, percentageTest, descriptionTest);
+        DebetAccount newDebetAccount = bankAccountOperationTest.createDebetAccount(ownerIdTest, limitTest, descriptionTest);
         Assert.assertNotNull(newDebetAccount);
     }
 
@@ -35,10 +35,9 @@ public class BankAccountOperationTest {
         BankAccountOperation bankAccountOperationTest = new BankAccountOperation();
         int ownerIdTest = bankAccount.getOwnerId();
         double limitTest = 1000.0;
-        double percentageTest = bankAccount.getPercentage();
         String descriptionTest = "JUnit Test";
 
-        NormalAccount newNormalAccount = bankAccountOperationTest.createNormalAccount(ownerIdTest, percentageTest, descriptionTest);
+        NormalAccount newNormalAccount = bankAccountOperationTest.createNormalAccount(ownerIdTest, descriptionTest);
         Assert.assertNotNull(newNormalAccount);
     }
 
@@ -91,7 +90,7 @@ public class BankAccountOperationTest {
 
     @Test
     public void testCreatingAccount() {
-        BankAccount account = BankAccountOperation.createNormalAccount(0, 10,  "test");
+        BankAccount account = BankAccountOperation.createNormalAccount(0,  "test");
         BankAccount normalAccount = new BankAccount(0, 10);
         Assert.assertEquals(normalAccount.getOwnerId(), account.getOwnerId());
     }
@@ -143,9 +142,9 @@ public class BankAccountOperationTest {
         BankAccountOperation bankAccountOperationTest = new BankAccountOperation();
 
         double balanceTest = bankAccount.getBalance(); //stary balance
-        double percentageTest = bankAccount.getPercentage(); // procent
+        double percentageTest = bankAccount.getInterests(); // procent
         String descriptionTest = "JUnit Test";
-        double payedTest = balanceTest * percentageTest; //suma o jaka powinien wzrosnac kredit
+        double payedTest = percentageTest; //suma o jaka powinien wzrosnac kredit
 
         bankAccountOperationTest.payPercentage(bankAccount, descriptionTest); //wywolanie operacji na pierwotnym kredycie za posrednictwem creditOperation
 
@@ -155,12 +154,13 @@ public class BankAccountOperationTest {
     @Test
     public void changePercentageTest() {
         BankAccountOperation bankAccountOperationTest = new BankAccountOperation();
-        double newPercentageTest = 5.0;
+
+        InterestsMechanism newPercentageTest = bankAccount.getInterestsMechanism();
         String descriptionTest = "JUnit Test";
 
         bankAccountOperationTest.changePercentage(bankAccount, newPercentageTest, descriptionTest);
 
-        Assert.assertEquals(newPercentageTest, bankAccount.getPercentage(), 0.0);
+        Assert.assertEquals(newPercentageTest, bankAccount.getInterestsMechanism());
 
     }
 

@@ -3,13 +3,13 @@ package services;
 public class ConnectedAccount extends Service {
     protected BankAccount bankAccount;
 
-    public ConnectedAccount(BankAccount bankAccount, int ownerId, double percentage) {
-        super(ownerId, percentage);
+    public ConnectedAccount(BankAccount bankAccount, int ownerId) {
+        super(ownerId);
         this.bankAccount = bankAccount;
     }
 
-    public ConnectedAccount(BankAccount bankAccount, double balance, int ownerId, double percentage) {
-        super(balance, ownerId, percentage);
+    public ConnectedAccount(BankAccount bankAccount, double balance, int ownerId) {
+        super(balance, ownerId);
         this.bankAccount = bankAccount;
     }
 

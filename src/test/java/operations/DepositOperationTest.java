@@ -1,5 +1,6 @@
 package operations;
 
+import interests.InterestsMechanism;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -14,8 +15,8 @@ public class DepositOperationTest {
 
     @BeforeClass
     static public void newBankAccountTest() {
-        bankAccount = new BankAccount(1000, 0, 10.0);
-        deposit = new Deposit(bankAccount, 100, 0, 10.0);
+        bankAccount = new BankAccount(1000, 0);
+        deposit = new Deposit(bankAccount, 100, 0);
     }
 
     @Test
@@ -23,11 +24,10 @@ public class DepositOperationTest {
         DepositOperation depositOperationTest = new DepositOperation();
         double balanceTest = bankAccount.getBalance();
         int ownerIdTest = bankAccount.getOwnerId();
-        double percentageTest = bankAccount.getPercentage();
 
         String descriptionTest = "JUnit Test";
 
-        Deposit newDepositTest = depositOperationTest.createDeposit(bankAccount, balanceTest, ownerIdTest, percentageTest, descriptionTest);
+        Deposit newDepositTest = depositOperationTest.createDeposit(bankAccount, balanceTest, ownerIdTest, descriptionTest);
         Assert.assertNotNull(newDepositTest);
 
     }
@@ -35,12 +35,12 @@ public class DepositOperationTest {
     @Test
     public void changePercentageTest() {
         DepositOperation depositOperationTest = new DepositOperation();
-        double newPercentageTest = 5.0;
+        InterestsMechanism newPercentageTest = bankAccount.getInterestsMechanism();
         String descriptionTest = "JUnit Test";
 
         depositOperationTest.changePercentage(deposit, newPercentageTest, descriptionTest);
 
-        Assert.assertEquals(newPercentageTest, deposit.getPercentage(), 0.0);
+        Assert.assertEquals(newPercentageTest, deposit.getInterestsMechanism());
 
     }
 
@@ -50,7 +50,7 @@ public class DepositOperationTest {
     public void solveDepositTest()
     {
         DepositOperation depositOperationTest = new DepositOperation();
-        double percentageTest = deposit.getPercentage();
+        double percentageTest = deposit.getInterests();
         double balanceTest = deposit.getBalance();
         double accountBalanceTest = bankAccount.getBalance();
         String descriptionTest = "JUnit Test";

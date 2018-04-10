@@ -11,7 +11,7 @@ public class NormalAccountTest {
 
     @Before
     public void init() {
-        normalAccount = new NormalAccount(100.0, 1, 1.0);
+        normalAccount = new NormalAccount(100.0, 1);
     }
 
     @Test

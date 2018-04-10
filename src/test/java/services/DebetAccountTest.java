@@ -12,7 +12,7 @@ public class DebetAccountTest {
     @Before
     public void init()
     {
-        debetAccount = new DebetAccount(100.0, 1, -300.0, 1.0);
+        debetAccount = new DebetAccount(100.0, 1, -300.0);
     }
 
     @Test

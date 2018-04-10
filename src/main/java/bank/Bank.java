@@ -3,6 +3,7 @@ package bank;
 
 import clients.Client;
 import history.History;
+import interests.InterestsMechanism;
 import messages.Ack;
 import messages.BankAck;
 import messages.TypeOperation;
@@ -125,7 +126,7 @@ public class Bank
         {
             String description = "Client " + getClientById(ownerId) + " added new account with " + percentage * 100 + " percentage";
 
-            NormalAccount normalAccount = BankAccountOperation.createNormalAccount(ownerId, percentage, description);
+            NormalAccount normalAccount = BankAccountOperation.createNormalAccount(ownerId, description);
             boolean ifSucceeded = bankAccounts.add(normalAccount);
 
             if (ifSucceeded)
@@ -181,7 +182,7 @@ public class Bank
         {
             String description = "Client " + getClientById(ownerId) + " added new debet account with " + limit + " and " + percentage * 100 + " percentage";
 
-            DebetAccount debetAccount = BankAccountOperation.createDebetAccount(ownerId, limit, percentage, description);
+            DebetAccount debetAccount = BankAccountOperation.createDebetAccount(ownerId, limit, description);
             boolean ifSucceeded = bankAccounts.add(debetAccount);
 
             if (ifSucceeded)
@@ -277,7 +278,7 @@ public class Bank
         {
             Client client = getClientById(ownerId);
             String description = "New " + client.getFirstName() + " " + client.getLastName() + " deposit with " + value + " and " + percentage * 100 + " created";
-            Deposit deposit = DepositOperation.createDeposit(getBankAccountById(accountId), value, ownerId, percentage, description);
+            Deposit deposit = DepositOperation.createDeposit(getBankAccountById(accountId), value, ownerId, description);
 
             boolean ifSucceeded = deposits.add(deposit);
 
@@ -314,7 +315,7 @@ public class Bank
         {
             Client client = getClientById(ownerId);
             String description = "New " + client.getFirstName() + " " + client.getLastName() + " credit with " + balance + " and " + percentage * 100 + " created";
-            Credit credit = CreditOperation.createCredit(getBankAccountById(accountId), balance, ownerId, percentage, description);
+            Credit credit = CreditOperation.createCredit(getBankAccountById(accountId), balance, ownerId, description);
 
             boolean ifSucceeded = credits.add(credit);
 
@@ -613,17 +614,18 @@ public class Bank
     /**
      * Changing percentage of account
      *
-     * @param accountId     unique account id
-     * @param newPercentage new value of percentage
+     * @param accountId unique account id
+     * @param interestsMechanism new mechanism
      * @return true if operation succeeded
      */
-    public boolean changeAccountPercentage(int accountId, double newPercentage)
+    public boolean changeAccountPercentage(int accountId, InterestsMechanism interestsMechanism)
     {
         if (ifAccountExists(accountId))
         {
             BankAccount bankAccount = getBankAccountById(accountId);
-            String description = "Amount of account (" + accountId + ") percentage changed from " + bankAccount.getPercentage()*100 + " to " + newPercentage*100;
-            boolean ifSucceeded = BankAccountOperation.changePercentage(bankAccount, newPercentage, description);
+            InterestsMechanism newInterestMechanism = interestsMechanism;
+            String description = "Amount of account (" + accountId + ") percentage changed from " + bankAccount.getInterestsMechanism() + " to " + newInterestMechanism;
+            boolean ifSucceeded = BankAccountOperation.changePercentage(bankAccount, newInterestMechanism, description);
 
             if (ifSucceeded)
             {

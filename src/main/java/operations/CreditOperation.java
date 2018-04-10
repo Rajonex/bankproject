@@ -1,6 +1,7 @@
 package operations;
 
 
+import interests.InterestsMechanism;
 import messages.Ack;
 import messages.TypeOperation;
 import services.BankAccount;
@@ -76,7 +77,7 @@ public class CreditOperation {
         double balance = credit.getBalance();
 
         if (balance < 0) {
-            credit.decreaseBalance(balance * credit.getPercentage());
+            credit.decreaseBalance(credit.getInterests());
             flag = true;
 
             Ack ack = new Ack(credit, null, TypeOperation.PAY_PERCENTAGE, LocalDate.now(), description);
@@ -90,18 +91,18 @@ public class CreditOperation {
      * Changing the interest system
      *
      * @param credit        = the credit
-     * @param newPercentage = new interest system
+     *
      * @param description   = description of the transaction
      * @return return true if the interest system is changed
      */
-    public static boolean changePercentage(Credit credit, double newPercentage, String description) {
-        double oldPercentage = credit.getPercentage();
-        //BankAccount bankAccount = credit.getBankAccount();
+    public static boolean changePercentage(Credit credit, InterestsMechanism mechanism, String description) {
 
-        credit.setPercentage(newPercentage);
+        InterestsMechanism oldMechanism = credit.getInterestsMechanism();
+        credit.setInterestsMechanism(mechanism);
+
 
         Ack ack = new Ack(credit, null, TypeOperation.CHANGE_PERCENTAGE, LocalDate.now(),
-                "Change percentage from " + oldPercentage * 100 + " to " + newPercentage * 100 + ". " + description);
+                "Change percentage from " + oldMechanism + " to " + mechanism + ". " + description);
         credit.addToHistory(ack);
 
         return true;
@@ -114,14 +115,13 @@ public class CreditOperation {
      * @param bankAccount = bank account which wants to create a credit
      * @param balance     = the amount for the credit
      * @param ownerId     = ID of the owner of the bank account
-     * @param percentage  = interest system
      * @param description = the description of the operation
      * @return return credit
      */
-    public static Credit createCredit(BankAccount bankAccount, double balance, int ownerId, double percentage, String description)
+    public static Credit createCredit(BankAccount bankAccount, double balance, int ownerId, String description)
 
     {
-        Credit credit = new Credit(bankAccount, balance * (-1), ownerId, percentage);
+        Credit credit = new Credit(bankAccount, balance * (-1), ownerId);
 
         Ack ack = new Ack(credit, null, TypeOperation.CREATE_ACCOUNT, LocalDate.now(), description);
         Ack ackBankAccount = new Ack(credit, bankAccount, TypeOperation.TRANSFER, LocalDate.now(), description);

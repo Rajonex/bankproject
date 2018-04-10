@@ -1,6 +1,7 @@
 package operations;
 
 
+import interests.InterestsMechanism;
 import messages.Ack;
 import messages.TypeOperation;
 import services.BankAccount;
@@ -15,16 +16,16 @@ public class DepositOperation {
      * Changing the interest system
      *
      * @param deposit       = the deposit
-     * @param newPercentage = new interest system
+     *
      * @param description   = description of the operation
      * @return true if the percentage is changed
      */
-    public static boolean changePercentage(Deposit deposit, double newPercentage, String description) {
-        double oldPercentage = deposit.getPercentage();
-        // BankAccount bankAccount = deposit.getBankAccount();
-        deposit.setPercentage(newPercentage);
-        Ack ack = new Ack(deposit, null, TypeOperation.CHANGE_PERCENTAGE, LocalDate.now(),
-                "Change percentage from " + oldPercentage * 100 + " to " + newPercentage * 100 + ". " + description);
+    public static boolean changePercentage(Deposit deposit, InterestsMechanism mechanism, String description) {
+
+        InterestsMechanism oldMechanism = deposit.getInterestsMechanism();
+        deposit.setInterestsMechanism(mechanism);
+         Ack ack = new Ack(deposit, null, TypeOperation.CHANGE_PERCENTAGE, LocalDate.now(),
+                "Change percentage from " + oldMechanism + " to "+ mechanism + ". " + description);
         deposit.addToHistory(ack);
         return true;
     }
@@ -35,15 +36,14 @@ public class DepositOperation {
      * @param bankAccount = a bank account for which it is created
      * @param value       = the value which is payed to the deposit
      * @param ownerId     = id of the owner of the bank account
-     * @param percentage  = interest system
      * @param description = description of the operation
      * @return return the deposit if it is created, null otherwise
      */
-    public static Deposit createDeposit(BankAccount bankAccount, double value, int ownerId, double percentage, String description)
+    public static Deposit createDeposit(BankAccount bankAccount, double value, int ownerId, String description)
 
     {
         if (bankAccount.decreaseBalance(value)) {
-            Deposit deposit = new Deposit(bankAccount, value, ownerId, percentage);
+            Deposit deposit = new Deposit(bankAccount, value, ownerId);
 
             Ack ack = new Ack(deposit, null, TypeOperation.CREATE_ACCOUNT, LocalDate.now(), description);
             Ack ackBankAccount = new Ack(bankAccount, deposit, TypeOperation.TRANSFER, LocalDate.now(), description);
@@ -94,7 +94,7 @@ public class DepositOperation {
         double value = deposit.getBalance();
 
         if (deposit.decreaseBalance(value)) {
-            double newValue = value + value * deposit.getPercentage();
+            double newValue = value + deposit.getInterests();
             bankAccount.increaseBalance(newValue);
 
             Ack ack = new Ack(deposit, bankAccount, TypeOperation.TRANSFER, LocalDate.now(), description);

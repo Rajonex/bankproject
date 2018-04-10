@@ -12,8 +12,8 @@ public class DepositTest {
     @Before
     public void init()
     {
-        BankAccount bankAccount = new NormalAccount(1 ,1.0);
-        deposit = new Deposit(bankAccount, 100.0 , 1, 1.0);
+        BankAccount bankAccount = new NormalAccount(1 );
+        deposit = new Deposit(bankAccount, 100.0 , 1);
     }
 
     @Test
