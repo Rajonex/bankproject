@@ -4,9 +4,7 @@ package bank;
 import clients.Client;
 import history.History;
 import interests.InterestsMechanism;
-import messages.Ack;
-import messages.BankAck;
-import messages.TypeOperation;
+import messages.*;
 import operations.BankAccountOperation;
 import operations.CreditOperation;
 import operations.DepositOperation;
@@ -18,12 +16,13 @@ import java.util.List;
 
 public class Bank
 {
+    private final int bankId = IdGenerator.generateBankId();
+    private PaymentSystemInfrastructure paymentSystemInfrastructure;
     private List<Client> clients;
-
     private List<Credit> credits;
     private List<Deposit> deposits;
     private List<BankAccount> bankAccounts;
-
+    private List<PackageToAnotherBank> packagesToSend;
     private History bankHistory;
 
     public Bank()
@@ -32,6 +31,7 @@ public class Bank
         credits = new ArrayList<>();
         deposits = new ArrayList<>();
         bankAccounts = new ArrayList<>();
+        packagesToSend = new ArrayList<>();
 
         bankHistory = new History();
     }
@@ -392,6 +392,24 @@ public class Bank
         return false;
     }
 
+    // TODO - dodać komentarz
+    public boolean transferFromAnotherBank(int fromBankId, int fromAccountId, int toAccountId, int value)
+    {
+        if (ifAccountExists(toAccountId))
+        {
+//           TODO - Nowa operacja, która doda do ACK transferFromAnotherBank i przeleje hajsy do konta w tym banku
+
+
+            return true;
+        } else
+        {
+            PackageToAnotherBank packageToAnotherBank = new PackageToAnotherBank(bankId, toAccountId, fromBankId, fromAccountId, value, TypeOfPackage.BOUNCED);
+            addPackageTolist(packageToAnotherBank);
+
+            return false;
+        }
+    }
+
     /**
      * Payment money into account
      *
@@ -614,7 +632,7 @@ public class Bank
     /**
      * Changing percentage of account
      *
-     * @param accountId unique account id
+     * @param accountId          unique account id
      * @param interestsMechanism new mechanism
      * @return true if operation succeeded
      */
@@ -658,6 +676,21 @@ public class Bank
     public List<Ack> getBankHistory()
     {
         return bankHistory.returnList();
+    }
+
+    /**
+     * Adding package to packages list. If there are 5 packages it sends them.
+     *
+     * @param packageToAnotherBank package to send
+     */
+    private void addPackageTolist(PackageToAnotherBank packageToAnotherBank)
+    {
+        packagesToSend.add(packageToAnotherBank);
+
+        if (packagesToSend.size() >= 5)
+        {
+            paymentSystemInfrastructure.sendPackages(packagesToSend);
+        }
     }
 
     //TODO - changePercentage (BA, CO, DO)

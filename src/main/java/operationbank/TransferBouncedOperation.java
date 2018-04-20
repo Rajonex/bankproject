@@ -7,14 +7,15 @@ import services.BankAccount;
 
 import java.time.LocalDate;
 
-public class TransferFromToOperation implements Command
+// TODO - uzupełnić
+public class TransferBouncedOperation implements Command
 {
-    private BankAccount bankAccountFrom;
-    private BankAccount bankAccountTo;
-    private double value;
-    private String description;
+    BankAccount bankAccountFrom;
+    BankAccount bankAccountTo;
+    double value;
+    String description;
 
-    public TransferFromToOperation(BankAccount bankAccountFrom, BankAccount getBankAccountTo, double value, String description)
+    public TransferBouncedOperation(BankAccount bankAccountFrom, BankAccount getBankAccountTo, double value, String description)
     {
         this.bankAccountFrom = bankAccountFrom;
         this.bankAccountTo = getBankAccountTo;
@@ -35,4 +36,7 @@ public class TransferFromToOperation implements Command
         }
         return null;
     }
+
+
 }
+
