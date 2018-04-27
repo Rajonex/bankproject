@@ -5,9 +5,9 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import services.BankAccount;
-import services.DebetAccount;
+import services.DebetAccountDecorator;
 
-public class CreateDebetAccountOperationTest {
+public class CreateDebetAccountDecoratorOperationTest {
 
     static BankAccount bankAccount = null;
 
@@ -24,8 +24,8 @@ public class CreateDebetAccountOperationTest {
         double limitTest = 1000.0;
         String descriptionTest = "JUnit Test";
 
-        DebetAccount newDebetAccount = bankAccountOperationTest.createDebetAccount(ownerIdTest, limitTest, descriptionTest);
-        Assert.assertNotNull(newDebetAccount);
+        DebetAccountDecorator newDebetAccountDecorator = bankAccountOperationTest.createDebetAccount(ownerIdTest, limitTest, descriptionTest);
+        Assert.assertNotNull(newDebetAccountDecorator);
     }
 
 }

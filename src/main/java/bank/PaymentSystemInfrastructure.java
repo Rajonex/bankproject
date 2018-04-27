@@ -5,6 +5,8 @@ import messages.PackageToAnotherBank;
 import java.util.List;
 import java.util.Map;
 
+// TODO - Dodanie nowych banków
+
 public class PaymentSystemInfrastructure {
     private Map<Integer, Bank> banksIdList;
 

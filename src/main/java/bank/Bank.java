@@ -15,7 +15,8 @@ import services.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-
+// TODO - interfejs bank
+// TODO - dodać drugi bank, implementować Bank interfejs!!!!!!!
 public class Bank {
     private static final int MAX_PACKAGE_AMOUNT = 5;
     private final int bankId = IdGenerator.generateBankId();
@@ -167,11 +168,11 @@ public class Bank {
         if (ownerId >= 0 && ifClientExists(ownerId)) {
             String description = "Client " + getClientById(ownerId) + " added new debet account with " + limit + " and " + percentage * 100 + " percentage";
 
-            DebetAccount debetAccount = BankAccountOperation.createDebetAccount(ownerId, limit, description);
-            boolean ifSucceeded = bankAccounts.add(debetAccount);
+            DebetAccountDecorator debetAccountDecorator = BankAccountOperation.createDebetAccount(ownerId, limit, description);
+            boolean ifSucceeded = bankAccounts.add(debetAccountDecorator);
 
             if (ifSucceeded) {
-                Ack ack = new Ack(debetAccount, null, TypeOperation.CREATE_ACCOUNT, LocalDate.now(), description);
+                Ack ack = new Ack(debetAccountDecorator, null, TypeOperation.CREATE_ACCOUNT, LocalDate.now(), description);
                 bankHistory.add(ack);
                 return true;
             }

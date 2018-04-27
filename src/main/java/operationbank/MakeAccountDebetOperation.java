@@ -4,7 +4,7 @@ import messages.Ack;
 import messages.TypeOperation;
 import operations.Command;
 import services.BankAccount;
-import services.DebetAccount;
+import services.DebetAccountDecorator;
 
 import java.time.LocalDate;
 
@@ -23,7 +23,7 @@ public class MakeAccountDebetOperation implements Command {
     @Override
     public Ack execute()
     {
-        bankAccount = new DebetAccount(bankAccount, limit);
+        bankAccount = new DebetAccountDecorator(bankAccount, limit);
         Ack ack = new Ack(bankAccount, null, TypeOperation.MAKE_DEBET, LocalDate.now(), description);
         bankAccount.addToHistory(ack);
         return ack;

@@ -5,7 +5,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import services.BankAccount;
-import services.DebetAccount;
+import services.DebetAccountDecorator;
 import services.NormalAccount;
 
 public class BankAccountOperationTest {
@@ -25,8 +25,8 @@ public class BankAccountOperationTest {
         double limitTest = 1000.0;
         String descriptionTest = "JUnit Test";
 
-        DebetAccount newDebetAccount = bankAccountOperationTest.createDebetAccount(ownerIdTest, limitTest, descriptionTest);
-        Assert.assertNotNull(newDebetAccount);
+        DebetAccountDecorator newDebetAccountDecorator = bankAccountOperationTest.createDebetAccount(ownerIdTest, limitTest, descriptionTest);
+        Assert.assertNotNull(newDebetAccountDecorator);
     }
 
 
@@ -50,7 +50,7 @@ public class BankAccountOperationTest {
 //        String descriptionTest = "JUnit Test";
 //
 //        BankAccount bankAccount1Test = bankAccount;
-//        bankAccount1Test = new DebetAccount(bankAccount1Test, limitTest);
+//        bankAccount1Test = new DebetAccountDecorator(bankAccount1Test, limitTest);
 //
 //        bankAccountOperationTest.makeAccountDebet(bankAccount, limitTest, descriptionTest);
 //

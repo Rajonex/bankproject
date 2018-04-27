@@ -38,15 +38,17 @@ public abstract class Service implements Product {
         localDate = LocalDate.now();
         interestsMechanism = new InterestA();
     }
-
+    @Override
     public InterestsMechanism getInterestsMechanism() {
         return interestsMechanism;
     }
 
+    @Override
     public void setInterestsMechanism(InterestsMechanism interestsMechanism) {
         this.interestsMechanism = interestsMechanism;
     }
 
+    @Override
     public double getInterests()
     {
         return interestsMechanism.interests(this);
@@ -78,6 +80,7 @@ public abstract class Service implements Product {
      *
      * @return balance of this service
      */
+    @Override
     public double getBalance() {
         return balance;
     }
@@ -87,6 +90,7 @@ public abstract class Service implements Product {
      *
      * @return date of the creation
      */
+    @Override
     public LocalDate getLocalDate() {
         return localDate;
     }
@@ -124,6 +128,7 @@ public abstract class Service implements Product {
      * @param ack one field of the history
      * @return feedback of the success of the operation
      */
+    @Override
     public boolean addToHistory(Ack ack) {
         return history.add(ack);
     }
@@ -133,6 +138,7 @@ public abstract class Service implements Product {
      *
      * @return history of object, in form of list
      */
+    @Override
     public List<Ack> showHistory() {
         return history.returnList();
     }

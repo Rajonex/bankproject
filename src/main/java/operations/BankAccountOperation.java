@@ -5,7 +5,7 @@ import interests.InterestsMechanism;
 import messages.Ack;
 import messages.TypeOperation;
 import services.BankAccount;
-import services.DebetAccount;
+import services.DebetAccountDecorator;
 import services.NormalAccount;
 
 import java.time.LocalDate;
@@ -109,10 +109,10 @@ public class BankAccountOperation {
      * @param description = description of the operation
      * @return created account
      */
-    public static DebetAccount createDebetAccount(int ownerId, double limit, String description) {
-        DebetAccount debetAccount = new DebetAccount(ownerId, limit);
-        Ack ack = new Ack(debetAccount, null, TypeOperation.CREATE_ACCOUNT, LocalDate.now(), description);
-        return debetAccount;
+    public static DebetAccountDecorator createDebetAccount(int ownerId, double limit, String description) {
+        DebetAccountDecorator debetAccountDecorator = new DebetAccountDecorator(ownerId, limit);
+        Ack ack = new Ack(debetAccountDecorator, null, TypeOperation.CREATE_ACCOUNT, LocalDate.now(), description);
+        return debetAccountDecorator;
     }
 
     /**
@@ -138,7 +138,7 @@ public class BankAccountOperation {
      * @return return true if the account is created
      */
     public static boolean makeAccountDebet(BankAccount bankAccount, double limit, String description) {
-        bankAccount = new DebetAccount(bankAccount, limit);
+        bankAccount = new DebetAccountDecorator(bankAccount, limit);
         Ack ack = new Ack(bankAccount, null, TypeOperation.MAKE_DEBET, LocalDate.now(), description);
         bankAccount.addToHistory(ack);
         return true;

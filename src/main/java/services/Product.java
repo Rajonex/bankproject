@@ -1,5 +1,11 @@
 package services;
 
+import interests.InterestsMechanism;
+import messages.Ack;
+
+import java.time.LocalDate;
+import java.util.List;
+
 public interface Product {
     /**
      * Increasing balance
@@ -30,4 +36,18 @@ public interface Product {
      * @return id object of this service
      */
     public int getId();
+
+    public InterestsMechanism getInterestsMechanism();
+
+    public void setInterestsMechanism(InterestsMechanism interestsMechanism);
+
+    public double getInterests();
+
+    public double getBalance();
+
+    public LocalDate getLocalDate();
+
+    public boolean addToHistory(Ack ack);
+
+    public List<Ack> showHistory();
 }

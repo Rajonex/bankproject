@@ -24,7 +24,7 @@ public class MakeAccountDebetOperationTest {
 //        String descriptionTest = "JUnit Test";
 //
 //        BankAccount bankAccount1Test = bankAccount;
-//        bankAccount1Test = new DebetAccount(bankAccount1Test, limitTest);
+//        bankAccount1Test = new DebetAccountDecorator(bankAccount1Test, limitTest);
 //
 //        bankAccountOperationTest.makeAccountDebet(bankAccount, limitTest, descriptionTest);
 //

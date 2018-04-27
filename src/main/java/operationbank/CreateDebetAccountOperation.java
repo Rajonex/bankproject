@@ -3,7 +3,7 @@ package operationbank;
 import messages.Ack;
 import messages.TypeOperation;
 import operations.Command;
-import services.DebetAccount;
+import services.DebetAccountDecorator;
 
 import java.time.LocalDate;
 
@@ -22,8 +22,8 @@ public class CreateDebetAccountOperation implements Command {
     @Override
     public Ack execute()
     {
-        DebetAccount debetAccount = new DebetAccount(ownerId, limit);
-        Ack ack = new Ack(debetAccount, null, TypeOperation.CREATE_ACCOUNT, LocalDate.now(), description);
+        DebetAccountDecorator debetAccountDecorator = new DebetAccountDecorator(ownerId, limit);
+        Ack ack = new Ack(debetAccountDecorator, null, TypeOperation.CREATE_ACCOUNT, LocalDate.now(), description);
         return ack;
     }
 }
