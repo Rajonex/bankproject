@@ -9,7 +9,7 @@ import org.junit.Test;
 public class BankTest
 {
     private History history = new History();
-    private Bank bank = new Bank();
+    private Bank bank = new BankA();
 
     @Test
     public void addNewClientTest()
