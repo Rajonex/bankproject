@@ -15,8 +15,7 @@ import services.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-// TODO - interfejs bank
-// TODO - dodać drugi bank, implementować BankA interfejs!!!!!!!
+
 public class BankA implements Bank {
     private static final int MAX_PACKAGE_AMOUNT = 5;
     private final int bankId;
@@ -35,6 +34,7 @@ public class BankA implements Bank {
         bankAccounts = new ArrayList<>();
         packagesToSend = new ArrayList<>();
         bankHistory = new History();
+        paymentSystemInfrastructure = new PaymentSystemInfrastructure();
         bankId = id;
     }
 
@@ -369,21 +369,27 @@ public class BankA implements Bank {
         return false;
     }
 
-    // TODO - dodać komentarz
+    /**
+     * Transfer money from account in another bank
+     *
+     * @param packageToAnotherBank package we want to send
+     * @return
+     */
     @Override
     public boolean transferFromAnotherBank(PackageToAnotherBank packageToAnotherBank) {
         if (ifAccountExists(packageToAnotherBank.getToAccount())) {
-//           TODO - Nowa operacja, która doda do ACK transferFromAnotherBank i przeleje hajsy do konta w tym banku
             BankAccount bankAccount = getBankAccountById(packageToAnotherBank.getToAccount());
             if(packageToAnotherBank.getTypeOfPackage() == TypeOfPackage.NORMAL) {
                 TransferInterbankOperation transferInterbankOperation = new TransferInterbankOperation(packageToAnotherBank.getFromAccount(), bankAccount, packageToAnotherBank.getValue(), "Interbank transfer");
                 transferInterbankOperation.execute();
-                // TODO - ACK!!!!
+                Ack ack = new Ack(packageToAnotherBank.getFromAccount(), packageToAnotherBank.getToAccount(), TypeOperation.TRANSFER_INTERBANK, LocalDate.now(), "Interbank transfer");
+                bankHistory.add(ack);
             }else {
                 if (packageToAnotherBank.getTypeOfPackage() == TypeOfPackage.BOUNCED) {
-                    TransferInterbankBouncedOperation transferInterbankBouncedOperation = new TransferInterbankBouncedOperation(packageToAnotherBank.getFromAccount(), bankAccount, packageToAnotherBank.getValue(), "Interbank transfer");
+                    TransferInterbankBouncedOperation transferInterbankBouncedOperation = new TransferInterbankBouncedOperation(packageToAnotherBank.getFromAccount(), bankAccount, packageToAnotherBank.getValue(), "Interbank bounced transfer");
                     transferInterbankBouncedOperation.execute();
-                    // TODO - ACK!!!!
+                    Ack ack = new Ack(packageToAnotherBank.getFromAccount(), packageToAnotherBank.getToAccount(), TypeOperation.TRANSFER_BOUNCED, LocalDate.now(), "Interbank bounced transfer");
+                    bankHistory.add(ack);
                 }
             }
             return true;
@@ -464,7 +470,7 @@ public class BankA implements Bank {
 
             if (ifSucceeded) {
                 // creating ack
-                Ack ack = new BankAck(credit, null, id, TypeOperation.DELETE_CREDIT, LocalDate.now(), "Credit of id: " + id + " of client " + client + " deleted");
+                Ack ack = new BankAck(credit.getId(), null, id, TypeOperation.DELETE_CREDIT, LocalDate.now(), "Credit of id: " + id + " of client " + client + " deleted");
                 bankHistory.add(ack);
 
                 return true;
@@ -540,7 +546,7 @@ public class BankA implements Bank {
             boolean ifSucceeded = deposits.removeIf(dp -> dp.getId() == id);
             if (ifSucceeded) {
                 // creating ack
-                Ack ack = new BankAck(deposit, null, id, TypeOperation.DELETE_DEPOSIT, LocalDate.now(), "Deposit of id: " + id + " of client " + client + " deleted");
+                Ack ack = new BankAck(deposit.getId(), null, id, TypeOperation.DELETE_DEPOSIT, LocalDate.now(), "Deposit of id: " + id + " of client " + client + " deleted");
                 bankHistory.add(ack);
 
                 return true;
@@ -661,8 +667,6 @@ public class BankA implements Bank {
     //TODO - ack if Operation methods fail?
     //TODO - payPercentage mechanism
     //TODO - correct struktura.png file
-
-    //TODO - bank jako singleton ?
-    //TODO - własne wyjątki
+    //TODO - own exceptions
 
 }

@@ -1,20 +1,18 @@
 package messages;
 
 
-import services.Product;
-
 import java.time.LocalDate;
 
 public class BankAck extends Ack {
     // TODO - change to long to extend range
-    private int clientId;
+    private Integer clientId;
 
     /**
      * Getters
      *
      * @return
      */
-    public int getClientId() {
+    public Integer getClientId() {
         return clientId;
     }
 
@@ -23,7 +21,7 @@ public class BankAck extends Ack {
      *
      * @param clientId
      */
-    public void setClientId(int clientId) {
+    public void setClientId(Integer clientId) {
         this.clientId = clientId;
     }
 
@@ -37,7 +35,7 @@ public class BankAck extends Ack {
      * @param localDate
      * @param description
      */
-    public BankAck(Product product1, Product product2, int clientId,TypeOperation typeOperation, LocalDate localDate, String description) {
+    public BankAck(Integer product1, Integer product2, Integer clientId,TypeOperation typeOperation, LocalDate localDate, String description) {
         super(product1, product2, typeOperation, localDate, description);
         this.clientId = clientId;
     }
