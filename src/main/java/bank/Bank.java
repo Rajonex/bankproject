@@ -16,7 +16,7 @@ public interface Bank {
 
     boolean makeAccountDebet(int accountId, double limit);
 
-    boolean addNewDebetAccount(int ownerId, double limit, double percentage);
+    boolean addNewDebetAccount(int ownerId, double limit, double debet, double percentage);
 
     boolean makeAccountNormal(int accountId);
 
@@ -34,11 +34,15 @@ public interface Bank {
 
     boolean payCreditRate(int creditId, double value);
 
+    boolean payBankAccountRate(int accountId, double value);
+
     boolean withdrawFromDeposit(int depositId);
 
     boolean changeAccountPercentage(int accountId, InterestsMechanism interestsMechanism);
 
     boolean changeCreditPercentage(int creditId, double newPercentage);
+
+    boolean changeDepositPercentage(int depositId, double newPercentage);
 
     List<Ack> getBankHistory();
 }

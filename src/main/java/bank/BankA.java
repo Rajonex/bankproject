@@ -5,11 +5,13 @@ import clients.Client;
 import history.History;
 import interests.InterestsMechanism;
 import messages.*;
-import operationbank.TransferInterbankBouncedOperation;
-import operationbank.TransferInterbankOperation;
-import operations.BankAccountOperation;
-import operations.CreditOperation;
-import operations.DepositOperation;
+import operationbank.*;
+import operationcredit.CreateCreditOperation;
+import operationcredit.PayOfCreditOperation;
+import operationcredit.PayPercentageOperation;
+import operationdeposit.BreakUpDepositOperation;
+import operationdeposit.CreateDepositOperation;
+import operationdeposit.SolveDepositOperation;
 import services.*;
 
 import java.time.LocalDate;
@@ -51,7 +53,6 @@ public class BankA implements Bank {
             // adding to list and return true if operation succeeded
             boolean ifSucceeded = clients.add(client);
             if (ifSucceeded) {
-                // creating ack
                 Ack ack = new BankAck(null, null, client.getId(), TypeOperation.ADD_NEW_CLIENT, LocalDate.now(), "New client " + client + " created");
                 bankHistory.add(ack);
 
@@ -95,7 +96,6 @@ public class BankA implements Bank {
             Client client = getClientById(id);
             boolean ifSucceeded = clients.removeIf(cl -> cl.getId() == id);
             if (ifSucceeded) {
-                // creating ack
                 Ack ack = new BankAck(null, null, id, TypeOperation.DELETE_CLIENT, LocalDate.now(), "Client " + client + " deleted");
                 bankHistory.add(ack);
 
@@ -120,12 +120,12 @@ public class BankA implements Bank {
         // check if ownerId is correct and if client with this id exists
         if (ownerId >= 0 && ifClientExists(ownerId)) {
             String description = "Client " + getClientById(ownerId) + " added new account with " + percentage * 100 + " percentage";
-
-            NormalAccount normalAccount = BankAccountOperation.createNormalAccount(ownerId, description);
+            CreateNormalAccountOperation createNormalAccountOperation = new CreateNormalAccountOperation(ownerId, description);
+            Ack ack = createNormalAccountOperation.execute();
+            NormalAccount normalAccount = new NormalAccount(ownerId);
             boolean ifSucceeded = bankAccounts.add(normalAccount);
 
             if (ifSucceeded) {
-                Ack ack = new Ack(normalAccount.getId(), null, TypeOperation.CREATE_ACCOUNT, LocalDate.now(), description);
                 bankHistory.add(ack);
                 return true;
             }
@@ -147,13 +147,12 @@ public class BankA implements Bank {
             BankAccount bankAccount = getBankAccountById(accountId);
             Client client = getClientById(bankAccount.getOwnerId());
             String description = "Client " + client + " account changed to debet account with " + limit + " limit";
-            boolean ifSucceeded = BankAccountOperation.makeAccountDebet(bankAccount, limit, description);
+            MakeAccountDebetOperation makeAccountDebetOperation = new MakeAccountDebetOperation(bankAccount, limit, description);
 
-            if (ifSucceeded) {
-                Ack ack = new Ack(bankAccount.getId(), null, TypeOperation.MAKE_DEBET, LocalDate.now(), description);
-                bankHistory.add(ack);
-                return true;
-            }
+            Ack ack = makeAccountDebetOperation.execute();
+            bankAccount.addToHistory(ack);
+            bankHistory.add(ack);
+            return true;
         }
 
         return false;
@@ -168,16 +167,19 @@ public class BankA implements Bank {
      * @return true if operation succeeded
      */
     @Override
-    public boolean addNewDebetAccount(int ownerId, double limit, double percentage) {
+    public boolean addNewDebetAccount(int ownerId, double limit, double debet, double percentage) {
         // check if ownerId is correct and if client with this id exists
         if (ownerId >= 0 && ifClientExists(ownerId)) {
             String description = "Client " + getClientById(ownerId) + " added new debet account with " + limit + " and " + percentage * 100 + " percentage";
-
-            DebetAccountDecorator debetAccountDecorator = BankAccountOperation.createDebetAccount(ownerId, limit, description);
+            BankAccount bankAccount = new BankAccount(ownerId);
+            DebetAccountDecorator debetAccountDecorator = new DebetAccountDecorator(limit, debet, bankAccount);
+            CreateDebetAccountOperation createDebetAccountOperation = new CreateDebetAccountOperation(ownerId, limit, description);
             boolean ifSucceeded = bankAccounts.add(debetAccountDecorator);
 
             if (ifSucceeded) {
-                Ack ack = new Ack(debetAccountDecorator.getId(), null, TypeOperation.CREATE_ACCOUNT, LocalDate.now(), description);
+                Ack ack = createDebetAccountOperation.execute();
+                bankAccount.addToHistory(ack);
+                bankAccount.addToHistory(ack);
                 bankHistory.add(ack);
                 return true;
             }
@@ -198,15 +200,12 @@ public class BankA implements Bank {
             BankAccount bankAccount = getBankAccountById(accountId);
             Client client = getClientById(bankAccount.getOwnerId());
             String description = "Client " + client + " account changed to normal account";
-            boolean ifSucceeded = BankAccountOperation.makeAccountNormal(bankAccount, description);
+            MakeAccountNormalOperation makeAccountNormalOperation = new MakeAccountNormalOperation(bankAccount, description);
 
-            if (ifSucceeded) {
-                Ack ack = new Ack(bankAccount.getId(), null, TypeOperation.MAKE_NORMAL, LocalDate.now(), description);
-                bankAccount.addToHistory(ack);
-                return true;
-            }
-            //else
-            // TODO - create ack that operation failed?
+            Ack ack = makeAccountNormalOperation.execute();
+            bankAccount.addToHistory(ack);
+            bankHistory.add(ack);
+            return true;
         }
 
         return false;
@@ -242,7 +241,7 @@ public class BankA implements Bank {
      * @return bankAccount with specified in param id
      */
     private BankAccount getBankAccountById(int accountId) {
-        return (BankAccount)bankAccounts.stream().filter(pr -> pr.getId() == accountId).findFirst().get();
+        return (BankAccount) bankAccounts.stream().filter(pr -> pr.getId() == accountId).findFirst().get();
     }
 
     // -------------------------------------------------------------------------------- Deposit
@@ -261,17 +260,17 @@ public class BankA implements Bank {
         // check if client and its account exists
         if (ifClientAccountExists(ownerId)) {
             Client client = getClientById(ownerId);
+            BankAccount bankAccount = getBankAccountById(accountId);
             String description = "New " + client.getFirstName() + " " + client.getLastName() + " deposit with " + value + " and " + percentage * 100 + " created";
-            Deposit deposit = DepositOperation.createDeposit(getBankAccountById(accountId), value, ownerId, description);
 
+            CreateDepositOperation createDepositOperation = new CreateDepositOperation(bankAccount, value, ownerId, description);
+
+            Deposit deposit = new Deposit(bankAccount, value, ownerId);
             boolean ifSucceeded = deposits.add(deposit);
 
             if (ifSucceeded) {
-                Ack ack = new Ack(deposit.getId(), null, TypeOperation.CREATE_ACCOUNT, LocalDate.now(), description);
-                Ack ackBankAccount = new Ack(accountId, deposit.getId(), TypeOperation.TRANSFER, LocalDate.now(), description);
-
+                Ack ack = createDepositOperation.execute();
                 bankHistory.add(ack);
-                bankHistory.add(ackBankAccount);
 
                 return true;
             }
@@ -296,17 +295,17 @@ public class BankA implements Bank {
         // check if client and its account exists
         if (ifClientAccountExists(ownerId)) {
             Client client = getClientById(ownerId);
+            BankAccount bankAccount = getBankAccountById(accountId);
             String description = "New " + client.getFirstName() + " " + client.getLastName() + " credit with " + balance + " and " + percentage * 100 + " created";
-            Credit credit = CreditOperation.createCredit(getBankAccountById(accountId), balance, ownerId, description);
 
+            CreateCreditOperation createCreditOperation = new CreateCreditOperation(bankAccount, balance, ownerId, description);
+
+            Credit credit = new Credit(bankAccount, balance, ownerId);
             boolean ifSucceeded = credits.add(credit);
 
             if (ifSucceeded) {
-                Ack ack = new Ack(credit.getId(), null, TypeOperation.CREATE_ACCOUNT, LocalDate.now(), description);
-                Ack ackBankAccount = new Ack(credit.getId(), accountId, TypeOperation.TRANSFER, LocalDate.now(), description);
-
+                Ack ack = createCreditOperation.execute();
                 bankHistory.add(ack);
-                bankHistory.add(ackBankAccount);
 
                 return true;
             }
@@ -353,17 +352,12 @@ public class BankA implements Bank {
             BankAccount bankAccountTo = getBankAccountById(accountToId);
 
             String description = "money successfully transferred from account: " + accountFromId + " to: " + accountToId + ", with amount of " + value;
-            boolean ifSucceeded = BankAccountOperation.transferFromTo(bankAccountFrom, bankAccountTo, value, description);
+            TransferFromToOperation transferFromToOperation = new TransferFromToOperation(getBankAccountById(accountFromId), getBankAccountById(accountToId), value, description);
 
-            if (ifSucceeded) {
-                Ack ack = new Ack(accountFromId, accountToId, TypeOperation.TRANSFER, LocalDate.now(), description);
-                bankHistory.add(ack);
+            Ack ack = transferFromToOperation.execute();
+            bankHistory.add(ack);
 
-                return true;
-            }
-            //else
-            //TODO - ack (przelew się nie powiódł)
-
+            return true;
         }
 
         return false;
@@ -379,12 +373,12 @@ public class BankA implements Bank {
     public boolean transferFromAnotherBank(PackageToAnotherBank packageToAnotherBank) {
         if (ifAccountExists(packageToAnotherBank.getToAccount())) {
             BankAccount bankAccount = getBankAccountById(packageToAnotherBank.getToAccount());
-            if(packageToAnotherBank.getTypeOfPackage() == TypeOfPackage.NORMAL) {
+            if (packageToAnotherBank.getTypeOfPackage() == TypeOfPackage.NORMAL) {
                 TransferInterbankOperation transferInterbankOperation = new TransferInterbankOperation(packageToAnotherBank.getFromAccount(), bankAccount, packageToAnotherBank.getValue(), "Interbank transfer");
                 transferInterbankOperation.execute();
                 Ack ack = new Ack(packageToAnotherBank.getFromAccount(), packageToAnotherBank.getToAccount(), TypeOperation.TRANSFER_INTERBANK, LocalDate.now(), "Interbank transfer");
                 bankHistory.add(ack);
-            }else {
+            } else {
                 if (packageToAnotherBank.getTypeOfPackage() == TypeOfPackage.BOUNCED) {
                     TransferInterbankBouncedOperation transferInterbankBouncedOperation = new TransferInterbankBouncedOperation(packageToAnotherBank.getFromAccount(), bankAccount, packageToAnotherBank.getValue(), "Interbank bounced transfer");
                     transferInterbankBouncedOperation.execute();
@@ -414,15 +408,12 @@ public class BankA implements Bank {
             BankAccount bankAccount = getBankAccountById(accountId);
 
             String description = "money successfully transferred to account: " + accountId + ", with amount of " + value;
-            boolean ifSucceeded = BankAccountOperation.payment(bankAccount, value, description);
+            PaymentOperation paymentOperation = new PaymentOperation(bankAccount, value, description);
+            Ack ack = paymentOperation.execute();
+            bankAccount.addToHistory(ack);
+            bankHistory.add(ack);
 
-            if (ifSucceeded) {
-                Ack ack = new Ack(accountId, null, TypeOperation.PAYMENT, LocalDate.now(), description);
-                bankHistory.add(ack);
-
-                return true;
-            }
-            //TODO - else ack
+            return true;
         }
 
         return false;
@@ -441,15 +432,13 @@ public class BankA implements Bank {
             BankAccount bankAccount = getBankAccountById(accountId);
 
             String description = "money successfully withdrawn from account: " + accountId + ", with amount of " + value;
-            boolean ifSucceeded = BankAccountOperation.withdraw(bankAccount, value, description);
+            WithdrawOperation withdrawOperation = new WithdrawOperation(bankAccount, value, description);
 
-            if (ifSucceeded) {
-                Ack ack = new Ack(null, accountId, TypeOperation.WITHDRAWN, LocalDate.now(), description);
-                bankHistory.add(ack);
+            Ack ack = withdrawOperation.execute();
+            bankAccount.addToHistory(ack);
+            bankHistory.add(ack);
 
-                return true;
-            }
-            //TODO - else ack
+            return true;
         }
 
         return false;
@@ -480,35 +469,52 @@ public class BankA implements Bank {
         return false;
     }
 
+    /**
+     * Paying credit rate. If value is high enough credit is paying off.
+     *
+     * @param creditId credit unique id
+     * @param value    paying value
+     * @return true if operation succeeded
+     */
     @Override
     public boolean payCreditRate(int creditId, double value) {
         if (ifCreditExists(creditId)) {
             Credit credit = getCreditById(creditId);
             String description = "rate transferred to credit's account with id " + creditId + ", value = " + value;
-            boolean ifSucceeded = CreditOperation.transfer(credit, value, description);
+            PayPercentageOperation payPercentageOperation = new PayPercentageOperation(credit, description);
+            boolean ifSucceeded = PayPercentageOperation.payPercentage(credit, description);
 
             if (ifSucceeded) {
                 // credit still must be payed by client
-                Ack ack = new Ack(credit.getId(), credit.getBankAccount().getId(), TypeOperation.TRANSFER, LocalDate.now(), description);
+                Ack ack = payPercentageOperation.execute();
                 bankHistory.add(ack);
-
                 return true;
             } else {
                 // credit is payed off
                 Client client = getClientById(credit.getOwnerId());
-                String creditPayedOff = "credit of client " + client + " is payed off and can be removed";
-                boolean ifPayOffSucceeded = CreditOperation.payOfCredit(credit, description);
+                String creditPayedOffDescription = "credit of client " + client + " is payed off and can be removed";
+                PayOfCreditOperation payOfCreditOperation = new PayOfCreditOperation(credit, creditPayedOffDescription);
 
-                if (ifPayOffSucceeded) {
-                    Ack ack = new Ack(credit.getId(), credit.getBankAccount().getId(), TypeOperation.TRANSFER, LocalDate.now(), description);
-                    bankHistory.add(ack);
-                    deleteCreditById(creditId);
-                    return true;
-                }
-                //TODO - else now money or something wrong happend
+                Ack ack = payOfCreditOperation.execute();
+                bankHistory.add(ack);
+                deleteCreditById(creditId);
+                return true;
             }
         }
 
+        return false;
+    }
+
+    /**
+     * Paying bank account rate.
+     * TODO - Write logic!
+     *
+     * @param accountId bank account unique id
+     * @param value     paying value
+     * @return true if operation succeeded
+     */
+    @Override
+    public boolean payBankAccountRate(int accountId, double value) {
         return false;
     }
 
@@ -572,27 +578,21 @@ public class BankA implements Bank {
             if (deposit.isExpired()) {
                 // deposit has expired
                 String description = "deposit " + depositId + " of client " + client + " is solved";
-                boolean ifSucceeded = DepositOperation.solveDeposit(deposit, description);
+                SolveDepositOperation solveDepositOperation = new SolveDepositOperation(deposit, description);
 
-                if (ifSucceeded) {
-                    Ack ack = new Ack(deposit.getId(), deposit.getBankAccount().getId(), TypeOperation.TRANSFER, LocalDate.now(), description);
-                    bankHistory.add(ack);
+                Ack ack = solveDepositOperation.execute();
+                bankHistory.add(ack);
 
-                    return true;
-                }
-                //TODO - else ACK - wrong
+                return true;
             } else {
                 //deposit will be broken up
                 String description = "deposit " + depositId + " of client " + client + " is broken up";
-                boolean ifSucceeded = DepositOperation.breakUpDeposit(deposit, description);
+                BreakUpDepositOperation breakUpDepositOperation = new BreakUpDepositOperation(deposit, description);
 
-                if (ifSucceeded) {
-                    Ack ack = new Ack(deposit.getId(), deposit.getBankAccount().getId(), TypeOperation.TRANSFER, LocalDate.now(), description);
-                    bankHistory.add(ack);
+                Ack ack = breakUpDepositOperation.execute();
+                bankHistory.add(ack);
 
-                    return true;
-                }
-                //TODO - else ACK - wrong
+                return true;
             }
         }
 
@@ -612,13 +612,11 @@ public class BankA implements Bank {
             BankAccount bankAccount = getBankAccountById(accountId);
             InterestsMechanism newInterestMechanism = interestsMechanism;
             String description = "Amount of account (" + accountId + ") percentage changed from " + bankAccount.getInterestsMechanism() + " to " + newInterestMechanism;
-            boolean ifSucceeded = BankAccountOperation.changePercentage(bankAccount, newInterestMechanism, description);
+            ChangePercentageOperation changePercentageOperation = new ChangePercentageOperation(bankAccount, interestsMechanism, description);
 
-            if (ifSucceeded) {
-                Ack ack = new Ack(accountId, null, TypeOperation.CHANGE_PERCENTAGE, LocalDate.now(), description);
-                bankHistory.add(ack);
-                return true;
-            }
+            Ack ack = changePercentageOperation.execute();
+            bankHistory.add(ack);
+            return true;
         }
 
         return false;
@@ -626,6 +624,7 @@ public class BankA implements Bank {
 
     /**
      * Changing percentage of credit
+     * TODO - Write logic!
      *
      * @param creditId      unique credit id
      * @param newPercentage new value of percentage
@@ -633,6 +632,19 @@ public class BankA implements Bank {
      */
     @Override
     public boolean changeCreditPercentage(int creditId, double newPercentage) {
+        return false;
+    }
+
+    /**
+     * Changing percentage of deposit
+     * TODO - Write logic!
+     *
+     * @param depositId     unique deposit id
+     * @param newPercentage new value of percentage
+     * @return true if operation succeeded
+     */
+    @Override
+    public boolean changeDepositPercentage(int depositId, double newPercentage) {
         return false;
     }
 
@@ -659,14 +671,8 @@ public class BankA implements Bank {
         }
     }
 
-    //TODO - changePercentage (BA, CO, DO)
-
-    // Many
-    //TODO - payPercentage (BA, CO)
-
     //TODO - ack if Operation methods fail?
     //TODO - payPercentage mechanism
     //TODO - correct struktura.png file
     //TODO - own exceptions
-
 }
