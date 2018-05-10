@@ -29,8 +29,8 @@ public class CreateDepositOperation implements Command {
              if (bankAccount.decreaseBalance(value)) {
                 Deposit deposit = new Deposit(bankAccount, value, ownerId);
 
-                Ack ack = new Ack(deposit, null, TypeOperation.CREATE_ACCOUNT, LocalDate.now(), description);
-                Ack ackBankAccount = new Ack(bankAccount, deposit, TypeOperation.TRANSFER, LocalDate.now(), description);
+                Ack ack = new Ack(deposit.getId(), null, TypeOperation.CREATE_ACCOUNT, LocalDate.now(), description);
+                Ack ackBankAccount = new Ack(bankAccount.getId(), deposit.getId(), TypeOperation.TRANSFER, LocalDate.now(), description);
                 deposit.addToHistory(ack);
 
                 deposit.addToHistory(ackBankAccount);

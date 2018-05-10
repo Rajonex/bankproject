@@ -28,7 +28,7 @@ public class TransferFromToOperation implements Command
         if (bankAccountFrom.decreaseBalance(value))
         {
             bankAccountTo.increaseBalance(value);
-            Ack ack = new Ack(bankAccountFrom, bankAccountTo, TypeOperation.TRANSFER, LocalDate.now(), description);
+            Ack ack = new Ack(bankAccountFrom.getId(), bankAccountTo.getId(), TypeOperation.TRANSFER, LocalDate.now(), description);
             bankAccountFrom.addToHistory(ack);
             bankAccountTo.addToHistory(ack);
             return ack;

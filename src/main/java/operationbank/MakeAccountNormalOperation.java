@@ -23,7 +23,7 @@ public class MakeAccountNormalOperation implements Command {
     {
         if (bankAccount.getBalance() > 0) {
             bankAccount = new NormalAccount(bankAccount);
-            Ack ack = new Ack(bankAccount, null, TypeOperation.MAKE_NORMAL, LocalDate.now(), description);
+            Ack ack = new Ack(bankAccount.getId(), null, TypeOperation.MAKE_NORMAL, LocalDate.now(), description);
             bankAccount.addToHistory(ack);
             return ack;
         }

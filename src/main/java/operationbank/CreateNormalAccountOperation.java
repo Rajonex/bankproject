@@ -21,7 +21,7 @@ public class CreateNormalAccountOperation implements Command {
     public Ack execute()
     {
         NormalAccount normalAccount = new NormalAccount(ownerId);
-        Ack ack = new Ack(normalAccount, null, TypeOperation.CREATE_ACCOUNT, LocalDate.now(), description);
+        Ack ack = new Ack(normalAccount.getId(), null, TypeOperation.CREATE_ACCOUNT, LocalDate.now(), description);
         normalAccount.addToHistory(ack);
         return ack;
     }

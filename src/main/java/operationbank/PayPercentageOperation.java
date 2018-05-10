@@ -24,7 +24,7 @@ public class PayPercentageOperation implements Command {
             double balance = bankAccount.getBalance();
             if (balance > 0) {
                 bankAccount.increaseBalance(bankAccount.getInterests());
-                Ack ack = new Ack(bankAccount, null, TypeOperation.PAY_PERCENTAGE, LocalDate.now(), description);
+                Ack ack = new Ack(bankAccount.getId(), null, TypeOperation.PAY_PERCENTAGE, LocalDate.now(), description);
                 bankAccount.addToHistory(ack);
                 return ack;
             }

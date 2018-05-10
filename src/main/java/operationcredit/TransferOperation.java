@@ -29,7 +29,7 @@ public class TransferOperation implements Command {
         if (credit.increaseBalance(value)) {
             if (bankAccount.decreaseBalance(value)) {
 
-                Ack ack = new Ack(credit, bankAccount, TypeOperation.TRANSFER, LocalDate.now(), description);
+                Ack ack = new Ack(credit.getId(), bankAccount.getId(), TypeOperation.TRANSFER, LocalDate.now(), description);
                 credit.addToHistory(ack);
                 bankAccount.addToHistory(ack);
 

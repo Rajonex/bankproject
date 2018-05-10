@@ -18,7 +18,7 @@ public class PayPercentageOperation implements Command {
             credit.decreaseBalance(credit.getInterests());
             flag = true;
 
-            Ack ack = new Ack(credit, null, TypeOperation.PAY_PERCENTAGE, LocalDate.now(), description);
+            Ack ack = new Ack(credit.getId(), null, TypeOperation.PAY_PERCENTAGE, LocalDate.now(), description);
             credit.addToHistory(ack);
         }
 
@@ -43,7 +43,7 @@ public class PayPercentageOperation implements Command {
 
         if (balance < 0) {
             credit.decreaseBalance(credit.getInterests());
-            Ack ack = new Ack(credit, null, TypeOperation.PAY_PERCENTAGE, LocalDate.now(), description);
+            Ack ack = new Ack(credit.getId(), null, TypeOperation.PAY_PERCENTAGE, LocalDate.now(), description);
             credit.addToHistory(ack);
             return ack;
         }

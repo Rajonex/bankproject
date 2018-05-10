@@ -27,7 +27,7 @@ public class PayOfCreditOperation implements Command {
         if (bankAccount.decreaseBalance(remainingValue)) {
             credit.increaseBalance(remainingValue);
 
-            Ack ack = new Ack(credit, bankAccount, TypeOperation.TRANSFER, LocalDate.now(), description);
+            Ack ack = new Ack(credit.getId(), bankAccount.getId(), TypeOperation.TRANSFER, LocalDate.now(), description);
             credit.addToHistory(ack);
             bankAccount.addToHistory(ack);
 

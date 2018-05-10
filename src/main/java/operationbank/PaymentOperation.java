@@ -23,7 +23,7 @@ public class PaymentOperation implements Command {
     public Ack execute()
     {
         bankAccount.increaseBalance(value);
-        Ack ack = new Ack(bankAccount, null, TypeOperation.PAYMENT, LocalDate.now(), description);
+        Ack ack = new Ack(bankAccount.getId(), null, TypeOperation.PAYMENT, LocalDate.now(), description);
         return ack;
     }
 

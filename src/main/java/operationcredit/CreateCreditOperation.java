@@ -28,8 +28,8 @@ public class CreateCreditOperation implements Command {
     {
             Credit credit = new Credit(bankAccount, balance * (-1), ownerId);
 
-            Ack ack = new Ack(credit, null, TypeOperation.CREATE_ACCOUNT, LocalDate.now(), description);
-            Ack ackBankAccount = new Ack(credit, bankAccount, TypeOperation.TRANSFER, LocalDate.now(), description);
+            Ack ack = new Ack(credit.getId(), null, TypeOperation.CREATE_ACCOUNT, LocalDate.now(), description);
+            Ack ackBankAccount = new Ack(credit.getId(), bankAccount.getId(), TypeOperation.TRANSFER, LocalDate.now(), description);
 
             credit.addToHistory(ack);
             credit.addToHistory(ackBankAccount);

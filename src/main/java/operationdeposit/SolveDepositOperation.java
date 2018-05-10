@@ -29,7 +29,7 @@ public class SolveDepositOperation implements Command {
             double newValue = value + deposit.getInterests();
             bankAccount.increaseBalance(newValue);
 
-            Ack ack = new Ack(deposit, bankAccount, TypeOperation.TRANSFER, LocalDate.now(), description);
+            Ack ack = new Ack(deposit.getId(), bankAccount.getId(), TypeOperation.TRANSFER, LocalDate.now(), description);
             deposit.addToHistory(ack);
             bankAccount.addToHistory(ack);
 

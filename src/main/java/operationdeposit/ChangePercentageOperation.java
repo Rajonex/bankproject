@@ -25,7 +25,7 @@ public class ChangePercentageOperation implements Command {
     {
         InterestsMechanism oldMechanism = deposit.getInterestsMechanism();
         deposit.setInterestsMechanism(mechanism);
-        Ack ack = new Ack(deposit, null, TypeOperation.CHANGE_PERCENTAGE, LocalDate.now(),
+        Ack ack = new Ack(deposit.getId(), null, TypeOperation.CHANGE_PERCENTAGE, LocalDate.now(),
                 "Change percentage from " + oldMechanism + " to "+ mechanism + ". " + description);
         deposit.addToHistory(ack);
         return ack;

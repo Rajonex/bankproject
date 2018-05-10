@@ -23,7 +23,7 @@ public class WithdrawOperation implements Command {
     public Ack execute()
     {
         if (bankAccount.decreaseBalance(value)) {
-            Ack ack = new Ack(null, bankAccount, TypeOperation.WITHDRAWN, LocalDate.now(), description);
+            Ack ack = new Ack(null, bankAccount.getId(), TypeOperation.WITHDRAWN, LocalDate.now(), description);
             return ack;
         }
         return null;

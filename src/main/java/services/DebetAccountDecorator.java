@@ -12,9 +12,9 @@ public class DebetAccountDecorator implements Product
 {
     private double limit; // it has minus value and it is max debet value
     private double debet;
-    private BankAccount bankAccount;
+    private Product bankAccount;
 
-    public DebetAccountDecorator(double limit, double debet, BankAccount bankAccount){
+    public DebetAccountDecorator(double limit, double debet, Product bankAccount){
         this.limit = limit;
         this.debet = debet;
         this.bankAccount = bankAccount;
