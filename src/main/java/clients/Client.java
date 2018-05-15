@@ -12,7 +12,7 @@ public class Client {
     /**
      * Getter
      *
-     * @return firstName
+     * @return firstName client's firt name
      */
     public String getFirstName() {
         return firstName;
@@ -21,7 +21,7 @@ public class Client {
     /**
      * Setter
      *
-     * @param firstName
+     * @param firstName client's first name
      */
     public void setFirstName(String firstName) {
         this.firstName = firstName;
@@ -30,7 +30,7 @@ public class Client {
     /**
      * Getter
      *
-     * @return lastName
+     * @return lastName client's last name
      */
     public String getLastName() {
         return lastName;
@@ -39,7 +39,7 @@ public class Client {
     /**
      * Setter
      *
-     * @param lastName
+     * @param lastName client's last name
      */
     public void setLastName(String lastName) {
         this.lastName = lastName;
@@ -57,10 +57,26 @@ public class Client {
     /**
      * Setter
      *
-     * @param id
+     * @param id client's id
      */
     public void setId(int id) {
         this.id = id;
+    }
+
+    /**
+     * Getter
+     * @return client's pesel
+     */
+    public String getPesel() {
+        return pesel;
+    }
+
+    /**
+     * Setter
+     * @param pesel client's pesel
+     */
+    public void setPesel(String pesel) {
+        this.pesel = pesel;
     }
 
     /**

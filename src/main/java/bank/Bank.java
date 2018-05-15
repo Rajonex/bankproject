@@ -3,6 +3,7 @@ package bank;
 import clients.Client;
 import exceptions.NoSuchAccountException;
 import exceptions.NoSuchClientException;
+import exceptions.NoSuchCreditException;
 import interests.InterestsMechanism;
 import messages.Ack;
 import messages.PackageToAnotherBank;
@@ -36,7 +37,7 @@ public interface Bank {
 
     boolean withdraw(int accountId, double value) throws NoSuchAccountException;
 
-    boolean payCreditRate(int creditId, double value) throws NoSuchClientException;
+    boolean payCreditRate(int creditId, double value) throws NoSuchClientException, NoSuchCreditException;
 
     boolean payBankAccountRate(int accountId, double value);
 

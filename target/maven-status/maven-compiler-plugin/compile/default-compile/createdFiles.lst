@@ -10,10 +10,8 @@ bank\Bank.class
 interests\InterestsMechanism.class
 messages\PackageToAnotherBank.class
 services\Credit.class
-services\NormalAccount.class
 services\ConnectedAccount.class
 messages\TypeOperation.class
-operationbank\MakeAccountNormalOperation.class
 operationdeposit\SolveDepositOperation.class
 services\IdGenerator.class
 interests\InterestB.class

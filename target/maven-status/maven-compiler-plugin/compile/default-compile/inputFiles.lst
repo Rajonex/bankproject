@@ -6,7 +6,6 @@ C:\Users\£ukasz\IdeaProjects\bankproject\src\main\java\operationcredit\CreateCre
 C:\Users\£ukasz\IdeaProjects\bankproject\src\main\java\operations\Command.java
 C:\Users\£ukasz\IdeaProjects\bankproject\src\main\java\operationcredit\PayPercentageOperation.java
 C:\Users\£ukasz\IdeaProjects\bankproject\src\main\java\operationdeposit\CreateDepositOperation.java
-C:\Users\£ukasz\IdeaProjects\bankproject\src\main\java\services\NormalAccount.java
 C:\Users\£ukasz\IdeaProjects\bankproject\src\main\java\messages\Ack.java
 C:\Users\£ukasz\IdeaProjects\bankproject\src\main\java\interests\InterestA.java
 C:\Users\£ukasz\IdeaProjects\bankproject\src\main\java\services\Service.java
@@ -18,7 +17,6 @@ C:\Users\£ukasz\IdeaProjects\bankproject\src\main\java\bank\Bank.java
 C:\Users\£ukasz\IdeaProjects\bankproject\src\main\java\clients\Client.java
 C:\Users\£ukasz\IdeaProjects\bankproject\src\main\java\operationcredit\PayOfCreditOperation.java
 C:\Users\£ukasz\IdeaProjects\bankproject\src\main\java\services\Product.java
-C:\Users\£ukasz\IdeaProjects\bankproject\src\main\java\operationbank\MakeAccountNormalOperation.java
 C:\Users\£ukasz\IdeaProjects\bankproject\src\main\java\bank\Reporting.java
 C:\Users\£ukasz\IdeaProjects\bankproject\src\main\java\interests\InterestC.java
 C:\Users\£ukasz\IdeaProjects\bankproject\src\main\java\operationbank\TransferFromToOperation.java

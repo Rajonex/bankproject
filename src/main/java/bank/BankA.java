@@ -4,6 +4,7 @@ package bank;
 import clients.Client;
 import exceptions.NoSuchAccountException;
 import exceptions.NoSuchClientException;
+import exceptions.NoSuchCreditException;
 import history.History;
 import interests.InterestsMechanism;
 import messages.*;
@@ -67,7 +68,7 @@ public class BankA implements Bank {
     @Override
     public boolean addNewClient(Client client) {
         // test if list contains client and client is not a null
-        if (client != null && !(clients.contains(client))) {
+        if (client != null && !getClients().stream().anyMatch(cl -> cl.getPesel().equals(client.getPesel()))) {
             // adding to list and return true if operation succeeded
             boolean ifSucceeded = clients.add(client);
             if (ifSucceeded) {
@@ -355,8 +356,11 @@ public class BankA implements Bank {
      * @param id credit's unique id
      * @return credit with specified in param id
      */
-    private Credit getCreditById(int id) {
-        return credits.stream().filter(account -> account.getId() == id).findFirst().get();
+    private Credit getCreditById(int id) throws NoSuchCreditException {
+        Credit credit = credits.stream().filter(cr -> cr.getId() == id).findAny().orElse(null);
+        if (credit == null)
+            throw new NoSuchCreditException("There is no credit with id=" + id);
+        return credit;
     }
 
     // -------------------------------------------------------------------------------- BankAccountOperations
@@ -376,8 +380,8 @@ public class BankA implements Bank {
             BankAccount bankAccountFrom = getBankAccountById(accountFromId);
             BankAccount bankAccountTo = getBankAccountById(accountToId);
 
-            String description = "money successfully transferred from account: " + accountFromId + " to: " + accountToId + ", with amount of " + value;
-            TransferFromToOperation transferFromToOperation = new TransferFromToOperation(getBankAccountById(accountFromId), getBankAccountById(accountToId), value, description);
+            String description = "money successfully transferred from account: " + bankAccountFrom + " to: " + bankAccountTo + ", with amount of " + value;
+            TransferFromToOperation transferFromToOperation = new TransferFromToOperation(bankAccountFrom, bankAccountTo, value, description);
 
             Ack ack = transferFromToOperation.execute();
             bankHistory.add(ack);
@@ -475,7 +479,7 @@ public class BankA implements Bank {
      * @param id unique credit's id
      * @return true if operation succeeded
      */
-    private boolean deleteCreditById(int id) throws NoSuchClientException {
+    public boolean deleteCreditById(int id) throws NoSuchClientException, NoSuchCreditException {
         // check if client exists
         if (ifCreditExists(id)) {
             Credit credit = getCreditById(id);
@@ -502,7 +506,7 @@ public class BankA implements Bank {
      * @return true if operation succeeded
      */
     @Override
-    public boolean payCreditRate(int creditId, double value) throws NoSuchClientException {
+    public boolean payCreditRate(int creditId, double value) throws NoSuchClientException, NoSuchCreditException {
         if (ifCreditExists(creditId)) {
             Credit credit = getCreditById(creditId);
             String description = "rate transferred to credit's account with id " + creditId + ", value = " + value;
