@@ -14,11 +14,11 @@ public interface Bank {
 
     boolean addNewNormalAccount(int ownerId, double percentage);
 
-    boolean makeAccountDebet(int accountId, double limit);
-
     boolean addNewDebetAccount(int ownerId, double limit, double debet, double percentage);
 
     boolean makeAccountNormal(int accountId);
+
+    boolean makeAccountDebet(int accountId, double limit, double debet);
 
     boolean addNewDeposit(int accountId, double value, int ownerId, double percentage);
 

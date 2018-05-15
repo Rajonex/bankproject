@@ -139,15 +139,16 @@ public class BankA implements Bank {
      *
      * @param accountId account's unique id.
      * @param limit     limit of debet account.
+     * @param debet     debet value of account
      * @return true if operation succeeded
      */
     @Override
-    public boolean makeAccountDebet(int accountId, double limit) {
+    public boolean makeAccountDebet(int accountId, double limit, double debet) {
         if (ifAccountExists(accountId)) {
             BankAccount bankAccount = getBankAccountById(accountId);
             Client client = getClientById(bankAccount.getOwnerId());
             String description = "Client " + client + " account changed to debet account with " + limit + " limit";
-            MakeAccountDebetOperation makeAccountDebetOperation = new MakeAccountDebetOperation(bankAccount, limit, description);
+            MakeAccountDebetOperation makeAccountDebetOperation = new MakeAccountDebetOperation(bankAccount, limit, debet, description);
 
             Ack ack = makeAccountDebetOperation.execute();
             bankAccount.addToHistory(ack);
@@ -173,7 +174,7 @@ public class BankA implements Bank {
             String description = "Client " + getClientById(ownerId) + " added new debet account with " + limit + " and " + percentage * 100 + " percentage";
             BankAccount bankAccount = new BankAccount(ownerId);
             DebetAccountDecorator debetAccountDecorator = new DebetAccountDecorator(limit, debet, bankAccount);
-            CreateDebetAccountOperation createDebetAccountOperation = new CreateDebetAccountOperation(ownerId, limit, description);
+            CreateDebetAccountOperation createDebetAccountOperation = new CreateDebetAccountOperation(bankAccount, debet, limit, description);
             boolean ifSucceeded = bankAccounts.add(debetAccountDecorator);
 
             if (ifSucceeded) {
