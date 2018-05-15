@@ -1,13 +1,11 @@
 package operationbank;
 
-import interests.InterestA;
 import interests.InterestB;
 import interests.InterestsMechanism;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import services.BankAccount;
-import services.Credit;
 
 public class ChangePercentageOperationTest {
 

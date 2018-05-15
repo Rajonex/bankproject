@@ -4,29 +4,30 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import services.BankAccount;
 
 public class InterestATest {
 
-    NormalAccount normalAccount = null;
+    BankAccount bankAccount = null;
     InterestsMechanism interestsMechanism = null;
     @Before
     public void init()
     {
         interestsMechanism = new InterestA();
-        normalAccount = new NormalAccount(100.0, 1);
-        normalAccount.setInterestsMechanism(interestsMechanism);
+        bankAccount = new BankAccount(100.0, 1);
+        bankAccount.setInterestsMechanism(interestsMechanism);
     }
 
     @Test
     public void test()
     {
-        Assert.assertEquals(3.0, normalAccount.getInterests(), 0.01);
+        Assert.assertEquals(3.0, bankAccount.getInterests(), 0.01);
     }
 
     @After
     public void finish()
     {
         interestsMechanism = null;
-        normalAccount = null;
+        bankAccount = null;
     }
 }

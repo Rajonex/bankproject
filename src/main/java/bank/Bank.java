@@ -1,6 +1,8 @@
 package bank;
 
 import clients.Client;
+import exceptions.NoSuchAccountException;
+import exceptions.NoSuchClientException;
 import interests.InterestsMechanism;
 import messages.Ack;
 import messages.PackageToAnotherBank;
@@ -10,35 +12,37 @@ import java.util.List;
 public interface Bank {
     boolean addNewClient(Client client);
 
-    boolean deleteClientById(int id);
+    boolean deleteClientById(int id) throws NoSuchClientException;
 
-    boolean addNewNormalAccount(int ownerId, double percentage);
+    boolean addNewNormalAccount(int ownerId) throws NoSuchClientException;
 
-    boolean addNewDebetAccount(int ownerId, double limit, double debet, double percentage);
+//    boolean addNewNormalAccount(int ownerId, double balance, double percentage);
 
-    boolean makeAccountNormal(int accountId);
+    boolean addNewDebetAccount(int ownerId, double limit, double debet, double percentage) throws NoSuchClientException;
 
-    boolean makeAccountDebet(int accountId, double limit, double debet);
+//    boolean makeAccountNormal(int accountId) throws NoSuchClientException, NoSuchAccountException;
 
-    boolean addNewDeposit(int accountId, double value, int ownerId, double percentage);
+    boolean makeAccountDebet(int accountId, double limit, double debet) throws NoSuchClientException, NoSuchAccountException;
 
-    boolean addNewCredit(int accountId, double balance, int ownerId, double percentage);
+    boolean addNewDeposit(int accountId, double value, int ownerId, double percentage) throws NoSuchClientException, NoSuchAccountException;
 
-    boolean transfer(int accountFromId, int accountToId, double value);
+    boolean addNewCredit(int accountId, double balance, int ownerId, double percentage) throws NoSuchClientException, NoSuchAccountException;
 
-    boolean transferFromAnotherBank(PackageToAnotherBank packageToAnotherBank);
+    boolean transfer(int accountFromId, int accountToId, double value) throws NoSuchAccountException;
 
-    boolean payment(int accountId, double value);
+    boolean transferFromAnotherBank(PackageToAnotherBank packageToAnotherBank) throws NoSuchAccountException;
 
-    boolean withdraw(int accountId, double value);
+    boolean payment(int accountId, double value) throws NoSuchAccountException;
 
-    boolean payCreditRate(int creditId, double value);
+    boolean withdraw(int accountId, double value) throws NoSuchAccountException;
+
+    boolean payCreditRate(int creditId, double value) throws NoSuchClientException;
 
     boolean payBankAccountRate(int accountId, double value);
 
-    boolean withdrawFromDeposit(int depositId);
+    boolean withdrawFromDeposit(int depositId) throws NoSuchClientException;
 
-    boolean changeAccountPercentage(int accountId, InterestsMechanism interestsMechanism);
+    boolean changeAccountPercentage(int accountId, InterestsMechanism interestsMechanism) throws NoSuchAccountException;
 
     boolean changeCreditPercentage(int creditId, double newPercentage);
 

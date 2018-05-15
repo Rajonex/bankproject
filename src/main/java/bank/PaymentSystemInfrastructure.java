@@ -1,5 +1,6 @@
 package bank;
 
+import exceptions.NoSuchAccountException;
 import messages.PackageToAnotherBank;
 import services.IdGenerator;
 
@@ -18,7 +19,11 @@ public class PaymentSystemInfrastructure {
     public boolean sendPackages(List<PackageToAnotherBank> listOfPackages) {
         listOfPackages.stream().forEach(p -> {
             Bank bankTo = banksIdList.get(p.getToBank());
-            bankTo.transferFromAnotherBank(p);
+            try {
+                bankTo.transferFromAnotherBank(p);
+            } catch (NoSuchAccountException e) {
+                e.printStackTrace();
+            }
         });
         return false;
     }
