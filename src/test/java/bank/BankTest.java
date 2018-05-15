@@ -104,6 +104,7 @@ public class BankTest {
         Assert.assertTrue(ifSucceeded);
     }
 
+
     @Test
     public void addNewDepositSuccessTest() throws NoSuchClientException, NoSuchAccountException {
         Client client = new Client( "Jan", "Kowalski", "12345678912");
@@ -111,7 +112,7 @@ public class BankTest {
         int clientId = bank.getClients().get(0).getId();
         bank.addNewNormalAccount(clientId);
         int accountId = bank.getBankAccounts().get(0).getId();
-        boolean ifSucceeded = bank.addNewDeposit(accountId, 10_000, 0, 5);
+        boolean ifSucceeded = bank.addNewDeposit(accountId, 10_000, clientId, 5);
 
         Assert.assertTrue(ifSucceeded);
     }
@@ -179,7 +180,6 @@ public class BankTest {
         int accountId2 = bank.getBankAccounts().get(1).getId();
         bank.payment(accountId1, 10_000);
         boolean ifSucceeded = bank.transfer(accountId1, accountId2, 5_000);
-        System.out.println(ifSucceeded);
 
         Assert.assertTrue(ifSucceeded);
     }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="15" failures="0" name="bank.BankTest" time="0.099" errors="0" skipped="0">
+<testsuite tests="1" failures="0" name="interests.InterestATest" time="0" errors="0" skipped="0">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk1.8.0_131\jre\bin"/>
@@ -65,19 +65,5 @@
     <property name="sun.desktop" value="windows"/>
     <property name="sun.cpu.isalist" value="amd64"/>
   </properties>
-  <testcase classname="bank.BankTest" name="transferTest" time="0.089"/>
-  <testcase classname="bank.BankTest" name="addNewDebetAccountWithoutClientTest" time="0"/>
-  <testcase classname="bank.BankTest" name="paymentSuccessTest" time="0"/>
-  <testcase classname="bank.BankTest" name="addNewDepositWithoutClientTest" time="0"/>
-  <testcase classname="bank.BankTest" name="paymentTest" time="0"/>
-  <testcase classname="bank.BankTest" name="addNewCreditWithoutClientTest" time="0"/>
-  <testcase classname="bank.BankTest" name="addNewDebetAccountSuccessTest" time="0.001"/>
-  <testcase classname="bank.BankTest" name="deleteClientByIdSuccessTest" time="0.001"/>
-  <testcase classname="bank.BankTest" name="addNewClientSuccessTest" time="0"/>
-  <testcase classname="bank.BankTest" name="addNewNormalAccountWithoutClientTest" time="0"/>
-  <testcase classname="bank.BankTest" name="transferSuccessTest" time="0.001"/>
-  <testcase classname="bank.BankTest" name="addNewCreditSuccessTest" time="0.003"/>
-  <testcase classname="bank.BankTest" name="addNewDepositSuccessTest" time="0.003"/>
-  <testcase classname="bank.BankTest" name="addNewNormalAccountSuccessTest" time="0"/>
-  <testcase classname="bank.BankTest" name="makeAccountDebetSuccessTest" time="0.001"/>
+  <testcase classname="interests.InterestATest" name="test" time="0"/>
 </testsuite>
