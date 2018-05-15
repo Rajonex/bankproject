@@ -16,17 +16,18 @@ public class MakeAccountDebetOperation implements Command {
     Product bankAccount;
     String description;
 
-    public MakeAccountDebetOperation(Product bankAccount, double limit, double debet, String description) {
+    public MakeAccountDebetOperation(Product bankAccount, double limit, String description) {
         this.bankAccount = bankAccount;
         this.limit = limit;
-        this.debet = debet;
+        this.debet = 0;
         this.description = description;
     }
 
     @Override
     public Ack execute()
     {
-        bankAccount = new DebetAccountDecorator(debet, limit, bankAccount);
+        Product debetAccount = new DebetAccountDecorator(limit, debet, bankAccount);
+        bankAccount = debetAccount;
         Ack ack = new Ack(bankAccount.getId(), null, TypeOperation.MAKE_DEBET, LocalDate.now(), description);
         bankAccount.addToHistory(ack);
         return ack;

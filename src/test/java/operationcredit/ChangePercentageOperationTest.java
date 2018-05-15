@@ -1,7 +1,7 @@
 package operationcredit;
 
+import interests.InterestA;
 import interests.InterestsMechanism;
-import operations.CreditOperation;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -12,23 +12,25 @@ public class ChangePercentageOperationTest {
 
     static BankAccount bankAccount = null;
     static Credit credit = null;
+    static InterestsMechanism interestsMechanism = null;
 
     @BeforeClass
     static public void newBankAccountTest() {
         bankAccount = new BankAccount(1000, 0);
         credit = new Credit(bankAccount, 100, 0);
+        interestsMechanism = new InterestA();
     }
 
 
     @Test
     public void changePercentageTest() {
-        CreditOperation creditOperationTest = new CreditOperation();
-        InterestsMechanism newPercentageTest = bankAccount.getInterestsMechanism();
         String descriptionTest = "JUnit Test";
 
-        creditOperationTest.changePercentage(credit, newPercentageTest, descriptionTest);
+        ChangePercentageOperation changePercentageOperationTest = new ChangePercentageOperation(credit, interestsMechanism, descriptionTest);
 
-        Assert.assertEquals(newPercentageTest, credit.getInterestsMechanism());
+        changePercentageOperationTest.execute();
+
+        Assert.assertEquals(interestsMechanism, credit.getInterestsMechanism());
 
     }
 

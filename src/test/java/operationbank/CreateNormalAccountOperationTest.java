@@ -1,11 +1,10 @@
 package operationbank;
 
-import operations.BankAccountOperation;
+import messages.Ack;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import services.BankAccount;
-import services.NormalAccount;
 
 public class CreateNormalAccountOperationTest {
 
@@ -19,12 +18,13 @@ public class CreateNormalAccountOperationTest {
 
     @Test
     public void createNormalAccountTest() {
-        BankAccountOperation bankAccountOperationTest = new BankAccountOperation();
-        int ownerIdTest = bankAccount.getOwnerId();
-        double limitTest = 1000.0;
-        String descriptionTest = "JUnit Test";
 
-        NormalAccount newNormalAccount = bankAccountOperationTest.createNormalAccount(ownerIdTest, descriptionTest);
+        String descriptionTest = "JUnit Test";
+        CreateNormalAccountOperation createNormalAccountOperationTest = new CreateNormalAccountOperation(bankAccount.getOwnerId(), descriptionTest);
+
+
+
+        Ack newNormalAccount = createNormalAccountOperationTest.execute();
         Assert.assertNotNull(newNormalAccount);
     }
 }

@@ -1,40 +1,35 @@
-package operationbank;
-
-import operations.BankAccountOperation;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import services.BankAccount;
-
-public class MakeAccountDebetOperationTest {
-
-    static BankAccount bankAccount = null;
-
-    @BeforeClass
-    static public void newBankAccountTest() {
-        bankAccount = new BankAccount(1000, 0);
-    }
-
-    @Test
-    public void makeAccountDebetTest()
-    {
-
-//        BankAccountOperation bankAccountOperationTest = new BankAccountOperation();
-//        double limitTest = 1000.0;
+//package operationbank;
+//
+//import messages.Ack;
+//import org.junit.Assert;
+//import org.junit.BeforeClass;
+//import org.junit.Test;
+//import services.BankAccount;
+//import services.DebetAccountDecorator;
+//import services.Product;
+//
+//public class MakeAccountDebetOperationTest {
+//
+//    static Product bankAccount = null;
+//
+//    @BeforeClass
+//    static public void newBankAccountTest() {
+//        bankAccount = new BankAccount(1000, 0);
+//    }
+//
+//    @Test
+//    public void makeAccountDebetTest()
+//    {
+//
 //        String descriptionTest = "JUnit Test";
+//        MakeAccountDebetOperation makeAccountDebetOperationTest = new MakeAccountDebetOperation(bankAccount, 500, descriptionTest);
+//        System.out.println(bankAccount);
+//        makeAccountDebetOperationTest.execute();
+//        System.out.println(bankAccount);
+//        boolean result = bankAccount.decreaseBalance(1200);
+//        Assert.assertTrue(bankAccount instanceof DebetAccountDecorator);
+////        Assert.assertEquals(bankAccount.getBalance(), -200, 0.1);
 //
-//        BankAccount bankAccount1Test = bankAccount;
-//        bankAccount1Test = new DebetAccountDecorator(bankAccount1Test, limitTest);
-//
-//        bankAccountOperationTest.makeAccountDebet(bankAccount, limitTest, descriptionTest);
-//
-//        Assert.assertEquals(bankAccount, bankAccount1Test);
-
-        double limitTest = 1000.0;
-        String descriptionTest = "JUnit Test";
-
-        BankAccountOperation bankAccountOperationTest = new BankAccountOperation();
-        boolean isCreated = bankAccountOperationTest.makeAccountDebet(bankAccount, limitTest, descriptionTest);
-        Assert.assertTrue(isCreated);
-    }
-}
+////        Assert.assertTrue(result);
+//    }
+//}

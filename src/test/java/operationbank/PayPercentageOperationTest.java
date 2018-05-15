@@ -1,6 +1,5 @@
 package operationbank;
 
-import operations.BankAccountOperation;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -19,15 +18,15 @@ public class PayPercentageOperationTest {
 
     @Test
     public void payPercentageTest() {
-        BankAccountOperation bankAccountOperationTest = new BankAccountOperation();
+
+        String descriptionTest = "JUnit Test";
+        PayPercentageOperation payPercentageOperationTest = new PayPercentageOperation(bankAccount, descriptionTest);
 
         double balanceTest = bankAccount.getBalance(); //stary balance
-        double percentageTest = bankAccount.getInterests(); // procent
-        String descriptionTest = "JUnit Test";
-        double payedTest = percentageTest; //suma o jaka powinien wzrosnac kredit
+        double percentageTest = bankAccount.getInterests(); //suma o jaka powinien wzrosnac credit
 
-        bankAccountOperationTest.payPercentage(bankAccount, descriptionTest); //wywolanie operacji na pierwotnym kredycie za posrednictwem creditOperation
+        payPercentageOperationTest.execute(); //wywolanie operacji na pierwotnym kredycie za posrednictwem creditOperation
 
-        Assert.assertEquals(balanceTest, bankAccount.getBalance(), payedTest);
+        Assert.assertEquals(balanceTest, bankAccount.getBalance(), percentageTest);
     }
 }

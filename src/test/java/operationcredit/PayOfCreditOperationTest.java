@@ -1,6 +1,5 @@
 package operationcredit;
 
-import operations.CreditOperation;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -23,12 +22,14 @@ public class PayOfCreditOperationTest {
     @Test
     public void payOfCreditTest()
     {
-        CreditOperation creditOperationTest = new CreditOperation();
+
         String descriptionTest = "JUnit Test";
+
+        PayOfCreditOperation payOfCreditOperationTest = new PayOfCreditOperation(credit, descriptionTest);
         double balanceTest = credit.getBalance();
 
-        creditOperationTest.payOfCredit(credit, descriptionTest);
+        payOfCreditOperationTest.execute();
 
-        Assert.assertEquals(balanceTest, credit.getBalance(), credit.getBalance());
+        Assert.assertEquals(balanceTest, credit.getBalance(), balanceTest);
     }
 }

@@ -1,6 +1,5 @@
 package operationcredit;
 
-import operations.CreditOperation;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -22,13 +21,13 @@ public class TransferOperationTest {
     @Test
     public void transferTest() {
 
-        CreditOperation creditOperationTest = new CreditOperation();
-
         double balanceTest = credit.getBalance();
         String descriptionTest = "JUnit Test";
         double valueTest = 100.0;
 
-        creditOperationTest.transfer(credit, valueTest, descriptionTest);
+        TransferOperation transferOperationTest = new TransferOperation(credit, valueTest, descriptionTest);
+
+        transferOperationTest.execute();
 
         Assert.assertEquals(credit.getBalance(), balanceTest, valueTest);
 

@@ -1,6 +1,5 @@
 package operationdeposit;
 
-import operations.DepositOperation;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -19,14 +18,14 @@ public class BreakUpDepositOperationTest {
     }
 
     @Test
-    public void breakUpDepositTest()
-    {
-        DepositOperation depositOperationTest = new DepositOperation();
-        double balanceTest = deposit.getBalance();
-        double accountBalanceTest = bankAccount.getBalance();
+    public void breakUpDepositTest() {
         String descriptionTest = "JUnit Test";
 
-        depositOperationTest.breakUpDeposit(deposit, descriptionTest);
+        BreakUpDepositOperation breakUpDepositOperationTest = new BreakUpDepositOperation(deposit, descriptionTest);
+        double balanceTest = deposit.getBalance();
+        double accountBalanceTest = bankAccount.getBalance();
+
+        breakUpDepositOperationTest.execute();
 
         Assert.assertEquals(bankAccount.getBalance(), accountBalanceTest, balanceTest);
     }

@@ -1,6 +1,5 @@
 package operationbank;
 
-import operations.BankAccountOperation;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -20,14 +19,15 @@ public class PaymentOperationTest {
     @Test
     public void paymentTest()
     {
-        BankAccountOperation bankAccountOperationTest = new BankAccountOperation();
-        double paymentTest = 100.0;
+        double valueTest = 100.0;
+        double oldBalance = bankAccount.getBalance();
         String descriptionTest = "JUnit Test";
-        double balanceTest = bankAccount.getBalance();
+        PaymentOperation paymentOperationTest = new PaymentOperation(bankAccount, valueTest, descriptionTest);
+        paymentOperationTest.execute();
 
-        bankAccountOperationTest.payment(bankAccount, paymentTest, descriptionTest);
 
-        Assert.assertEquals(balanceTest+paymentTest, bankAccount.getBalance(), 0.0);
+        Assert.assertEquals(bankAccount.getBalance()-valueTest, oldBalance, 0.01);
+
     }
 
 }

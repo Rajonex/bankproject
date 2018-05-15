@@ -9,7 +9,7 @@ import messages.Ack;
 import java.time.LocalDate;
 import java.util.List;
 
-public abstract class Service implements Product {
+public class Service implements Product, Cloneable {
     protected History history; // history of this service
     private int id; // id this service object
     protected boolean canBeNegative; // information if the value can be negative
@@ -26,6 +26,7 @@ public abstract class Service implements Product {
         this.ownerId = ownerId;
         this.percentage = percentage;
         localDate = LocalDate.now();
+        canBeNegative = false;
         interestsMechanism = new InterestA();
     }
 
@@ -36,8 +37,16 @@ public abstract class Service implements Product {
         this.ownerId = ownerId;
         this.percentage = percentage;
         localDate = LocalDate.now();
+        canBeNegative = false;
         interestsMechanism = new InterestA();
     }
+
+    public Object clone() throws CloneNotSupportedException {
+// tutaj: specyficzne operacje związane z klonowaniem
+        return super.clone();
+    }
+
+
     @Override
     public InterestsMechanism getInterestsMechanism() {
         return interestsMechanism;

@@ -1,6 +1,6 @@
 package operationbank;
 
-import operations.BankAccountOperation;
+import messages.Ack;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -19,12 +19,12 @@ public class CreateDebetAccountDecoratorOperationTest {
 
     @Test
     public void createDebetAccountTest() {
-        BankAccountOperation bankAccountOperationTest = new BankAccountOperation();
-        int ownerIdTest = bankAccount.getOwnerId();
-        double limitTest = 1000.0;
         String descriptionTest = "JUnit Test";
+        double limitTest = 1000.0;
+        double valueTest = 500.0;
+        CreateDebetAccountOperation createDebetAccountOperationTest = new CreateDebetAccountOperation(bankAccount, limitTest, valueTest, descriptionTest);
 
-        DebetAccountDecorator newDebetAccountDecorator = bankAccountOperationTest.createDebetAccount(ownerIdTest, limitTest, descriptionTest);
+        Ack newDebetAccountDecorator = createDebetAccountOperationTest.execute();
         Assert.assertNotNull(newDebetAccountDecorator);
     }
 

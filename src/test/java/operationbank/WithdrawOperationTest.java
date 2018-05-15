@@ -1,6 +1,5 @@
 package operationbank;
 
-import operations.BankAccountOperation;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -20,12 +19,13 @@ public class WithdrawOperationTest {
     @Test
     public void withdrawTest()
     {
-        BankAccountOperation bankAccountOperationTest = new BankAccountOperation();
         double paymentTest = 100.0;
         String descriptionTest = "JUnit Test";
+
+        WithdrawOperation withdrawOperationTest = new WithdrawOperation(bankAccount, paymentTest, descriptionTest);
         double balanceTest = bankAccount.getBalance();
 
-        bankAccountOperationTest.withdraw(bankAccount, paymentTest, descriptionTest);
+        withdrawOperationTest.execute();
 
         Assert.assertEquals(balanceTest-paymentTest, bankAccount.getBalance(), 0.0);
     }

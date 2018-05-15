@@ -1,6 +1,5 @@
 package operationdeposit;
 
-import operations.DepositOperation;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -20,17 +19,18 @@ public class SolveDepositOperationTest {
 
 
     @Test
-    public void solveDepositTest()
-    {
-        DepositOperation depositOperationTest = new DepositOperation();
+    public void solveDepositTest() {
+
+        String descriptionTest = "JUnit Test";
+
+        SolveDepositOperation solveDepositOperationTest = new SolveDepositOperation(deposit, descriptionTest);
+
         double percentageTest = deposit.getInterests();
         double balanceTest = deposit.getBalance();
         double accountBalanceTest = bankAccount.getBalance();
-        String descriptionTest = "JUnit Test";
+        double paymentTest = percentageTest * balanceTest + balanceTest;
 
-        double paymentTest = percentageTest*balanceTest+balanceTest;
-
-        depositOperationTest.solveDeposit(deposit, descriptionTest);
+        solveDepositOperationTest.execute();
 
         Assert.assertEquals(bankAccount.getBalance(), accountBalanceTest, paymentTest);
     }

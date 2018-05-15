@@ -1,32 +1,34 @@
 package operationbank;
 
+import interests.InterestA;
+import interests.InterestB;
 import interests.InterestsMechanism;
-import operations.BankAccountOperation;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import services.BankAccount;
+import services.Credit;
 
 public class ChangePercentageOperationTest {
 
     static BankAccount bankAccount = null;
+    static InterestsMechanism interestsMechanism;
 
     @BeforeClass
     static public void newBankAccountTest() {
         bankAccount = new BankAccount(1000, 0);
+        interestsMechanism = new InterestB();
     }
 
 
     @Test
     public void changePercentageTest() {
-        BankAccountOperation bankAccountOperationTest = new BankAccountOperation();
-
-        InterestsMechanism newPercentageTest = bankAccount.getInterestsMechanism();
         String descriptionTest = "JUnit Test";
+        ChangePercentageOperation changePercentageOperationTest = new ChangePercentageOperation(bankAccount, interestsMechanism, descriptionTest);
 
-        bankAccountOperationTest.changePercentage(bankAccount, newPercentageTest, descriptionTest);
+        changePercentageOperationTest.execute();
 
-        Assert.assertEquals(newPercentageTest, bankAccount.getInterestsMechanism());
+        Assert.assertEquals(interestsMechanism, bankAccount.getInterestsMechanism());
 
     }
 }

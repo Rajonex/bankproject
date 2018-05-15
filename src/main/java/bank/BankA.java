@@ -148,7 +148,7 @@ public class BankA implements Bank {
             BankAccount bankAccount = getBankAccountById(accountId);
             Client client = getClientById(bankAccount.getOwnerId());
             String description = "Client " + client + " account changed to debet account with " + limit + " limit";
-            MakeAccountDebetOperation makeAccountDebetOperation = new MakeAccountDebetOperation(bankAccount, limit, debet, description);
+            MakeAccountDebetOperation makeAccountDebetOperation = new MakeAccountDebetOperation(bankAccount, limit, description);
 
             Ack ack = makeAccountDebetOperation.execute();
             bankAccount.addToHistory(ack);

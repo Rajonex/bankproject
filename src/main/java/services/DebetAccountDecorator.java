@@ -8,16 +8,27 @@ import services.BankAccount;
 import java.time.LocalDate;
 import java.util.List;
 
-public class DebetAccountDecorator implements Product
+public class DebetAccountDecorator implements Product, Cloneable
 {
     private double limit; // it has minus value and it is max debet value
     private double debet;
     private Product bankAccount;
 
+    public Object clone() throws CloneNotSupportedException {
+// tutaj: specyficzne operacje związane z klonowaniem
+        return super.clone();
+    }
+
+
     public DebetAccountDecorator(double limit, double debet, Product bankAccount){
         this.limit = limit;
         this.debet = debet;
-        this.bankAccount = bankAccount;
+        try {
+            this.bankAccount = (Product) bankAccount.clone();
+        } catch(CloneNotSupportedException er)
+        {
+            er.printStackTrace();
+        }
     }
 
     @Override
@@ -53,7 +64,7 @@ public class DebetAccountDecorator implements Product
             }
             else
             {
-                if(balance != 0) {
+                if(balance > 0) {
                     bankAccount.decreaseBalance(balance);
                     value -= balance;
                 }

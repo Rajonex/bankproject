@@ -6,7 +6,7 @@ import messages.Ack;
 import java.time.LocalDate;
 import java.util.List;
 
-public interface Product {
+public interface Product /*extends Cloneable*/ {
     /**
      * Increasing balance
      *
@@ -50,4 +50,8 @@ public interface Product {
     public boolean addToHistory(Ack ack);
 
     public List<Ack> showHistory();
+
+    public Object clone() throws CloneNotSupportedException;
+
+
 }
