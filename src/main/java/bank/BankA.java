@@ -2,6 +2,8 @@ package bank;
 
 
 import clients.Client;
+import exceptions.NoSuchAccountException;
+import exceptions.NoSuchClientException;
 import history.History;
 import interests.InterestsMechanism;
 import messages.*;
@@ -38,6 +40,22 @@ public class BankA implements Bank {
         bankHistory = new History();
         paymentSystemInfrastructure = new PaymentSystemInfrastructure();
         bankId = id;
+    }
+
+    public List<Client> getClients() {
+        return clients;
+    }
+
+    public List<Credit> getCredits() {
+        return credits;
+    }
+
+    public List<Deposit> getDeposits() {
+        return deposits;
+    }
+
+    public List<Product> getBankAccounts() {
+        return bankAccounts;
     }
 
     /**
@@ -79,8 +97,11 @@ public class BankA implements Bank {
      * @param id unique id of every client
      * @return
      */
-    private Client getClientById(int id) {
-        return clients.stream().filter(cl -> cl.getId() == id).findFirst().get();
+    public Client getClientById(int id) throws NoSuchClientException {
+        Client client = clients.stream().filter(cl -> cl.getId() == id).findAny().orElse(null);
+        if (client == null)
+            throw new NoSuchClientException("There is no client with id=" + id);
+        return client;
     }
 
     /**
@@ -90,7 +111,7 @@ public class BankA implements Bank {
      * @return true if succeeded
      */
     @Override
-    public boolean deleteClientById(int id) {
+    public boolean deleteClientById(int id) throws NoSuchClientException {
         // check if client exists
         if (ifClientExists(id)) {
             Client client = getClientById(id);
@@ -111,15 +132,14 @@ public class BankA implements Bank {
     /**
      * Creating new normal Account for client with specified id, percentage and adding it to normalAccounts list.
      *
-     * @param ownerId    client's unique id
-     * @param percentage account's percentage
+     * @param ownerId client's unique id
      * @return true if opeartion succeeded
      */
     @Override
-    public boolean addNewNormalAccount(int ownerId, double percentage) {
+    public boolean addNewNormalAccount(int ownerId) throws NoSuchClientException {
         // check if ownerId is correct and if client with this id exists
         if (ownerId >= 0 && ifClientExists(ownerId)) {
-            String description = "Client " + getClientById(ownerId) + " added new account with " + percentage * 100 + " percentage";
+            String description = "Client " + getClientById(ownerId) + " added new account";
             CreateNormalAccountOperation createNormalAccountOperation = new CreateNormalAccountOperation(ownerId, description);
             Ack ack = createNormalAccountOperation.execute();
             NormalAccount normalAccount = new NormalAccount(ownerId);
@@ -143,7 +163,7 @@ public class BankA implements Bank {
      * @return true if operation succeeded
      */
     @Override
-    public boolean makeAccountDebet(int accountId, double limit, double debet) {
+    public boolean makeAccountDebet(int accountId, double limit, double debet) throws NoSuchClientException, NoSuchAccountException {
         if (ifAccountExists(accountId)) {
             BankAccount bankAccount = getBankAccountById(accountId);
             Client client = getClientById(bankAccount.getOwnerId());
@@ -168,7 +188,7 @@ public class BankA implements Bank {
      * @return true if operation succeeded
      */
     @Override
-    public boolean addNewDebetAccount(int ownerId, double limit, double debet, double percentage) {
+    public boolean addNewDebetAccount(int ownerId, double limit, double debet, double percentage) throws NoSuchClientException {
         // check if ownerId is correct and if client with this id exists
         if (ownerId >= 0 && ifClientExists(ownerId)) {
             String description = "Client " + getClientById(ownerId) + " added new debet account with " + limit + " and " + percentage * 100 + " percentage";
@@ -196,7 +216,7 @@ public class BankA implements Bank {
      * @return true if operation succeeded
      */
     @Override
-    public boolean makeAccountNormal(int accountId) {
+    public boolean makeAccountNormal(int accountId) throws NoSuchClientException, NoSuchAccountException {
         if (ifAccountExists(accountId)) {
             BankAccount bankAccount = getBankAccountById(accountId);
             Client client = getClientById(bankAccount.getOwnerId());
@@ -241,8 +261,12 @@ public class BankA implements Bank {
      * @param accountId bankAccount's unique id
      * @return bankAccount with specified in param id
      */
-    private BankAccount getBankAccountById(int accountId) {
-        return (BankAccount) bankAccounts.stream().filter(pr -> pr.getId() == accountId).findFirst().get();
+    public BankAccount getBankAccountById(int accountId) throws NoSuchAccountException {
+        Product product = bankAccounts.stream().filter(pr -> pr.getId() == accountId).findFirst().orElse(null);
+        if (product == null)
+            throw new NoSuchAccountException("There is no account with id=" + accountId);
+        else
+            return (BankAccount) product;
     }
 
     // -------------------------------------------------------------------------------- Deposit
@@ -257,7 +281,7 @@ public class BankA implements Bank {
      * @return true if deposit created with success
      */
     @Override
-    public boolean addNewDeposit(int accountId, double value, int ownerId, double percentage) {
+    public boolean addNewDeposit(int accountId, double value, int ownerId, double percentage) throws NoSuchClientException, NoSuchAccountException {
         // check if client and its account exists
         if (ifClientAccountExists(ownerId)) {
             Client client = getClientById(ownerId);
@@ -292,7 +316,7 @@ public class BankA implements Bank {
      * @return true if credit created with success
      */
     @Override
-    public boolean addNewCredit(int accountId, double balance, int ownerId, double percentage) {
+    public boolean addNewCredit(int accountId, double balance, int ownerId, double percentage) throws NoSuchClientException, NoSuchAccountException {
         // check if client and its account exists
         if (ifClientAccountExists(ownerId)) {
             Client client = getClientById(ownerId);
@@ -346,7 +370,7 @@ public class BankA implements Bank {
      * @return true if transfer succeeded
      */
     @Override
-    public boolean transfer(int accountFromId, int accountToId, double value) {
+    public boolean transfer(int accountFromId, int accountToId, double value) throws NoSuchAccountException {
         // check if accountFrom exists in bank
         if (ifAccountExists(accountFromId) && ifAccountExists(accountToId)) {
             BankAccount bankAccountFrom = getBankAccountById(accountFromId);
@@ -371,7 +395,7 @@ public class BankA implements Bank {
      * @return
      */
     @Override
-    public boolean transferFromAnotherBank(PackageToAnotherBank packageToAnotherBank) {
+    public boolean transferFromAnotherBank(PackageToAnotherBank packageToAnotherBank) throws NoSuchAccountException {
         if (ifAccountExists(packageToAnotherBank.getToAccount())) {
             BankAccount bankAccount = getBankAccountById(packageToAnotherBank.getToAccount());
             if (packageToAnotherBank.getTypeOfPackage() == TypeOfPackage.NORMAL) {
@@ -404,7 +428,7 @@ public class BankA implements Bank {
      * @return true if payment succeeded
      */
     @Override
-    public boolean payment(int accountId, double value) {
+    public boolean payment(int accountId, double value) throws NoSuchAccountException {
         if (ifAccountExists(accountId)) {
             BankAccount bankAccount = getBankAccountById(accountId);
 
@@ -428,7 +452,7 @@ public class BankA implements Bank {
      * @return true if withdraw succeeded
      */
     @Override
-    public boolean withdraw(int accountId, double value) {
+    public boolean withdraw(int accountId, double value) throws NoSuchAccountException {
         if (ifAccountExists(accountId)) {
             BankAccount bankAccount = getBankAccountById(accountId);
 
@@ -451,7 +475,7 @@ public class BankA implements Bank {
      * @param id unique credit's id
      * @return true if operation succeeded
      */
-    private boolean deleteCreditById(int id) {
+    private boolean deleteCreditById(int id) throws NoSuchClientException {
         // check if client exists
         if (ifCreditExists(id)) {
             Credit credit = getCreditById(id);
@@ -478,7 +502,7 @@ public class BankA implements Bank {
      * @return true if operation succeeded
      */
     @Override
-    public boolean payCreditRate(int creditId, double value) {
+    public boolean payCreditRate(int creditId, double value) throws NoSuchClientException {
         if (ifCreditExists(creditId)) {
             Credit credit = getCreditById(creditId);
             String description = "rate transferred to credit's account with id " + creditId + ", value = " + value;
@@ -545,7 +569,7 @@ public class BankA implements Bank {
      * @param id unique deposit's id
      * @return true if operation succeeded
      */
-    private boolean deleteDepositById(int id) {
+    private boolean deleteDepositById(int id) throws NoSuchClientException {
         // check if client exists
         if (ifDepositExists(id)) {
             Deposit deposit = getDepositById(id);
@@ -571,7 +595,7 @@ public class BankA implements Bank {
      * @return true if operation succeeded
      */
     @Override
-    public boolean withdrawFromDeposit(int depositId) {
+    public boolean withdrawFromDeposit(int depositId) throws NoSuchClientException {
         // checking if deposit exists in bank
         if (ifDepositExists(depositId)) {
             Deposit deposit = getDepositById(depositId);
@@ -608,7 +632,7 @@ public class BankA implements Bank {
      * @return true if operation succeeded
      */
     @Override
-    public boolean changeAccountPercentage(int accountId, InterestsMechanism interestsMechanism) {
+    public boolean changeAccountPercentage(int accountId, InterestsMechanism interestsMechanism) throws NoSuchAccountException {
         if (ifAccountExists(accountId)) {
             BankAccount bankAccount = getBankAccountById(accountId);
             InterestsMechanism newInterestMechanism = interestsMechanism;

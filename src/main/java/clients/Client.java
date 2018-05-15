@@ -1,12 +1,13 @@
 package clients;
 
+import services.IdGenerator;
+
 public class Client {
     private String firstName;
     private String lastName;
     private String pesel;
     // TODO - change to long to extend range
     private int id;
-    private static int generatedId = 0;
 
     /**
      * Getter
@@ -71,37 +72,35 @@ public class Client {
      * @param lastName
      */
     public Client(String firstName, String lastName, String pesel) {
+        this.id = IdGenerator.generateClientId();
         this.firstName = firstName;
         this.lastName = lastName;
         //TODO - liczba znaków pesel
         this.pesel = pesel;
-        this.id = generatedId++;
     }
 
     /**
      * Method to compare one object with another
      *
-     * @param object
+     * @param object object to compare
      * @return
      */
+    @Override
     public boolean equals(Object object) {
         if (this == object)
             return true;
         if (object == null || getClass() != object.getClass())
             return false;
-        if (!super.equals(object))
-            return false;
 
         Client client = (Client) object;
 
-        if (!firstName.equals(client.firstName))
+        if (id != client.id)
             return false;
-        if (!lastName.equals(client.lastName))
+        if (firstName != null ? !firstName.equals(client.firstName) : client.firstName != null)
             return false;
-        if (!pesel.equals(client.pesel))
+        if (lastName != null ? !lastName.equals(client.lastName) : client.lastName != null)
             return false;
-
-        return true;
+        return pesel != null ? pesel.equals(client.pesel) : client.pesel == null;
     }
 
     /**
@@ -109,11 +108,12 @@ public class Client {
      *
      * @return
      */
+    @Override
     public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + firstName.hashCode();
-        result = 31 * result + lastName.hashCode();
-        result = 31 * result + pesel.hashCode();
+        int result = firstName != null ? firstName.hashCode() : 0;
+        result = 31 * result + (lastName != null ? lastName.hashCode() : 0);
+        result = 31 * result + (pesel != null ? pesel.hashCode() : 0);
+        result = 31 * result + id;
         return result;
     }
 }
