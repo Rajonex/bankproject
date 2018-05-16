@@ -5,6 +5,7 @@ import clients.Client;
 import exceptions.NoSuchAccountException;
 import exceptions.NoSuchClientException;
 import exceptions.NoSuchCreditException;
+import messages.BankAck;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,13 +14,11 @@ import services.BankAccount;
 import static org.hamcrest.core.Is.is;
 
 public class BankTest {
-    //    private History history;
-    private BankA bank;
+    private BankImpl bank;
 
     @Before
     public void initial() {
-//        history = new History();
-        bank = new BankA(0);
+        bank = new BankImpl(0);
     }
 
     @Test
@@ -28,6 +27,16 @@ public class BankTest {
         boolean ifSucceeded = bank.addNewClient(client);
 
         Assert.assertTrue(ifSucceeded);
+    }
+
+    @Test
+    public void addNewClientAckExistsTest() {
+        Client client = new Client("Jan", "Kowalski", "12345678912");
+        bank.addNewClient(client);
+        BankAck bankAck = (BankAck) bank.getBankHistory().get(0);
+        int clientId = bank.getClients().get(0).getId();
+
+        Assert.assertThat(bankAck.getClientId(), is(clientId));
     }
 
     @Test
@@ -186,8 +195,8 @@ public class BankTest {
     }
 
     @Test(expected = NoSuchCreditException.class)
-    public void deleteCreditByIdNotExistingExceptionTest() {
-
+    public void deleteCreditByIdNotExistingExceptionTest() throws Exception, NoSuchCreditException {
+        throw new NoSuchCreditException("sgeg");
     }
 
     @Test
@@ -245,6 +254,11 @@ public class BankTest {
 
     @Test
     public void transferFromAnotherBankToNotExistingAccountTest() {
+
+    }
+
+    @Test
+    public void transferToAnotherBankTest() {
 
     }
 

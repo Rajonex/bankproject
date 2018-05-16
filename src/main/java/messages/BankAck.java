@@ -39,4 +39,9 @@ public class BankAck extends Ack {
         super(product1, product2, typeOperation, localDate, description);
         this.clientId = clientId;
     }
+
+    @Override
+    public String toString() {
+        return "BankAck{" + "clientId=" + clientId + ", product1=" + product1 + ", product2=" + product2 + ", typeOperation=" + typeOperation + ", localDate=" + localDate + ", description='" + description + '\'' + '}';
+    }
 }

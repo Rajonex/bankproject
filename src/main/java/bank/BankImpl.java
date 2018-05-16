@@ -21,7 +21,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BankA implements Bank {
+public class BankImpl implements Bank {
     private static final int MAX_PACKAGE_AMOUNT = 5;
     private final int bankId;
     private PaymentSystemInfrastructure paymentSystemInfrastructure;
@@ -32,7 +32,7 @@ public class BankA implements Bank {
     private List<PackageToAnotherBank> packagesToSend;
     private History bankHistory;
 
-    public BankA(int id) {
+    public BankImpl(int id) {
         clients = new ArrayList<>();
         credits = new ArrayList<>();
         deposits = new ArrayList<>();
@@ -57,6 +57,10 @@ public class BankA implements Bank {
 
     public List<Product> getBankAccounts() {
         return bankAccounts;
+    }
+
+    public int getBankId() {
+        return bankId;
     }
 
     /**
@@ -363,6 +367,7 @@ public class BankA implements Bank {
         return credit;
     }
 
+
     // -------------------------------------------------------------------------------- BankAccountOperations
 
     /**
@@ -418,10 +423,25 @@ public class BankA implements Bank {
             return true;
         } else {
             PackageToAnotherBank packageToAnotherBankResponse = new PackageToAnotherBank(bankId, packageToAnotherBank.getToAccount(), packageToAnotherBank.getFromBank(), packageToAnotherBank.getFromAccount(), packageToAnotherBank.getValue(), TypeOfPackage.BOUNCED);
-            addPackageTolist(packageToAnotherBankResponse);
+            transferToAntoherBank(packageToAnotherBankResponse);
 
             return false;
         }
+    }
+
+    /**
+     * Transfering money to another bank
+     *
+     * @param packageToAnotherBank package with transfer information
+     * @return true if operation withdraw succeeded
+     * @throws NoSuchAccountException throwing when there is no account with such id
+     */
+    public boolean transferToAntoherBank(PackageToAnotherBank packageToAnotherBank) throws NoSuchAccountException {
+        if (withdraw(packageToAnotherBank.getFromAccount(), packageToAnotherBank.getValue())) {
+            addPackageTolist(packageToAnotherBank);
+            return true;
+        } else
+            return false;
     }
 
     /**
