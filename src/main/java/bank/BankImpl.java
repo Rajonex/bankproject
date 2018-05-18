@@ -15,6 +15,8 @@ import operationcredit.PayPercentageOperation;
 import operationdeposit.BreakUpDepositOperation;
 import operationdeposit.CreateDepositOperation;
 import operationdeposit.SolveDepositOperation;
+import reports.ReportBalance;
+import reports.ReportCreateMainAccountDate;
 import services.*;
 
 import java.time.LocalDate;
@@ -173,7 +175,7 @@ public class BankImpl implements Bank {
             BankAccount bankAccount = getBankAccountById(accountId);
             Client client = getClientById(bankAccount.getOwnerId());
             String description = "Client " + client + " account changed to debet account with " + limit + " limit";
-            MakeAccountDebetOperation makeAccountDebetOperation = new MakeAccountDebetOperation(bankAccount, limit, description);
+            MakeAccountDebetOperation makeAccountDebetOperation = new MakeAccountDebetOperation(this, bankAccount, limit, description);
 
             Ack ack = makeAccountDebetOperation.execute();
             bankAccount.addToHistory(ack);
@@ -720,6 +722,70 @@ public class BankImpl implements Bank {
         }
     }
 
+    // TODO - sprawdzic metode, w odpowiedni sposob obsluzyc wyjatek
+
+    /**
+     *
+     * @param bankAccountId searched BankAccount, for which we add debet
+     * @param limit max value of debet
+     * @param description description of this action
+     * @return
+     */
+    @Override
+    public boolean wrapAccountFromNormalToDebet(int bankAccountId, double limit, String description)
+    {
+        Product bankAccount = null;
+        try {
+            bankAccount = getBankAccountById(bankAccountId);
+        } catch(NoSuchAccountException er)
+        {
+            er.printStackTrace();
+        }
+        if(bankAccount != null)
+        {
+            bankAccount = new DebetAccountDecorator(limit, 0, bankAccount);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public List<Product> getBankAccountsByBalance(double balance)
+    {
+        ReportBalance reportBalance = new ReportBalance(balance);
+        for(Credit credit: credits)
+        {
+            credit.accept(reportBalance);
+        }
+        for(Deposit deposit: deposits)
+        {
+            deposit.accept(reportBalance);
+        }
+        for(Product bankAccount: bankAccounts)
+        {
+            bankAccount.accept(reportBalance);
+        }
+        return reportBalance.getProductsWithCriteria();
+    }
+
+    @Override
+    public List<Product> getBankAccountsByDate(LocalDate date)
+    {
+        ReportCreateMainAccountDate reportCreateMainAccountDate = new ReportCreateMainAccountDate(date);
+        for(Credit credit: credits)
+        {
+            credit.accept(reportCreateMainAccountDate);
+        }
+        for(Deposit deposit: deposits)
+        {
+            deposit.accept(reportCreateMainAccountDate);
+        }
+        for(Product bankAccount: bankAccounts)
+        {
+            bankAccount.accept(reportCreateMainAccountDate);
+        }
+        return reportCreateMainAccountDate.getProductsWithCriteria();
+    }
     //TODO - ack if Operation methods fail?
     //TODO - payPercentage mechanism
     //TODO - correct struktura.png file

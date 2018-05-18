@@ -1,6 +1,9 @@
 package services;
 
 
+import reports.Report;
+import reports.ReportBalance;
+
 public class Credit extends ConnectedAccount {
 
     public Credit(BankAccount bankAccount, int ownerId) {
@@ -25,5 +28,11 @@ public class Credit extends ConnectedAccount {
             return false;
         balance += value;
         return true;
+    }
+
+    @Override
+    public void accept(Report report)
+    {
+        report.visit(this);
     }
 }

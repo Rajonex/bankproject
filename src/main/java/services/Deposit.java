@@ -1,6 +1,9 @@
 package services;
 
 
+import reports.Report;
+import reports.ReportBalance;
+
 import java.time.LocalDate;
 
 public class Deposit extends ConnectedAccount {
@@ -41,5 +44,11 @@ public class Deposit extends ConnectedAccount {
      */
     public boolean isExpired() {
         return getLocalDate().plusMonths(getDuration()).isBefore(LocalDate.now());
+    }
+
+    @Override
+    public void accept(Report report)
+    {
+        report.visit(this);
     }
 }

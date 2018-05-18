@@ -2,6 +2,8 @@ package services;
 
 import interests.InterestsMechanism;
 import messages.Ack;
+import reports.Report;
+import reports.ReportBalance;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -53,5 +55,6 @@ public interface Product /*extends Cloneable*/ {
 
     public Object clone() throws CloneNotSupportedException;
 
+    public void accept(Report report);
 
 }

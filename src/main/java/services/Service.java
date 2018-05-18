@@ -5,11 +5,12 @@ import history.History;
 import interests.InterestA;
 import interests.InterestsMechanism;
 import messages.Ack;
+import reports.ReportBalance;
 
 import java.time.LocalDate;
 import java.util.List;
 
-public class Service implements Product, Cloneable {
+public abstract class Service implements Product, Cloneable {
     protected History history; // history of this service
     private int id; // id this service object
     protected boolean canBeNegative; // information if the value can be negative
@@ -152,5 +153,9 @@ public class Service implements Product, Cloneable {
         return history.returnList();
     }
 
-
+//    @Override
+//    public void accept(ReportBalance report)
+//    {
+//        report.visit(this);
+//    }
 }

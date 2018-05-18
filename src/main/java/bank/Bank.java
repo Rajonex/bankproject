@@ -7,8 +7,12 @@ import exceptions.NoSuchCreditException;
 import interests.InterestsMechanism;
 import messages.Ack;
 import messages.PackageToAnotherBank;
+import services.Product;
 
+import java.time.LocalDate;
 import java.util.List;
+
+// TODO Implement class implements Report - filter all objects type Product by method visit of Report object (use methode accept(Report report) on all objects Product) and after return Products according the criteria with method report.getProductsWithCriteria()
 
 public interface Bank {
     boolean addNewClient(Client client);
@@ -50,4 +54,10 @@ public interface Bank {
     boolean changeDepositPercentage(int depositId, double newPercentage);
 
     List<Ack> getBankHistory();
+
+    boolean wrapAccountFromNormalToDebet(int bankAccountId, double limit, String description);
+
+    List<Product> getBankAccountsByBalance(double balance);
+
+    List<Product> getBankAccountsByDate(LocalDate date);
 }

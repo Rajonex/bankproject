@@ -1,6 +1,6 @@
 package services;
 
-public class ConnectedAccount extends Service {
+public abstract class ConnectedAccount extends Service {
     protected BankAccount bankAccount;
 
     public ConnectedAccount(BankAccount bankAccount, int ownerId) {

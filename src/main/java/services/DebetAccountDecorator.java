@@ -3,6 +3,8 @@ package services;
 
 import interests.InterestsMechanism;
 import messages.Ack;
+import reports.Report;
+import reports.ReportBalance;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -122,4 +124,9 @@ public class DebetAccountDecorator implements Product, Cloneable
         return bankAccount.showHistory();
     }
 
+    @Override
+    public void accept(Report report)
+    {
+        report.visit(this);
+    }
 }
