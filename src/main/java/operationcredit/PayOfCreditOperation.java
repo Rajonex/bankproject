@@ -5,6 +5,7 @@ import messages.TypeOperation;
 import operations.Command;
 import services.BankAccount;
 import services.Credit;
+import services.Product;
 
 import java.time.LocalDate;
 
@@ -22,7 +23,7 @@ public class PayOfCreditOperation implements Command {
     public Ack execute()
     {
         double remainingValue = credit.getBalance();
-        BankAccount bankAccount = credit.getBankAccount();
+        Product bankAccount = credit.getBankAccount();
 
         if (bankAccount.decreaseBalance(remainingValue)) {
             credit.increaseBalance(remainingValue);

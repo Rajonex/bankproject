@@ -27,12 +27,12 @@ public class Deposit extends ConnectedAccount {
         this.duration = duration;
     }
 
-    public Deposit(BankAccount bankAccount, int ownerId) {
+    public Deposit(Product bankAccount, int ownerId) {
         super(bankAccount, ownerId);
         canBeNegative = false;
     }
 
-    public Deposit(BankAccount bankAccount, double balance, int ownerId) {
+    public Deposit(Product bankAccount, double balance, int ownerId) {
         super(bankAccount, balance, ownerId);
         canBeNegative = false;
     }

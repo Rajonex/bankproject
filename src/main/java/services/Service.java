@@ -10,7 +10,7 @@ import reports.ReportBalance;
 import java.time.LocalDate;
 import java.util.List;
 
-public abstract class Service implements Product, Cloneable {
+public abstract class Service implements Product {
     protected History history; // history of this service
     private int id; // id this service object
     protected boolean canBeNegative; // information if the value can be negative
@@ -42,10 +42,6 @@ public abstract class Service implements Product, Cloneable {
         interestsMechanism = new InterestA();
     }
 
-    public Object clone() throws CloneNotSupportedException {
-// tutaj: specyficzne operacje związane z klonowaniem
-        return super.clone();
-    }
 
 
     @Override

@@ -14,21 +14,17 @@ public class DebetAccountDecorator implements Product, Cloneable
     private double debet;
     private Product bankAccount;
 
-    public Object clone() throws CloneNotSupportedException {
-// TODO - tutaj: specyficzne operacje związane z klonowaniem
-        return super.clone();
-    }
-
 
     public DebetAccountDecorator(double limit, double debet, Product bankAccount){
         this.limit = limit;
         this.debet = debet;
-        try {
-            this.bankAccount = (Product) bankAccount.clone();
-        } catch(CloneNotSupportedException er)
-        {
-            er.printStackTrace();
-        }
+        this.bankAccount = bankAccount;
+//        try {
+//            this.bankAccount = (Product) bankAccount.clone();
+//        } catch(CloneNotSupportedException er)
+//        {
+//            er.printStackTrace();
+//        }
     }
 
     @Override

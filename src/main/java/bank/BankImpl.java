@@ -276,6 +276,14 @@ public class BankImpl implements Bank {
             return (BankAccount) product;
     }
 
+    public Product getProductById(int accountId)throws NoSuchAccountException {
+        Product product = bankAccounts.stream().filter(pr -> pr.getId() == accountId).findFirst().orElse(null);
+        if (product == null)
+            throw new NoSuchAccountException("There is no account with id=" + accountId);
+        else
+            return product;
+    }
+
     // -------------------------------------------------------------------------------- Deposit
 
     /**
@@ -734,16 +742,33 @@ public class BankImpl implements Bank {
      */
     @Override
     public boolean wrapAccountFromNormalToDebet(int bankAccountId, double limit, String description) {
-        Product bankAccount = null;
-        try {
-            bankAccount = getBankAccountById(bankAccountId);
-        } catch (NoSuchAccountException er) {
-            er.printStackTrace();
+//        Product bankAccount = null;
+        for(int i = 0; i<bankAccounts.size(); i++)
+        {
+            if(bankAccounts.get(i).getId()==bankAccountId)
+            {
+                bankAccounts.set(i, new DebetAccountDecorator(limit, 0, bankAccounts.get(i)));
+                return true;
+            }
         }
-        if (bankAccount != null) {
-            bankAccount = new DebetAccountDecorator(limit, 0, bankAccount);
-            return true;
-        }
+//        for(Product product: bankAccounts)
+//        {
+//            if(product.getId() == bankAccountId)
+//            {
+//                product = new DebetAccountDecorator(limit, 0, product);
+//                return true;
+//            }
+////
+//        }
+//        try {
+//            bankAccount = getBankAccountById(bankAccountId);
+//        } catch (NoSuchAccountException er) {
+//            er.printStackTrace();
+//        }
+//        if (bankAccount != null) {
+//            bankAccount = new DebetAccountDecorator(limit, 0, bankAccount);
+//            return true;
+//        }
         return false;
     }
 

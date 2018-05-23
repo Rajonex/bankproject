@@ -4,12 +4,13 @@ import messages.Ack;
 import messages.TypeOperation;
 import operations.Command;
 import services.BankAccount;
+import services.Product;
 
 import java.time.LocalDate;
 
 public class TransferInterbankOperation implements Command {
     private int bankAccountFrom;
-    private BankAccount bankAccountTo;
+    private Product bankAccountTo;
     private double value;
     private String description;
 
@@ -21,7 +22,7 @@ public class TransferInterbankOperation implements Command {
      * @param value
      * @param description
      */
-    public TransferInterbankOperation(int bankAccountFrom, BankAccount getBankAccountTo, double value, String description) {
+    public TransferInterbankOperation(int bankAccountFrom, Product getBankAccountTo, double value, String description) {
         this.bankAccountFrom = bankAccountFrom;
         this.bankAccountTo = getBankAccountTo;
         this.value = value;

@@ -4,16 +4,17 @@ import messages.Ack;
 import messages.TypeOperation;
 import operations.Command;
 import services.BankAccount;
+import services.Product;
 
 import java.time.LocalDate;
 
 public class PayPercentageOperation implements Command {
 
 
-    BankAccount bankAccount;
+    Product bankAccount;
     String description;
 
-    public PayPercentageOperation(BankAccount bankAccount, String description) {
+    public PayPercentageOperation(Product bankAccount, String description) {
         this.bankAccount = bankAccount;
         this.description = description;
     }

@@ -5,18 +5,19 @@ import messages.TypeOperation;
 import operations.Command;
 import services.BankAccount;
 import services.Credit;
+import services.Product;
 
 import java.time.LocalDate;
 
 public class CreateCreditOperation implements Command {
 
 
-    BankAccount bankAccount;
+    Product bankAccount;
     double balance;
     int ownerId;
     String description;
 
-    public CreateCreditOperation(BankAccount bankAccount, double balance, int ownerId, String description) {
+    public CreateCreditOperation(Product bankAccount, double balance, int ownerId, String description) {
         this.bankAccount = bankAccount;
         this.balance = balance;
         this.ownerId = ownerId;

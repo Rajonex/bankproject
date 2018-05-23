@@ -5,18 +5,19 @@ import messages.TypeOperation;
 import operations.Command;
 import services.BankAccount;
 import services.Deposit;
+import services.Product;
 
 import java.time.LocalDate;
 
 public class CreateDepositOperation implements Command {
 
 
-    BankAccount bankAccount;
+    Product bankAccount;
     double value;
     int ownerId;
     String description;
 
-    public CreateDepositOperation(BankAccount bankAccount, double value, int ownerId, String description) {
+    public CreateDepositOperation(Product bankAccount, double value, int ownerId, String description) {
         this.bankAccount = bankAccount;
         this.value = value;
         this.ownerId = ownerId;

@@ -52,8 +52,6 @@ public interface Product /*extends Cloneable*/ {
 
     public List<Ack> showHistory();
 
-    public Object clone() throws CloneNotSupportedException;
-
     public void accept(Report report);
 
 }
