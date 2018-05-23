@@ -18,6 +18,7 @@ import reports.ReportBalance;
 import reports.ReportCreateMainAccountDate;
 import services.*;
 
+import java.lang.reflect.Type;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -144,12 +145,11 @@ public class BankImpl implements Bank {
     @Override
     public boolean addNewNormalAccount(int ownerId) throws NoSuchClientException {
         String description = "Client " + getClientById(ownerId) + " added new account";
-        CreateNormalAccountOperation createNormalAccountOperation = new CreateNormalAccountOperation(ownerId, description);
-        Ack ack = createNormalAccountOperation.execute();
         BankAccount normalAccount = new BankAccount(ownerId);
         boolean ifSucceeded = bankAccounts.add(normalAccount);
 
         if (ifSucceeded) {
+            Ack ack = new Ack(ownerId, normalAccount.getId(), TypeOperation.CREATE_ACCOUNT, LocalDate.now(), description);
             bankHistory.add(ack);
             return true;
         }
@@ -192,11 +192,10 @@ public class BankImpl implements Bank {
         String description = "Client " + getClientById(ownerId) + " added new debet account with " + limit + " and " + percentage * 100 + " percentage";
         BankAccount bankAccount = new BankAccount(ownerId);
         DebetAccountDecorator debetAccountDecorator = new DebetAccountDecorator(limit, debet, bankAccount);
-        CreateDebetAccountOperation createDebetAccountOperation = new CreateDebetAccountOperation(bankAccount, debet, limit, description);
         boolean ifSucceeded = bankAccounts.add(debetAccountDecorator);
 
         if (ifSucceeded) {
-            Ack ack = createDebetAccountOperation.execute();
+            Ack ack = new Ack(ownerId, debetAccountDecorator.getId(), TypeOperation.CREATE_ACCOUNT, LocalDate.now(), description);
             bankAccount.addToHistory(ack);
             bankAccount.addToHistory(ack);
             bankHistory.add(ack);
@@ -692,9 +691,10 @@ public class BankImpl implements Bank {
      */
     @Override
     public boolean wrapAccountFromNormalToDebet(int bankAccountId, double limit, String description) {
-//        Product bankAccount = null;
-        for (int i = 0; i < bankAccounts.size(); i++) {
-            if (bankAccounts.get(i).getId() == bankAccountId) {
+        for(int i = 0; i<bankAccounts.size(); i++)
+        {
+            if(bankAccounts.get(i).getId()==bankAccountId)
+            {
                 bankAccounts.set(i, new DebetAccountDecorator(limit, 0, bankAccounts.get(i)));
                 return true;
             }
