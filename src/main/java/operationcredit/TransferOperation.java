@@ -25,7 +25,6 @@ public class TransferOperation implements Command {
     public Ack execute()
     {
         Product bankAccount = credit.getBankAccount();
-
         if (credit.increaseBalance(value)) {
             if (bankAccount.decreaseBalance(value)) {
 

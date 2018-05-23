@@ -11,6 +11,7 @@ import messages.*;
 import operationbank.*;
 import operationcredit.CreateCreditOperation;
 import operationcredit.PayOfCreditOperation;
+import operationcredit.TransferOperation;
 import operationdeposit.BreakUpDepositOperation;
 import operationdeposit.CreateDepositOperation;
 import operationdeposit.SolveDepositOperation;
@@ -18,7 +19,6 @@ import reports.ReportBalance;
 import reports.ReportCreateMainAccountDate;
 import services.*;
 
-import java.lang.reflect.Type;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -314,8 +314,7 @@ public class BankImpl implements Bank {
         String description = "New " + client.getFirstName() + " " + client.getLastName() + " credit with " + balance + " and " + percentage * 100 + " created";
 
         CreateCreditOperation createCreditOperation = new CreateCreditOperation(bankAccount, balance, ownerId, description);
-
-        Credit credit = new Credit(bankAccount, balance, ownerId);
+        Credit credit = new Credit(bankAccount, balance * (-1), ownerId);
         boolean ifSucceeded = credits.add(credit);
 
         if (ifSucceeded) {
@@ -505,9 +504,8 @@ public class BankImpl implements Bank {
     public boolean payCreditRate(int creditId, double value) throws NoSuchClientException, NoSuchCreditException {
         Credit credit = getCreditById(creditId);
         String description = "rate transferred to credit's account with id " + creditId + ", value = " + value;
-        PayOfCreditOperation payOfCreditOperation = new PayOfCreditOperation(credit, description);
-        Ack ack = payOfCreditOperation.execute();
-
+        TransferOperation transferOperation = new TransferOperation(credit, value, description);
+        Ack ack = transferOperation.execute();
         if (ack != null) {
             bankHistory.add(ack);
             return true;
@@ -515,8 +513,8 @@ public class BankImpl implements Bank {
             // credit is payed off
             Client client = getClientById(credit.getOwnerId());
             String creditPayedOffDescription = "credit of client " + client + " is payed off and can be removed";
-
-            ack = new Ack(creditId, null, TypeOperation.DELETE_CREDIT, LocalDate.now(), creditPayedOffDescription);
+            PayOfCreditOperation payOfCreditOperation = new PayOfCreditOperation(credit, creditPayedOffDescription);
+            ack = payOfCreditOperation.execute();
             bankHistory.add(ack);
             deleteCreditById(creditId);
             return true;

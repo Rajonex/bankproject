@@ -56,7 +56,8 @@ public class BankTest {
     @Test
     public void addNewClientExistingPeselTest() {
         bankA.addNewClient(clientA);
-        boolean ifSucceeded = bankA.addNewClient(clientB);
+        Client clientWithSamePesel = new Client("Test", "Test", clientA.getPesel());
+        boolean ifSucceeded = bankA.addNewClient(clientWithSamePesel);
 
         Assert.assertFalse(ifSucceeded);
     }
@@ -325,12 +326,13 @@ public class BankTest {
     public void payCreditRateTest() throws NoSuchClientException, NoSuchAccountException, NoSuchCreditException {
         bankA.addNewClient(clientA);
         bankA.addNewNormalAccount(clientA.getId());
-        bankA.addNewCredit(bankA.getBankAccounts().get(0).getId(), -10_000, clientA.getId(), 5);
+        bankA.addNewCredit(bankA.getBankAccounts().get(0).getId(), 1_000, clientA.getId(), 5);
         Credit credit = bankA.getCredits().get(0);
-        boolean ifSucceeded = bankA.payCreditRate(bankA.getCredits().get(0).getId(), 3_000);
+        boolean ifSucceeded = bankA.payCreditRate(bankA.getCredits().get(0).getId(), 300);
 
         Assert.assertTrue(ifSucceeded);
-        Assert.assertThat(credit.getBalance(), is(-7_000));
+        Assert.assertThat(credit.getBalance(), is(-700.0));
+        Assert.assertThat(credit.getBankAccount().getBalance(), is(700.0));
     }
 
     @Test(expected = NoSuchCreditException.class)
