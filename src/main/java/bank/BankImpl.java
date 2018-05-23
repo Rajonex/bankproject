@@ -11,7 +11,6 @@ import messages.*;
 import operationbank.*;
 import operationcredit.CreateCreditOperation;
 import operationcredit.PayOfCreditOperation;
-import operationcredit.PayPercentageOperation;
 import operationdeposit.BreakUpDepositOperation;
 import operationdeposit.CreateDepositOperation;
 import operationdeposit.SolveDepositOperation;
@@ -144,20 +143,16 @@ public class BankImpl implements Bank {
      */
     @Override
     public boolean addNewNormalAccount(int ownerId) throws NoSuchClientException {
-        // check if ownerId is correct and if client with this id exists
-        if (ownerId >= 0 && ifClientExists(ownerId)) {
-            String description = "Client " + getClientById(ownerId) + " added new account";
-            CreateNormalAccountOperation createNormalAccountOperation = new CreateNormalAccountOperation(ownerId, description);
-            Ack ack = createNormalAccountOperation.execute();
-            BankAccount normalAccount = new BankAccount(ownerId);
-            boolean ifSucceeded = bankAccounts.add(normalAccount);
+        String description = "Client " + getClientById(ownerId) + " added new account";
+        CreateNormalAccountOperation createNormalAccountOperation = new CreateNormalAccountOperation(ownerId, description);
+        Ack ack = createNormalAccountOperation.execute();
+        BankAccount normalAccount = new BankAccount(ownerId);
+        boolean ifSucceeded = bankAccounts.add(normalAccount);
 
-            if (ifSucceeded) {
-                bankHistory.add(ack);
-                return true;
-            }
+        if (ifSucceeded) {
+            bankHistory.add(ack);
+            return true;
         }
-
         return false;
     }
 
@@ -171,19 +166,16 @@ public class BankImpl implements Bank {
      */
     @Override
     public boolean makeAccountDebet(int accountId, double limit, double debet) throws NoSuchClientException, NoSuchAccountException {
-        if (ifAccountExists(accountId)) {
-            BankAccount bankAccount = getBankAccountById(accountId);
-            Client client = getClientById(bankAccount.getOwnerId());
-            String description = "Client " + client + " account changed to debet account with " + limit + " limit";
-            MakeAccountDebetOperation makeAccountDebetOperation = new MakeAccountDebetOperation(this, bankAccount, limit, description);
+        BankAccount bankAccount = (BankAccount) getProductById(accountId);
+        Client client = getClientById(bankAccount.getOwnerId());
+        String description = "Client " + client + " account changed to debet account with " + limit + " limit";
+        MakeAccountDebetOperation makeAccountDebetOperation = new MakeAccountDebetOperation(this, bankAccount, limit, description);
 
-            Ack ack = makeAccountDebetOperation.execute();
-            bankAccount.addToHistory(ack);
-            bankHistory.add(ack);
-            return true;
-        }
+        Ack ack = makeAccountDebetOperation.execute();
+        bankAccount.addToHistory(ack);
+        bankHistory.add(ack);
+        return true;
 
-        return false;
     }
 
     /**
@@ -197,22 +189,19 @@ public class BankImpl implements Bank {
     @Override
     public boolean addNewDebetAccount(int ownerId, double limit, double debet, double percentage) throws NoSuchClientException {
         // check if ownerId is correct and if client with this id exists
-        if (ownerId >= 0 && ifClientExists(ownerId)) {
-            String description = "Client " + getClientById(ownerId) + " added new debet account with " + limit + " and " + percentage * 100 + " percentage";
-            BankAccount bankAccount = new BankAccount(ownerId);
-            DebetAccountDecorator debetAccountDecorator = new DebetAccountDecorator(limit, debet, bankAccount);
-            CreateDebetAccountOperation createDebetAccountOperation = new CreateDebetAccountOperation(bankAccount, debet, limit, description);
-            boolean ifSucceeded = bankAccounts.add(debetAccountDecorator);
+        String description = "Client " + getClientById(ownerId) + " added new debet account with " + limit + " and " + percentage * 100 + " percentage";
+        BankAccount bankAccount = new BankAccount(ownerId);
+        DebetAccountDecorator debetAccountDecorator = new DebetAccountDecorator(limit, debet, bankAccount);
+        CreateDebetAccountOperation createDebetAccountOperation = new CreateDebetAccountOperation(bankAccount, debet, limit, description);
+        boolean ifSucceeded = bankAccounts.add(debetAccountDecorator);
 
-            if (ifSucceeded) {
-                Ack ack = createDebetAccountOperation.execute();
-                bankAccount.addToHistory(ack);
-                bankAccount.addToHistory(ack);
-                bankHistory.add(ack);
-                return true;
-            }
+        if (ifSucceeded) {
+            Ack ack = createDebetAccountOperation.execute();
+            bankAccount.addToHistory(ack);
+            bankAccount.addToHistory(ack);
+            bankHistory.add(ack);
+            return true;
         }
-
         return false;
     }
 
@@ -268,12 +257,12 @@ public class BankImpl implements Bank {
      * @param accountId bankAccount's unique id
      * @return bankAccount with specified in param id
      */
-    public BankAccount getBankAccountById(int accountId) throws NoSuchAccountException {
+    public Product getProductById(int accountId) throws NoSuchAccountException {
         Product product = bankAccounts.stream().filter(pr -> pr.getId() == accountId).findFirst().orElse(null);
         if (product == null)
             throw new NoSuchAccountException("There is no account with id=" + accountId);
         else
-            return (BankAccount) product;
+            return product;
     }
 
     // -------------------------------------------------------------------------------- Deposit
@@ -290,24 +279,21 @@ public class BankImpl implements Bank {
     @Override
     public boolean addNewDeposit(int accountId, double value, int ownerId, double percentage) throws NoSuchClientException, NoSuchAccountException {
         // check if client and its account exists
-        if (ifClientAccountExists(ownerId)) {
-            Client client = getClientById(ownerId);
-            BankAccount bankAccount = getBankAccountById(accountId);
-            String description = "New " + client.getFirstName() + " " + client.getLastName() + " deposit with " + value + " and " + percentage * 100 + " created";
+        Client client = getClientById(ownerId);
+        BankAccount bankAccount = (BankAccount) getProductById(accountId);
+        String description = "New " + client.getFirstName() + " " + client.getLastName() + " deposit with " + value + " and " + percentage * 100 + " created";
 
-            CreateDepositOperation createDepositOperation = new CreateDepositOperation(bankAccount, value, ownerId, description);
+        CreateDepositOperation createDepositOperation = new CreateDepositOperation(bankAccount, value, ownerId, description);
 
-            Deposit deposit = new Deposit(bankAccount, value, ownerId);
-            boolean ifSucceeded = deposits.add(deposit);
+        Deposit deposit = new Deposit(bankAccount, value, ownerId);
+        boolean ifSucceeded = deposits.add(deposit);
 
-            if (ifSucceeded) {
-                Ack ack = createDepositOperation.execute();
-                bankHistory.add(ack);
+        if (ifSucceeded) {
+            Ack ack = createDepositOperation.execute();
+            bankHistory.add(ack);
 
-                return true;
-            }
+            return true;
         }
-
         return false;
     }
 
@@ -324,25 +310,21 @@ public class BankImpl implements Bank {
      */
     @Override
     public boolean addNewCredit(int accountId, double balance, int ownerId, double percentage) throws NoSuchClientException, NoSuchAccountException {
-        // check if client and its account exists
-        if (ifClientAccountExists(ownerId)) {
-            Client client = getClientById(ownerId);
-            BankAccount bankAccount = getBankAccountById(accountId);
-            String description = "New " + client.getFirstName() + " " + client.getLastName() + " credit with " + balance + " and " + percentage * 100 + " created";
+        Client client = getClientById(ownerId);
+        BankAccount bankAccount = (BankAccount) getProductById(accountId);
+        String description = "New " + client.getFirstName() + " " + client.getLastName() + " credit with " + balance + " and " + percentage * 100 + " created";
 
-            CreateCreditOperation createCreditOperation = new CreateCreditOperation(bankAccount, balance, ownerId, description);
+        CreateCreditOperation createCreditOperation = new CreateCreditOperation(bankAccount, balance, ownerId, description);
 
-            Credit credit = new Credit(bankAccount, balance, ownerId);
-            boolean ifSucceeded = credits.add(credit);
+        Credit credit = new Credit(bankAccount, balance, ownerId);
+        boolean ifSucceeded = credits.add(credit);
 
-            if (ifSucceeded) {
-                Ack ack = createCreditOperation.execute();
-                bankHistory.add(ack);
+        if (ifSucceeded) {
+            Ack ack = createCreditOperation.execute();
+            bankHistory.add(ack);
 
-                return true;
-            }
+            return true;
         }
-
         return false;
     }
 
@@ -382,21 +364,16 @@ public class BankImpl implements Bank {
      */
     @Override
     public boolean transfer(int accountFromId, int accountToId, double value) throws NoSuchAccountException {
-        // check if accountFrom exists in bank
-        if (ifAccountExists(accountFromId) && ifAccountExists(accountToId)) {
-            BankAccount bankAccountFrom = getBankAccountById(accountFromId);
-            BankAccount bankAccountTo = getBankAccountById(accountToId);
+        BankAccount bankAccountFrom = (BankAccount) getProductById(accountFromId);
+        BankAccount bankAccountTo = (BankAccount) getProductById(accountToId);
 
-            String description = "money successfully transferred from account: " + bankAccountFrom + " to: " + bankAccountTo + ", with amount of " + value;
-            TransferFromToOperation transferFromToOperation = new TransferFromToOperation(bankAccountFrom, bankAccountTo, value, description);
+        String description = "money successfully transferred from account: " + bankAccountFrom + " to: " + bankAccountTo + ", with amount of " + value;
+        TransferFromToOperation transferFromToOperation = new TransferFromToOperation(bankAccountFrom, bankAccountTo, value, description);
 
-            Ack ack = transferFromToOperation.execute();
-            bankHistory.add(ack);
+        Ack ack = transferFromToOperation.execute();
+        bankHistory.add(ack);
 
-            return true;
-        }
-
-        return false;
+        return true;
     }
 
     /**
@@ -408,7 +385,7 @@ public class BankImpl implements Bank {
     @Override
     public boolean transferFromAnotherBank(PackageToAnotherBank packageToAnotherBank) throws NoSuchAccountException {
         if (ifAccountExists(packageToAnotherBank.getToAccount())) {
-            BankAccount bankAccount = getBankAccountById(packageToAnotherBank.getToAccount());
+            BankAccount bankAccount = (BankAccount) getProductById(packageToAnotherBank.getToAccount());
             if (packageToAnotherBank.getTypeOfPackage() == TypeOfPackage.NORMAL) {
                 TransferInterbankOperation transferInterbankOperation = new TransferInterbankOperation(packageToAnotherBank.getFromAccount(), bankAccount, packageToAnotherBank.getValue(), "Interbank transfer");
                 transferInterbankOperation.execute();
@@ -456,7 +433,7 @@ public class BankImpl implements Bank {
     @Override
     public boolean payment(int accountId, double value) throws NoSuchAccountException {
         if (ifAccountExists(accountId)) {
-            BankAccount bankAccount = getBankAccountById(accountId);
+            BankAccount bankAccount = (BankAccount) getProductById(accountId);
 
             String description = "money successfully transferred to account: " + accountId + ", with amount of " + value;
             PaymentOperation paymentOperation = new PaymentOperation(bankAccount, value, description);
@@ -480,7 +457,7 @@ public class BankImpl implements Bank {
     @Override
     public boolean withdraw(int accountId, double value) throws NoSuchAccountException {
         if (ifAccountExists(accountId)) {
-            BankAccount bankAccount = getBankAccountById(accountId);
+            BankAccount bankAccount = (BankAccount) getProductById(accountId);
 
             String description = "money successfully withdrawn from account: " + accountId + ", with amount of " + value;
             WithdrawOperation withdrawOperation = new WithdrawOperation(bankAccount, value, description);
@@ -503,18 +480,16 @@ public class BankImpl implements Bank {
      */
     public boolean deleteCreditById(int id) throws NoSuchClientException, NoSuchCreditException {
         // check if client exists
-        if (ifCreditExists(id)) {
-            Credit credit = getCreditById(id);
-            Client client = getClientById(credit.getOwnerId());
-            boolean ifSucceeded = credits.removeIf(cr -> cr.getId() == id);
+        Credit credit = getCreditById(id);
+        Client client = getClientById(credit.getOwnerId());
+        boolean ifSucceeded = credits.removeIf(cr -> cr.getId() == id);
 
-            if (ifSucceeded) {
-                // creating ack
-                Ack ack = new BankAck(credit.getId(), null, id, TypeOperation.DELETE_CREDIT, LocalDate.now(), "Credit of id: " + id + " of client " + client + " deleted");
-                bankHistory.add(ack);
+        if (ifSucceeded) {
+            // creating ack
+            Ack ack = new BankAck(credit.getId(), null, id, TypeOperation.DELETE_CREDIT, LocalDate.now(), "Credit of id: " + id + " of client " + client + " deleted");
+            bankHistory.add(ack);
 
-                return true;
-            }
+            return true;
         }
 
         return false;
@@ -529,31 +504,25 @@ public class BankImpl implements Bank {
      */
     @Override
     public boolean payCreditRate(int creditId, double value) throws NoSuchClientException, NoSuchCreditException {
-        if (ifCreditExists(creditId)) {
-            Credit credit = getCreditById(creditId);
-            String description = "rate transferred to credit's account with id " + creditId + ", value = " + value;
-            PayPercentageOperation payPercentageOperation = new PayPercentageOperation(credit, description);
-            boolean ifSucceeded = PayPercentageOperation.payPercentage(credit, description);
+        Credit credit = getCreditById(creditId);
+        String description = "rate transferred to credit's account with id " + creditId + ", value = " + value;
+        PayOfCreditOperation payOfCreditOperation = new PayOfCreditOperation(credit, description);
+        Ack ack = payOfCreditOperation.execute();
 
-            if (ifSucceeded) {
-                // credit still must be payed by client
-                Ack ack = payPercentageOperation.execute();
-                bankHistory.add(ack);
-                return true;
-            } else {
-                // credit is payed off
-                Client client = getClientById(credit.getOwnerId());
-                String creditPayedOffDescription = "credit of client " + client + " is payed off and can be removed";
-                PayOfCreditOperation payOfCreditOperation = new PayOfCreditOperation(credit, creditPayedOffDescription);
+        if (ack != null) {
+            bankHistory.add(ack);
+            return true;
+        } else {
+            // credit is payed off
+            Client client = getClientById(credit.getOwnerId());
+            String creditPayedOffDescription = "credit of client " + client + " is payed off and can be removed";
 
-                Ack ack = payOfCreditOperation.execute();
-                bankHistory.add(ack);
-                deleteCreditById(creditId);
-                return true;
-            }
+            ack = new Ack(creditId, null, TypeOperation.DELETE_CREDIT, LocalDate.now(), creditPayedOffDescription);
+            bankHistory.add(ack);
+            deleteCreditById(creditId);
+            return true;
         }
 
-        return false;
     }
 
     /**
@@ -596,18 +565,15 @@ public class BankImpl implements Bank {
      * @return true if operation succeeded
      */
     private boolean deleteDepositById(int id) throws NoSuchClientException {
-        // check if client exists
-        if (ifDepositExists(id)) {
-            Deposit deposit = getDepositById(id);
-            Client client = getClientById(deposit.getOwnerId());
-            boolean ifSucceeded = deposits.removeIf(dp -> dp.getId() == id);
-            if (ifSucceeded) {
-                // creating ack
-                Ack ack = new BankAck(deposit.getId(), null, id, TypeOperation.DELETE_DEPOSIT, LocalDate.now(), "Deposit of id: " + id + " of client " + client + " deleted");
-                bankHistory.add(ack);
+        Deposit deposit = getDepositById(id);
+        Client client = getClientById(deposit.getOwnerId());
+        boolean ifSucceeded = deposits.removeIf(dp -> dp.getId() == id);
+        if (ifSucceeded) {
+            // creating ack
+            Ack ack = new BankAck(deposit.getId(), null, id, TypeOperation.DELETE_DEPOSIT, LocalDate.now(), "Deposit of id: " + id + " of client " + client + " deleted");
+            bankHistory.add(ack);
 
-                return true;
-            }
+            return true;
         }
 
         return false;
@@ -622,32 +588,28 @@ public class BankImpl implements Bank {
      */
     @Override
     public boolean withdrawFromDeposit(int depositId) throws NoSuchClientException {
-        // checking if deposit exists in bank
-        if (ifDepositExists(depositId)) {
-            Deposit deposit = getDepositById(depositId);
-            Client client = getClientById(deposit.getOwnerId());
-            if (deposit.isExpired()) {
-                // deposit has expired
-                String description = "deposit " + depositId + " of client " + client + " is solved";
-                SolveDepositOperation solveDepositOperation = new SolveDepositOperation(deposit, description);
+        Deposit deposit = getDepositById(depositId);
+        Client client = getClientById(deposit.getOwnerId());
+        if (deposit.isExpired()) {
+            // deposit has expired
+            String description = "deposit " + depositId + " of client " + client + " is solved";
+            SolveDepositOperation solveDepositOperation = new SolveDepositOperation(deposit, description);
 
-                Ack ack = solveDepositOperation.execute();
-                bankHistory.add(ack);
+            Ack ack = solveDepositOperation.execute();
+            bankHistory.add(ack);
 
-                return true;
-            } else {
-                //deposit will be broken up
-                String description = "deposit " + depositId + " of client " + client + " is broken up";
-                BreakUpDepositOperation breakUpDepositOperation = new BreakUpDepositOperation(deposit, description);
+            return true;
+        } else {
+            //deposit will be broken up
+            String description = "deposit " + depositId + " of client " + client + " is broken up";
+            BreakUpDepositOperation breakUpDepositOperation = new BreakUpDepositOperation(deposit, description);
 
-                Ack ack = breakUpDepositOperation.execute();
-                bankHistory.add(ack);
+            Ack ack = breakUpDepositOperation.execute();
+            bankHistory.add(ack);
 
-                return true;
-            }
+            return true;
         }
 
-        return false;
     }
 
     /**
@@ -659,18 +621,14 @@ public class BankImpl implements Bank {
      */
     @Override
     public boolean changeAccountPercentage(int accountId, InterestsMechanism interestsMechanism) throws NoSuchAccountException {
-        if (ifAccountExists(accountId)) {
-            BankAccount bankAccount = getBankAccountById(accountId);
-            InterestsMechanism newInterestMechanism = interestsMechanism;
-            String description = "Amount of account (" + accountId + ") percentage changed from " + bankAccount.getInterestsMechanism() + " to " + newInterestMechanism;
-            ChangePercentageOperation changePercentageOperation = new ChangePercentageOperation(bankAccount, interestsMechanism, description);
+        BankAccount bankAccount = (BankAccount) getProductById(accountId);
+        InterestsMechanism newInterestMechanism = interestsMechanism;
+        String description = "Amount of account (" + accountId + ") percentage changed from " + bankAccount.getInterestsMechanism() + " to " + newInterestMechanism;
+        ChangePercentageOperation changePercentageOperation = new ChangePercentageOperation(bankAccount, interestsMechanism, description);
 
-            Ack ack = changePercentageOperation.execute();
-            bankHistory.add(ack);
-            return true;
-        }
-
-        return false;
+        Ack ack = changePercentageOperation.execute();
+        bankHistory.add(ack);
+        return true;
     }
 
     /**
@@ -734,15 +692,12 @@ public class BankImpl implements Bank {
      */
     @Override
     public boolean wrapAccountFromNormalToDebet(int bankAccountId, double limit, String description) {
-        Product bankAccount = null;
-        try {
-            bankAccount = getBankAccountById(bankAccountId);
-        } catch (NoSuchAccountException er) {
-            er.printStackTrace();
-        }
-        if (bankAccount != null) {
-            bankAccount = new DebetAccountDecorator(limit, 0, bankAccount);
-            return true;
+//        Product bankAccount = null;
+        for (int i = 0; i < bankAccounts.size(); i++) {
+            if (bankAccounts.get(i).getId() == bankAccountId) {
+                bankAccounts.set(i, new DebetAccountDecorator(limit, 0, bankAccounts.get(i)));
+                return true;
+            }
         }
         return false;
     }
@@ -788,8 +743,4 @@ public class BankImpl implements Bank {
         }
         return reportCreateMainAccountDate.getProductsWithCriteria();
     }
-    //TODO - ack if Operation methods fail?
-    //TODO - payPercentage mechanism
-    //TODO - correct struktura.png file
-    //TODO - own exceptions
 }

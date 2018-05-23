@@ -45,7 +45,7 @@ public class PaymentSystemInfrastructureTest {
         PackageToAnotherBank packageToAnotherBank = new PackageToAnotherBank(0, 0,  bankImpl.getBankId(), accountClientId, 2_000, TypeOfPackage.NORMAL);
         listOfPackages.add(packageToAnotherBank);
 
-        BankAccount bankAccount = bankImpl.getBankAccountById(accountClientId);
+        BankAccount bankAccount = (BankAccount)bankImpl.getProductById(accountClientId);
 
         paymentSystemInfrastructure.sendPackages(listOfPackages);
         Assert.assertThat(bankAccount.getBalance(), is((double)2_000));

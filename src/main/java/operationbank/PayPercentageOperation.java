@@ -3,17 +3,17 @@ package operationbank;
 import messages.Ack;
 import messages.TypeOperation;
 import operations.Command;
-import services.BankAccount;
+import services.Product;
 
 import java.time.LocalDate;
 
 public class PayPercentageOperation implements Command {
 
 
-    BankAccount bankAccount;
+    Product bankAccount;
     String description;
 
-    public PayPercentageOperation(BankAccount bankAccount, String description) {
+    public PayPercentageOperation(Product bankAccount, String description) {
         this.bankAccount = bankAccount;
         this.description = description;
     }
@@ -21,14 +21,14 @@ public class PayPercentageOperation implements Command {
     @Override
     public Ack execute()
     {
-            double balance = bankAccount.getBalance();
-            if (balance > 0) {
-                bankAccount.increaseBalance(bankAccount.getInterests());
-                Ack ack = new Ack(bankAccount.getId(), null, TypeOperation.PAY_PERCENTAGE, LocalDate.now(), description);
-                bankAccount.addToHistory(ack);
-                return ack;
-            }
+        double balance = bankAccount.getBalance();
+        if (balance > 0) {
+            bankAccount.increaseBalance(bankAccount.getInterests());
+            Ack ack = new Ack(bankAccount.getId(), null, TypeOperation.PAY_PERCENTAGE, LocalDate.now(), description);
+            bankAccount.addToHistory(ack);
+            return ack;
+        }
 
-            return null;
+        return null;
     }
 }

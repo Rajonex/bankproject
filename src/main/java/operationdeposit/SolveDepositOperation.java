@@ -3,8 +3,8 @@ package operationdeposit;
 import messages.Ack;
 import messages.TypeOperation;
 import operations.Command;
-import services.BankAccount;
 import services.Deposit;
+import services.Product;
 
 import java.time.LocalDate;
 
@@ -22,7 +22,7 @@ public class SolveDepositOperation implements Command {
     @Override
     public Ack execute()
     {
-        BankAccount bankAccount = deposit.getBankAccount();
+        Product bankAccount = deposit.getBankAccount();
         double value = deposit.getBalance();
 
         if (deposit.decreaseBalance(value)) {

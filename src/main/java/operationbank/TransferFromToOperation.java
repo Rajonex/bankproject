@@ -3,18 +3,18 @@ package operationbank;
 import messages.Ack;
 import messages.TypeOperation;
 import operations.Command;
-import services.BankAccount;
+import services.Product;
 
 import java.time.LocalDate;
 
 public class TransferFromToOperation implements Command
 {
-    private BankAccount bankAccountFrom;
-    private BankAccount bankAccountTo;
+    private Product bankAccountFrom;
+    private Product bankAccountTo;
     private double value;
     private String description;
 
-    public TransferFromToOperation(BankAccount bankAccountFrom, BankAccount getBankAccountTo, double value, String description)
+    public TransferFromToOperation(Product bankAccountFrom, Product getBankAccountTo, double value, String description)
     {
         this.bankAccountFrom = bankAccountFrom;
         this.bankAccountTo = getBankAccountTo;

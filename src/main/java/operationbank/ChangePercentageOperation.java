@@ -4,17 +4,17 @@ import interests.InterestsMechanism;
 import messages.Ack;
 import messages.TypeOperation;
 import operations.Command;
-import services.BankAccount;
+import services.Product;
 
 import java.time.LocalDate;
 
 public class ChangePercentageOperation implements Command {
 
-    BankAccount bankAccount;
+    Product bankAccount;
     InterestsMechanism mechanism;
     String description;
 
-    public ChangePercentageOperation(BankAccount bankAccount, InterestsMechanism mechanism, String description) {
+    public ChangePercentageOperation(Product bankAccount, InterestsMechanism mechanism, String description) {
         this.bankAccount = bankAccount;
         this.mechanism = mechanism;
         this.description = description;

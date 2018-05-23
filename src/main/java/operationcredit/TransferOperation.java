@@ -3,8 +3,8 @@ package operationcredit;
 import messages.Ack;
 import messages.TypeOperation;
 import operations.Command;
-import services.BankAccount;
 import services.Credit;
+import services.Product;
 
 import java.time.LocalDate;
 
@@ -24,7 +24,7 @@ public class TransferOperation implements Command {
     @Override
     public Ack execute()
     {
-        BankAccount bankAccount = credit.getBankAccount();
+        Product bankAccount = credit.getBankAccount();
 
         if (credit.increaseBalance(value)) {
             if (bankAccount.decreaseBalance(value)) {

@@ -5,18 +5,19 @@ import messages.TypeOperation;
 import operations.Command;
 import services.BankAccount;
 import services.Deposit;
+import services.Product;
 
 import java.time.LocalDate;
 
 public class CreateDepositOperation implements Command {
 
 
-    BankAccount bankAccount;
+    Product bankAccount;
     double value;
     int ownerId;
     String description;
 
-    public CreateDepositOperation(BankAccount bankAccount, double value, int ownerId, String description) {
+    public CreateDepositOperation(Product bankAccount, double value, int ownerId, String description) {
         this.bankAccount = bankAccount;
         this.value = value;
         this.ownerId = ownerId;
@@ -26,19 +27,19 @@ public class CreateDepositOperation implements Command {
     @Override
     public Ack execute()
     {
-             if (bankAccount.decreaseBalance(value)) {
-                Deposit deposit = new Deposit(bankAccount, value, ownerId);
+        if (bankAccount.decreaseBalance(value)) {
+            Deposit deposit = new Deposit(bankAccount, value, ownerId);
 
-                Ack ack = new Ack(deposit.getId(), null, TypeOperation.CREATE_ACCOUNT, LocalDate.now(), description);
-                Ack ackBankAccount = new Ack(bankAccount.getId(), deposit.getId(), TypeOperation.TRANSFER, LocalDate.now(), description);
-                deposit.addToHistory(ack);
+            Ack ack = new Ack(deposit.getId(), null, TypeOperation.CREATE_ACCOUNT, LocalDate.now(), description);
+            Ack ackBankAccount = new Ack(bankAccount.getId(), deposit.getId(), TypeOperation.TRANSFER, LocalDate.now(), description);
+            deposit.addToHistory(ack);
 
-                deposit.addToHistory(ackBankAccount);
-                bankAccount.addToHistory(ackBankAccount);
+            deposit.addToHistory(ackBankAccount);
+            bankAccount.addToHistory(ackBankAccount);
 
-                return ack;
-            }
-            return null;
+            return ack;
+        }
+        return null;
 
     }
 }

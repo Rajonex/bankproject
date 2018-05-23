@@ -2,16 +2,15 @@ package services;
 
 
 import reports.Report;
-import reports.ReportBalance;
 
 public class Credit extends ConnectedAccount {
 
-    public Credit(BankAccount bankAccount, int ownerId) {
+    public Credit(Product bankAccount, int ownerId) {
         super(bankAccount, ownerId);
         canBeNegative = true;
     }
 
-    public Credit(BankAccount bankAccount, double balance, int ownerId) {
+    public Credit(Product bankAccount, double balance, int ownerId) {
         super(bankAccount, balance, ownerId);
         canBeNegative = true;
     }
