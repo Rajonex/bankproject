@@ -27,6 +27,6 @@ public class PayPercentageOperationTest {
 
         payPercentageOperationTest.execute(); //wywolanie operacji na pierwotnym kredycie za posrednictwem creditOperation
 
-        Assert.assertEquals(balanceTest, bankAccount.getBalance(), percentageTest);
+        Assert.assertEquals(balanceTest+percentageTest, bankAccount.getBalance(), 0.01);
     }
 }

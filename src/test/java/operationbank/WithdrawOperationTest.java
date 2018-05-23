@@ -27,6 +27,6 @@ public class WithdrawOperationTest {
 
         withdrawOperationTest.execute();
 
-        Assert.assertEquals(balanceTest-paymentTest, bankAccount.getBalance(), 0.0);
+        Assert.assertEquals(balanceTest-paymentTest, bankAccount.getBalance(), 0.01);
     }
 }

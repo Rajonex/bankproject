@@ -28,7 +28,7 @@ public class TransferFromToOperationTest {
 
         transferFromToOperationTest.execute();
 
-        Assert.assertEquals(bankAccountFrom.getBalance(), bankAccountTo.getBalance(), valueTest*2);
+        Assert.assertEquals(bankAccountFrom.getBalance()+valueTest, bankAccountTo.getBalance()-valueTest, 0.01);
 
     }
 }

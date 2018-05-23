@@ -27,11 +27,11 @@ public class SolveDepositOperationTest {
 
         double percentageTest = deposit.getInterests();
         double balanceTest = deposit.getBalance();
-        double accountBalanceTest = bankAccount.getBalance();
-        double paymentTest = percentageTest * balanceTest + balanceTest;
+
+        double accountAfterSolving = bankAccount.getBalance() + (percentageTest + balanceTest);
 
         solveDepositOperationTest.execute();
 
-        Assert.assertEquals(bankAccount.getBalance(), accountBalanceTest, paymentTest);
+        Assert.assertEquals(bankAccount.getBalance(), accountAfterSolving, 0.01);
     }
 }

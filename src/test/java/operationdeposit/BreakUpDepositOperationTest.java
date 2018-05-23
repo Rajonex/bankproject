@@ -27,6 +27,6 @@ public class BreakUpDepositOperationTest {
 
         breakUpDepositOperationTest.execute();
 
-        Assert.assertEquals(bankAccount.getBalance(), accountBalanceTest, balanceTest);
+        Assert.assertEquals(bankAccount.getBalance(), accountBalanceTest+balanceTest, 0.01);
     }
 }

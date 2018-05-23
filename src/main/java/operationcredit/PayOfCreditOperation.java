@@ -21,7 +21,7 @@ public class PayOfCreditOperation implements Command {
     @Override
     public Ack execute()
     {
-        double remainingValue = credit.getBalance();
+        double remainingValue = Math.abs(credit.getBalance());
         Product bankAccount = credit.getBankAccount();
 
         if (bankAccount.decreaseBalance(remainingValue)) {
@@ -33,6 +33,11 @@ public class PayOfCreditOperation implements Command {
 
             return ack;
         }
-        return null;
+
+        Ack ack = new Ack(credit.getId(), bankAccount.getId(), TypeOperation.FAILURE, LocalDate.now(), description);
+        credit.addToHistory(ack);
+        bankAccount.addToHistory(ack);
+
+        return ack;
     }
 }

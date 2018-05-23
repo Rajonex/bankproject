@@ -24,9 +24,10 @@ public class SolveDepositOperation implements Command {
     {
         Product bankAccount = deposit.getBankAccount();
         double value = deposit.getBalance();
+        double interest = deposit.getInterests();
 
         if (deposit.decreaseBalance(value)) {
-            double newValue = value + deposit.getInterests();
+            double newValue = value + interest;
             bankAccount.increaseBalance(newValue);
 
             Ack ack = new Ack(deposit.getId(), bankAccount.getId(), TypeOperation.TRANSFER, LocalDate.now(), description);
@@ -36,7 +37,11 @@ public class SolveDepositOperation implements Command {
             return ack;
         }
 
-        return null;
+        Ack ack = new Ack(deposit.getId(), bankAccount.getId(), TypeOperation.FAILURE, LocalDate.now(), description);
+        deposit.addToHistory(ack);
+        bankAccount.addToHistory(ack);
+
+        return ack;
 
     }
 }

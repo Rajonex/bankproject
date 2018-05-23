@@ -15,7 +15,7 @@ public class TransferOperationTest {
     @BeforeClass
     static public void newBankAccountTest() {
         bankAccount = new BankAccount(1000, 0);
-        credit = new Credit(bankAccount, 100, 0);
+        credit = new Credit(bankAccount, -100, 0);
     }
 
     @Test
@@ -29,7 +29,7 @@ public class TransferOperationTest {
 
         transferOperationTest.execute();
 
-        Assert.assertEquals(credit.getBalance(), balanceTest, valueTest);
+        Assert.assertEquals(credit.getBalance(), balanceTest+valueTest, 0.01);
 
     }
 }

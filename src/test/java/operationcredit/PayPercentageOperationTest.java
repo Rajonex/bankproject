@@ -14,7 +14,7 @@ public class PayPercentageOperationTest {
     @BeforeClass
     static public void newBankAccountTest() {
         bankAccount = new BankAccount(1000, 0);
-        credit = new Credit(bankAccount, 100, 0);
+        credit = new Credit(bankAccount, -100, 0);
     }
 
 
@@ -29,7 +29,7 @@ public class PayPercentageOperationTest {
 
         double payedTest = balanceTest * percentageTest; //suma o jaka powinien wzrosnac kredit
         payPercentageOperationTest.execute();
-        Assert.assertEquals(balanceTest, credit.getBalance(), payedTest);
+        Assert.assertEquals(balanceTest-percentageTest, credit.getBalance(), 0.01);
     }
 
 
