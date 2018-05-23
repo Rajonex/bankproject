@@ -5,9 +5,9 @@ import services.*;
 import java.util.List;
 
 public interface Report {
-    public void visit(BankAccount bankAccount);
-    public void visit(Credit credit);
-    public void visit(DebetAccountDecorator debetAccountDecorator);
-    public void visit(Deposit deposit);
-    public List<Product> getProductsWithCriteria();
+    void visit(BankAccount bankAccount);
+    void visit(Credit credit);
+    void visit(DebetAccountDecorator debetAccountDecorator);
+    void visit(Deposit deposit);
+    List<Product> getProductsWithCriteria();
 }

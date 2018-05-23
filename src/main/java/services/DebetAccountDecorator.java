@@ -4,7 +4,6 @@ package services;
 import interests.InterestsMechanism;
 import messages.Ack;
 import reports.Report;
-import reports.ReportBalance;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -16,7 +15,7 @@ public class DebetAccountDecorator implements Product, Cloneable
     private Product bankAccount;
 
     public Object clone() throws CloneNotSupportedException {
-// tutaj: specyficzne operacje związane z klonowaniem
+// TODO - tutaj: specyficzne operacje związane z klonowaniem
         return super.clone();
     }
 

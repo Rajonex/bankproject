@@ -725,63 +725,65 @@ public class BankImpl implements Bank {
     // TODO - sprawdzic metode, w odpowiedni sposob obsluzyc wyjatek
 
     /**
+     * wrapping normal account to debet one
      *
      * @param bankAccountId searched BankAccount, for which we add debet
-     * @param limit max value of debet
-     * @param description description of this action
-     * @return
+     * @param limit         max value of debet
+     * @param description   description of this action
+     * @return true if operation succeeded
      */
     @Override
-    public boolean wrapAccountFromNormalToDebet(int bankAccountId, double limit, String description)
-    {
+    public boolean wrapAccountFromNormalToDebet(int bankAccountId, double limit, String description) {
         Product bankAccount = null;
         try {
             bankAccount = getBankAccountById(bankAccountId);
-        } catch(NoSuchAccountException er)
-        {
+        } catch (NoSuchAccountException er) {
             er.printStackTrace();
         }
-        if(bankAccount != null)
-        {
+        if (bankAccount != null) {
             bankAccount = new DebetAccountDecorator(limit, 0, bankAccount);
             return true;
         }
         return false;
     }
 
+    /**
+     * Raporting by minimum account balance value
+     *
+     * @param balance minimum balance of account we are looking for
+     * @return list of Products with bigger balance value
+     */
     @Override
-    public List<Product> getBankAccountsByBalance(double balance)
-    {
+    public List<Product> getBankAccountsByBalance(double balance) {
         ReportBalance reportBalance = new ReportBalance(balance);
-        for(Credit credit: credits)
-        {
+        for (Credit credit : credits) {
             credit.accept(reportBalance);
         }
-        for(Deposit deposit: deposits)
-        {
+        for (Deposit deposit : deposits) {
             deposit.accept(reportBalance);
         }
-        for(Product bankAccount: bankAccounts)
-        {
+        for (Product bankAccount : bankAccounts) {
             bankAccount.accept(reportBalance);
         }
         return reportBalance.getProductsWithCriteria();
     }
 
+    /**
+     * Reporting accounts with older date of creating then we are passing
+     *
+     * @param date date of account creating
+     * @return list of Products with older date of creating
+     */
     @Override
-    public List<Product> getBankAccountsByDate(LocalDate date)
-    {
+    public List<Product> getBankAccountsByDate(LocalDate date) {
         ReportCreateMainAccountDate reportCreateMainAccountDate = new ReportCreateMainAccountDate(date);
-        for(Credit credit: credits)
-        {
+        for (Credit credit : credits) {
             credit.accept(reportCreateMainAccountDate);
         }
-        for(Deposit deposit: deposits)
-        {
+        for (Deposit deposit : deposits) {
             deposit.accept(reportCreateMainAccountDate);
         }
-        for(Product bankAccount: bankAccounts)
-        {
+        for (Product bankAccount : bankAccounts) {
             bankAccount.accept(reportCreateMainAccountDate);
         }
         return reportCreateMainAccountDate.getProductsWithCriteria();

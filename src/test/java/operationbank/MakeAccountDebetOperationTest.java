@@ -1,13 +1,12 @@
 package operationbank;
 
-import bank.Bank;
 import bank.BankImpl;
-import messages.Ack;
+import clients.Client;
+import exceptions.NoSuchAccountException;
+import exceptions.NoSuchClientException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import services.BankAccount;
-import services.DebetAccountDecorator;
 import services.Product;
 
 
@@ -15,31 +14,32 @@ import services.Product;
 public class MakeAccountDebetOperationTest {
 
     static Product bankAccount = null;
-    static Bank bank = null;
+    static BankImpl bank = null;
 
 
     @BeforeClass
-    static public void newBankAccountTest() {
-//        bankAccount = new BankAccount(1000, 0);
+    static public void newBankAccountTest() throws NoSuchClientException, NoSuchAccountException {
         bank = new BankImpl(1);
-//        bank.addNewNormalAccount()
-//        Ack ack = bank.getBankHistory().get(bank.getBankHistory().size()-1);
-//        if(ack.getDescription() = )
-
+        Client client = new Client("Jan", "Kowalski", "12345678912");
+        bank.addNewClient(client);
+        int clientId = bank.getClients().get(0).getId();
+        bank.addNewNormalAccount(clientId);
+        bankAccount = bank.getBankAccounts().get(0);
+        bank.payment(bankAccount.getId(), 1000);
     }
 
     @Test
-    public void makeAccountDebetTest()
-    {
-//        String descriptionTest = "JUnit Test";
-//        MakeAccountDebetOperation makeAccountDebetOperationTest = new MakeAccountDebetOperation(bank, bankAccount, 500, descriptionTest);
-//        System.out.println(bankAccount);
-//        makeAccountDebetOperationTest.execute();
-//        System.out.println(bankAccount);
-//        boolean result = bankAccount.decreaseBalance(1200);
-//        Assert.assertTrue(bankAccount instanceof DebetAccountDecorator);
-//        Assert.assertEquals(bankAccount.getBalance(), -200, 0.1);
+    public void makeAccountDebetTest() throws NoSuchAccountException {
+        String descriptionTest = "JUnit Test";
+        int accountId = bank.getBankAccounts().get(0).getId();
+        MakeAccountDebetOperation makeAccountDebetOperation = new MakeAccountDebetOperation(bank, bankAccount, 500, descriptionTest);
+        makeAccountDebetOperation.execute();
+        bankAccount = bank.getBankAccountById(accountId);
+        boolean result = bankAccount.decreaseBalance(1200);
+//        bank.withdraw(accountId, 1200);
 
+//        Assert.assertTrue(bankAccount instanceof DebetAccountDecorator);
+        Assert.assertEquals(-200, bankAccount.getBalance(), 0.1);
 //        Assert.assertTrue(result);
     }
 }
