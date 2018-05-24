@@ -1,5 +1,6 @@
 package operationbank;
 
+import interests.InterestA;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -12,8 +13,8 @@ public class TransferFromToOperationTest {
 
     @BeforeClass
     static public void newBankAccountTest() {
-        bankAccountFrom = new BankAccount(1000, 0);
-        bankAccountTo = new BankAccount(1000, 1);
+        bankAccountFrom = new BankAccount(1000, 0, new InterestA());
+        bankAccountTo = new BankAccount(1000, 1, new InterestA());
 
     }
 

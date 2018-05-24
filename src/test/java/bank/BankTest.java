@@ -147,7 +147,7 @@ public class BankTest {
         int accountId = bankA.getBankAccounts().get(0).getId();
         BankAccount bankAccount = (BankAccount)bankA.getProductById(accountId);
         bankA.payment(accountId, 15_000);
-        boolean ifSucceeded = bankA.addNewDeposit(accountId, 10_000, clientA.getId(), 2, 5);
+        boolean ifSucceeded = bankA.addNewDeposit(accountId, 10_000, clientA.getId(), 2, new InterestA());
 
         Assert.assertTrue(ifSucceeded);
     }
@@ -157,14 +157,14 @@ public class BankTest {
         bankA.addNewClient(clientA);
         bankA.addNewNormalAccount(clientA.getId());
         int accountId = bankA.getBankAccounts().get(0).getId();
-        boolean ifSucceeded = bankA.addNewDeposit(accountId, 10_000, clientA.getId(), 2, 5);
+        boolean ifSucceeded = bankA.addNewDeposit(accountId, 10_000, clientA.getId(), 2, new InterestA());
 
         Assert.assertFalse(ifSucceeded);
     }
 
     @Test(expected = NoSuchClientException.class)
     public void addNewDepositWithoutClientTest() throws NoSuchClientException, NoSuchAccountException {
-        boolean ifSucceeded = bankA.addNewDeposit(0, 10_000, 0, 2, 5);
+        boolean ifSucceeded = bankA.addNewDeposit(0, 10_000, 0, 2, new InterestA());
     }
 
     @Test(expected = NoSuchAccountException.class)
@@ -178,21 +178,21 @@ public class BankTest {
         int clientId = bankA.getClients().get(0).getId();
         bankA.addNewNormalAccount(clientId);
         int accountId = bankA.getBankAccounts().get(0).getId();
-        boolean ifSucceeded = bankA.addNewCredit(accountId, 10_000, clientId, 5);
+        boolean ifSucceeded = bankA.addNewCredit(accountId, 10_000, clientId, new InterestA());
 
         Assert.assertTrue(ifSucceeded);
     }
 
     @Test(expected = NoSuchClientException.class)
     public void addNewCreditWithoutClientTest() throws NoSuchClientException, NoSuchAccountException {
-        boolean ifSucceeded = bankA.addNewCredit(0, 10_000, 0, 5);
+        boolean ifSucceeded = bankA.addNewCredit(0, 10_000, 0, new InterestA());
     }
 
     @Test
     public void deleteCreditByIdSucessTest() throws NoSuchAccountException, NoSuchClientException, NoSuchCreditException {
         bankA.addNewClient(clientA);
         bankA.addNewNormalAccount(clientA.getId());
-        bankA.addNewCredit(bankA.getBankAccounts().get(0).getId(), 10_000, clientA.getId(), 5);
+        bankA.addNewCredit(bankA.getBankAccounts().get(0).getId(), 10_000, clientA.getId(), new InterestA());
         boolean ifSucceeded = bankA.deleteCreditById(bankA.getCredits().get(0).getId());
 
         Assert.assertTrue(ifSucceeded);
@@ -365,7 +365,7 @@ public class BankTest {
     public void payCreditRateTest() throws NoSuchClientException, NoSuchAccountException, NoSuchCreditException {
         bankA.addNewClient(clientA);
         bankA.addNewNormalAccount(clientA.getId());
-        bankA.addNewCredit(bankA.getBankAccounts().get(0).getId(), 1_000, clientA.getId(), 5);
+        bankA.addNewCredit(bankA.getBankAccounts().get(0).getId(), 1_000, clientA.getId(), new InterestA());
         Credit credit = bankA.getCredits().get(0);
         boolean ifSucceeded = bankA.payCreditRate(bankA.getCredits().get(0).getId(), 300);
 
@@ -391,7 +391,7 @@ public class BankTest {
         Assert.assertThat(bankAccount.getBalance(), is(5_000.0));
 
         // Duration set to -1 to simulate thet deposit is expired
-        bankA.addNewDeposit(accountId, 5_000, clientA.getId(), -1, 10);
+        bankA.addNewDeposit(accountId, 5_000, clientA.getId(), -1, new InterestA());
         Deposit deposit = (bankA.getDeposits().get(0));
         Assert.assertThat(deposit.getBalance(), is(5_000.0));
         Assert.assertThat(bankAccount.getBalance(), is(0.0));
@@ -416,7 +416,7 @@ public class BankTest {
         Assert.assertThat(bankAccount.getBalance(), is(5_000.0));
 
         // Duration set to -1 to simulate thet deposit is expired
-        bankA.addNewDeposit(accountId, 5_000, clientA.getId(), -1, 10);
+        bankA.addNewDeposit(accountId, 5_000, clientA.getId(), -1, new InterestA());
         Deposit deposit = (bankA.getDeposits().get(0));
         Assert.assertThat(deposit.getBalance(), is(5_000.0));
         Assert.assertThat(bankAccount.getBalance(), is(0.0));
@@ -440,7 +440,7 @@ public class BankTest {
         bankA.payment(accountId, 5_000);
         Assert.assertThat(bankAccount.getBalance(), is(5_000.0));
 
-        bankA.addNewDeposit(accountId, 5_000, clientA.getId(), 2, 10);
+        bankA.addNewDeposit(accountId, 5_000, clientA.getId(), 2, new InterestA());
         Deposit deposit = (bankA.getDeposits().get(0));
         Assert.assertThat(deposit.getBalance(), is(5_000.0));
         Assert.assertThat(bankAccount.getBalance(), is(0.0));
@@ -468,7 +468,7 @@ public class BankTest {
         bankA.payment(accountId, 5_000);
         Assert.assertThat(bankAccount.getBalance(), is(5_000.0));
 
-        bankA.addNewDeposit(accountId, 5_000, clientA.getId(), 2, 10);
+        bankA.addNewDeposit(accountId, 5_000, clientA.getId(), 2, new InterestA());
         Deposit deposit = (bankA.getDeposits().get(0));
         Assert.assertNotNull(deposit);
         Assert.assertThat(bankA.getDeposits().size(), is(1));
@@ -491,6 +491,42 @@ public class BankTest {
 
         bankA.changeAccountPercentage(accountId, new InterestC());
         Assert.assertTrue(bankAccount.getInterestsMechanism() instanceof InterestC);
+    }
+
+    @Test
+    public void changeCreditPercentageTest() throws NoSuchClientException, NoSuchAccountException, NoSuchCreditException {
+        bankA.addNewClient(clientA);
+        bankA.addNewNormalAccount(clientA.getId());
+        int accountId = bankA.getBankAccounts().get(0).getId();
+        bankA.addNewCredit(accountId, 10_000, clientA.getId(), new InterestA());
+        Credit credit = bankA.getCredits().get(0);
+        Assert.assertTrue(credit.getInterestsMechanism() instanceof InterestA);
+
+        bankA.changeCreditPercentage(credit.getId(), new InterestB());
+        Assert.assertTrue(credit.getInterestsMechanism() instanceof InterestB);
+
+        bankA.changeCreditPercentage(credit.getId(), new InterestC());
+        Assert.assertTrue(credit.getInterestsMechanism() instanceof InterestC);
+    }
+
+    // TODO - pecentage wywalić, dć mechnizm!!!!
+
+    @Test
+    public void changeDepositPercentageTest() throws NoSuchClientException, NoSuchAccountException, NoSuchCreditException, NoSuchDepositException {
+        bankA.addNewClient(clientA);
+        bankA.addNewNormalAccount(clientA.getId());
+        int accountId = bankA.getBankAccounts().get(0).getId();
+        BankAccount bankAccount = (BankAccount)bankA.getProductById(accountId);
+        bankA.payment(accountId, 10_000);
+        bankA.addNewDeposit(accountId, 5_000, clientA.getId(), 2, new InterestA());
+        Deposit deposit = bankA.getDeposits().get(0);
+        Assert.assertTrue(deposit.getInterestsMechanism() instanceof InterestA);
+
+        bankA.changeDepositPercentage(deposit.getId(), new InterestB());
+        Assert.assertTrue(deposit.getInterestsMechanism() instanceof InterestB);
+
+        bankA.changeDepositPercentage(deposit.getId(), new InterestC());
+        Assert.assertTrue(deposit.getInterestsMechanism() instanceof InterestC);
     }
 
     @Test(expected = NoSuchAccountException.class)

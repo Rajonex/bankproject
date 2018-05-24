@@ -16,8 +16,8 @@ public class ChangePercentageOperationTest {
 
     @BeforeClass
     static public void newBankAccountTest() {
-        bankAccount = new BankAccount(1000, 0);
-        credit = new Credit(bankAccount, 100, 0);
+        bankAccount = new BankAccount(1000, 0, new InterestA());
+        credit = new Credit(bankAccount, 100, 0, new InterestA());
         interestsMechanism = new InterestA();
     }
 

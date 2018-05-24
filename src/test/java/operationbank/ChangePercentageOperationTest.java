@@ -1,5 +1,6 @@
 package operationbank;
 
+import interests.InterestA;
 import interests.InterestB;
 import interests.InterestsMechanism;
 import org.junit.Assert;
@@ -14,7 +15,7 @@ public class ChangePercentageOperationTest {
 
     @BeforeClass
     static public void newBankAccountTest() {
-        bankAccount = new BankAccount(1000, 0);
+        bankAccount = new BankAccount(1000, 0, new InterestA());
         interestsMechanism = new InterestB();
     }
 

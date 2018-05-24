@@ -20,8 +20,7 @@ public class InterestCTest {
     public void firstLimit()
     {
         double value = 100000.0;
-        bankAccount = new BankAccount(value, 1);
-        bankAccount.setInterestsMechanism(interestsMechanism);
+        bankAccount = new BankAccount(value, 1, interestsMechanism);
         Assert.assertEquals((0.13 * value / 500_000) * value, bankAccount.getInterests(), 0.1);
     }
 
@@ -29,8 +28,7 @@ public class InterestCTest {
     public void secondLimit()
     {
         double value = 1000000.0;
-        bankAccount = new BankAccount(value, 1);
-        bankAccount.setInterestsMechanism(interestsMechanism);
+        bankAccount = new BankAccount(value, 1, interestsMechanism);
         Assert.assertEquals(0.13 * value, bankAccount.getInterests(), 0.1);
     }
 

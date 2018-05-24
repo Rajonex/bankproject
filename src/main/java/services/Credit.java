@@ -1,6 +1,7 @@
 package services;
 
 
+import interests.InterestsMechanism;
 import reports.Report;
 
 public class Credit extends ConnectedAccount {
@@ -10,8 +11,8 @@ public class Credit extends ConnectedAccount {
         canBeNegative = true;
     }
 
-    public Credit(Product bankAccount, double balance, int ownerId) {
-        super(bankAccount, balance, ownerId);
+    public Credit(Product bankAccount, double balance, int ownerId, InterestsMechanism interestsMechanism) {
+        super(bankAccount, balance, ownerId, interestsMechanism);
         canBeNegative = true;
     }
 

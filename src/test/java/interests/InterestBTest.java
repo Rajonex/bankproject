@@ -20,7 +20,7 @@ public class InterestBTest {
     public void firstLimit()
     {
         double value = 1000.0;
-        bankAccount = new BankAccount(value, 1);
+        bankAccount = new BankAccount(value, 1, new InterestA());
         bankAccount.setInterestsMechanism(interestsMechanism);
         Assert.assertEquals(value * 0.03, bankAccount.getInterests(), 0.01);
     }
@@ -29,7 +29,7 @@ public class InterestBTest {
     public void secondLimit()
     {
         double value = 10000.0;
-        bankAccount = new BankAccount(value, 1);
+        bankAccount = new BankAccount(value, 1, new InterestA());
         bankAccount.setInterestsMechanism(interestsMechanism);
         Assert.assertEquals(value * 0.05, bankAccount.getInterests(), 0.01);
     }
@@ -38,7 +38,7 @@ public class InterestBTest {
     public void thirdLimit()
     {
         double value = 70000.0;
-        bankAccount = new BankAccount(value, 1);
+        bankAccount = new BankAccount(value, 1, new InterestA());
         bankAccount.setInterestsMechanism(interestsMechanism);
         Assert.assertEquals(value * 0.1, bankAccount.getInterests(), 0.1);
     }
@@ -47,7 +47,7 @@ public class InterestBTest {
     public void fourthLimit()
     {
         double value = 200000.0;
-        bankAccount = new BankAccount(value, 1);
+        bankAccount = new BankAccount(value, 1, new InterestA());
         bankAccount.setInterestsMechanism(interestsMechanism);
         Assert.assertEquals(value * 0.12, bankAccount.getInterests(), 0.1);
     }

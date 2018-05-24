@@ -1,5 +1,7 @@
 package services;
 
+import interests.InterestsMechanism;
+
 public abstract class ConnectedAccount extends Service {
     protected Product bankAccount;
 
@@ -8,8 +10,8 @@ public abstract class ConnectedAccount extends Service {
         this.bankAccount = bankAccount;
     }
 
-    public ConnectedAccount(Product bankAccount, double balance, int ownerId) {
-        super(balance, ownerId);
+    public ConnectedAccount(Product bankAccount, double balance, int ownerId, InterestsMechanism interestsMechanism) {
+        super(balance, ownerId, interestsMechanism);
         this.bankAccount = bankAccount;
     }
 

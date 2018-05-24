@@ -14,7 +14,7 @@ public class InterestATest {
     public void init()
     {
         interestsMechanism = new InterestA();
-        bankAccount = new BankAccount(100.0, 1);
+        bankAccount = new BankAccount(100.0, 1, new InterestA());
         bankAccount.setInterestsMechanism(interestsMechanism);
     }
 

@@ -251,22 +251,22 @@ public class BankImpl implements Bank {
      * @param value      deposit's value
      * @param ownerId    client's id
      * @param duration   number of mounts we want to freeze money
-     * @param percentage percentage of deposit
+     * @param interestsMechanism interest mechanism
      * @return true if deposit created with success
      */
     @Override
-    public boolean addNewDeposit(int accountId, double value, int ownerId, long duration, double percentage) throws NoSuchClientException, NoSuchAccountException {
+    public boolean addNewDeposit(int accountId, double value, int ownerId, long duration, InterestsMechanism interestsMechanism) throws NoSuchClientException, NoSuchAccountException {
         // check if client and its account exists
         Client client = getClientById(ownerId);
         BankAccount bankAccount = (BankAccount) getProductById(accountId);
-        String description = "New " + client.getFirstName() + " " + client.getLastName() + " deposit with " + value + " and " + percentage * 100 + " created";
+        String description = "New " + client.getFirstName() + " " + client.getLastName() + " deposit with " + value + " and " + interestsMechanism + " created";
 
-        CreateDepositOperation createDepositOperation = new CreateDepositOperation(bankAccount, value, ownerId, duration, description);
+        CreateDepositOperation createDepositOperation = new CreateDepositOperation(bankAccount, value, ownerId, duration, interestsMechanism, description);
         Ack ack = createDepositOperation.execute();
         boolean ifSucceeded = ack != null ? true : false;
 
         if (ifSucceeded) {
-            Deposit deposit = new Deposit(bankAccount, value, ownerId, duration);
+            Deposit deposit = new Deposit(bankAccount, value, ownerId, duration, interestsMechanism);
             deposits.add(deposit);
             bankHistory.add(ack);
 
@@ -283,17 +283,17 @@ public class BankImpl implements Bank {
      * @param accountId  client's bankAccount's id
      * @param balance    deposit's value
      * @param ownerId    client's id
-     * @param percentage percentage of deposit
+     * @param interestsMechanism percentage of deposit
      * @return true if credit created with success
      */
     @Override
-    public boolean addNewCredit(int accountId, double balance, int ownerId, double percentage) throws NoSuchClientException, NoSuchAccountException {
+    public boolean addNewCredit(int accountId, double balance, int ownerId, InterestsMechanism interestsMechanism) throws NoSuchClientException, NoSuchAccountException {
         Client client = getClientById(ownerId);
         BankAccount bankAccount = (BankAccount) getProductById(accountId);
-        String description = "New " + client.getFirstName() + " " + client.getLastName() + " credit with " + balance + " and " + percentage * 100 + " created";
+        String description = "New " + client.getFirstName() + " " + client.getLastName() + " credit with " + balance + " and " + interestsMechanism + " created";
 
-        CreateCreditOperation createCreditOperation = new CreateCreditOperation(bankAccount, balance, ownerId, description);
-        Credit credit = new Credit(bankAccount, balance * (-1), ownerId);
+        CreateCreditOperation createCreditOperation = new CreateCreditOperation(bankAccount, balance, ownerId, interestsMechanism, description);
+        Credit credit = new Credit(bankAccount, balance * (-1), ownerId, interestsMechanism);
         boolean ifSucceeded = credits.add(credit);
 
         if (ifSucceeded) {
@@ -321,7 +321,7 @@ public class BankImpl implements Bank {
      * @param id credit's unique id
      * @return credit with specified in param id
      */
-    private Credit getCreditById(int id) throws NoSuchCreditException {
+    public Credit getCreditById(int id) throws NoSuchCreditException {
         Credit credit = credits.stream().filter(cr -> cr.getId() == id).findAny().orElse(null);
         if (credit == null)
             throw new NoSuchCreditException("There is no credit with id=" + id);
@@ -510,20 +510,6 @@ public class BankImpl implements Bank {
         }
 
     }
-
-    /**
-     * Paying bank account rate.
-     * TODO - Write logic!
-     *
-     * @param accountId bank account unique id
-     * @param value     paying value
-     * @return true if operation succeeded
-     */
-    @Override
-    public boolean payBankAccountRate(int accountId, double value) {
-        return false;
-    }
-
     /**
      * Checking if deposit with specified id exists
      *
@@ -621,28 +607,40 @@ public class BankImpl implements Bank {
 
     /**
      * Changing percentage of credit
-     * TODO - Write logic!
      *
      * @param creditId      unique credit id
-     * @param newPercentage new value of percentage
+     * @param interestsMechanism new interest mechanism
      * @return true if operation succeeded
      */
     @Override
-    public boolean changeCreditPercentage(int creditId, double newPercentage) {
-        return false;
+    public boolean changeCreditPercentage(int creditId, InterestsMechanism interestsMechanism) throws NoSuchCreditException {
+        Credit credit = getCreditById(creditId);
+        InterestsMechanism newInterestMechanism = interestsMechanism;
+        String description = "Amount of account (" + creditId + ") percentage changed from " + credit.getInterestsMechanism() + " to " + newInterestMechanism;
+        ChangePercentageOperation changePercentageOperation = new ChangePercentageOperation(credit, interestsMechanism, description);
+
+        Ack ack = changePercentageOperation.execute();
+        bankHistory.add(ack);
+        return true;
     }
 
     /**
      * Changing percentage of deposit
-     * TODO - Write logic!
      *
      * @param depositId     unique deposit id
-     * @param newPercentage new value of percentage
+     * @param interestsMechanism new interest mechanism
      * @return true if operation succeeded
      */
     @Override
-    public boolean changeDepositPercentage(int depositId, double newPercentage) {
-        return false;
+    public boolean changeDepositPercentage(int depositId, InterestsMechanism interestsMechanism) throws NoSuchDepositException {
+        Deposit deposit = getDepositById(depositId);
+        InterestsMechanism newInterestMechanism = interestsMechanism;
+        String description = "Amount of account (" + depositId + ") percentage changed from " + deposit.getInterestsMechanism() + " to " + newInterestMechanism;
+        ChangePercentageOperation changePercentageOperation = new ChangePercentageOperation(deposit, interestsMechanism, description);
+
+        Ack ack = changePercentageOperation.execute();
+        bankHistory.add(ack);
+        return true;
     }
 
     /**

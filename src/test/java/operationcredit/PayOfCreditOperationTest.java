@@ -1,5 +1,6 @@
 package operationcredit;
 
+import interests.InterestA;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -13,8 +14,8 @@ public class PayOfCreditOperationTest {
 
     @BeforeClass
     static public void newBankAccountTest() {
-        bankAccount = new BankAccount(1000, 0);
-        credit = new Credit(bankAccount, -100, 0);
+        bankAccount = new BankAccount(1000, 0, new InterestA());
+        credit = new Credit(bankAccount, -100, 0, new InterestA());
     }
 
 

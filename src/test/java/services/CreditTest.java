@@ -1,5 +1,6 @@
 package services;
 
+import interests.InterestA;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -13,7 +14,7 @@ public class CreditTest {
     public void init()
     {
         BankAccount bankAccount = new BankAccount(1);
-        credit = new Credit(bankAccount, -100.0, 1);
+        credit = new Credit(bankAccount, -100.0, 1, new InterestA());
     }
 
     @Test

@@ -30,7 +30,7 @@ public abstract class Service implements Product {
         interestsMechanism = new InterestA();
     }
 
-    public Service(double balance, int ownerId) {
+    public Service(double balance, int ownerId, InterestsMechanism interestsMechanism) {
         id = IdGenerator.generateServiceId();
         this.balance = balance;
         history = new History();
@@ -38,7 +38,7 @@ public abstract class Service implements Product {
         this.percentage = percentage;
         localDate = LocalDate.now();
         canBeNegative = false;
-        interestsMechanism = new InterestA();
+        this.interestsMechanism = interestsMechanism;
     }
 
 

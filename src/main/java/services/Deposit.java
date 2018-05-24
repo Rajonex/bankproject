@@ -1,6 +1,7 @@
 package services;
 
 
+import interests.InterestsMechanism;
 import reports.Report;
 
 import java.time.LocalDate;
@@ -31,8 +32,8 @@ public class Deposit extends ConnectedAccount {
         canBeNegative = false;
     }
 
-    public Deposit(Product bankAccount, double balance, int ownerId, long duration) {
-        super(bankAccount, balance, ownerId);
+    public Deposit(Product bankAccount, double balance, int ownerId, long duration, InterestsMechanism interestsMechanism) {
+        super(bankAccount, balance, ownerId, interestsMechanism);
         canBeNegative = false;
         this.duration = duration;
     }

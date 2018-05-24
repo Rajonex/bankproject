@@ -1,5 +1,6 @@
 package services;
 
+import interests.InterestsMechanism;
 import reports.Report;
 
 public class BankAccount extends Service implements Cloneable{
@@ -8,8 +9,8 @@ public class BankAccount extends Service implements Cloneable{
         super(ownerId);
     }
 
-    public BankAccount(double balance, int ownerId) {
-        super(balance, ownerId);
+    public BankAccount(double balance, int ownerId, InterestsMechanism interestsMechanism) {
+        super(balance, ownerId, interestsMechanism);
     }
 
 

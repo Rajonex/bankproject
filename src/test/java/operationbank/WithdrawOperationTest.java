@@ -1,5 +1,6 @@
 package operationbank;
 
+import interests.InterestA;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -12,7 +13,7 @@ public class WithdrawOperationTest {
 
     @BeforeClass
     static public void newBankAccountTest() {
-        bankAccount = new BankAccount(1000, 0);
+        bankAccount = new BankAccount(1000, 0, new InterestA());
     }
 
 
