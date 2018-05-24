@@ -31,9 +31,10 @@ public class Deposit extends ConnectedAccount {
         canBeNegative = false;
     }
 
-    public Deposit(Product bankAccount, double balance, int ownerId) {
+    public Deposit(Product bankAccount, double balance, int ownerId, long duration) {
         super(bankAccount, balance, ownerId);
         canBeNegative = false;
+        this.duration = duration;
     }
 
     /**

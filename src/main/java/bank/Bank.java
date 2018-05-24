@@ -4,6 +4,7 @@ import clients.Client;
 import exceptions.NoSuchAccountException;
 import exceptions.NoSuchClientException;
 import exceptions.NoSuchCreditException;
+import exceptions.NoSuchDepositException;
 import interests.InterestsMechanism;
 import messages.Ack;
 import messages.PackageToAnotherBank;
@@ -29,7 +30,7 @@ public interface Bank {
 
     boolean makeAccountDebet(int accountId, double limit, double debet) throws NoSuchClientException, NoSuchAccountException;
 
-    boolean addNewDeposit(int accountId, double value, int ownerId, double percentage) throws NoSuchClientException, NoSuchAccountException;
+    boolean addNewDeposit(int accountId, double value, int ownerId, long duration, double percentage) throws NoSuchClientException, NoSuchAccountException;
 
     boolean addNewCredit(int accountId, double balance, int ownerId, double percentage) throws NoSuchClientException, NoSuchAccountException;
 
@@ -45,7 +46,7 @@ public interface Bank {
 
     boolean payBankAccountRate(int accountId, double value);
 
-    boolean withdrawFromDeposit(int depositId) throws NoSuchClientException;
+    boolean withdrawFromDeposit(int depositId) throws NoSuchClientException, NoSuchDepositException;
 
     boolean changeAccountPercentage(int accountId, InterestsMechanism interestsMechanism) throws NoSuchAccountException;
 

@@ -3,7 +3,6 @@ package operationdeposit;
 import messages.Ack;
 import messages.TypeOperation;
 import operations.Command;
-import services.BankAccount;
 import services.Deposit;
 import services.Product;
 
@@ -14,13 +13,15 @@ public class CreateDepositOperation implements Command {
 
     Product bankAccount;
     double value;
+    long duration;
     int ownerId;
     String description;
 
-    public CreateDepositOperation(Product bankAccount, double value, int ownerId, String description) {
+    public CreateDepositOperation(Product bankAccount, double value, int ownerId, long duration, String description) {
         this.bankAccount = bankAccount;
         this.value = value;
         this.ownerId = ownerId;
+        this.duration = duration;
         this.description = description;
     }
 
@@ -28,7 +29,7 @@ public class CreateDepositOperation implements Command {
     public Ack execute()
     {
         if (bankAccount.decreaseBalance(value)) {
-            Deposit deposit = new Deposit(bankAccount, value, ownerId);
+            Deposit deposit = new Deposit(bankAccount, value, ownerId, duration);
 
             Ack ack = new Ack(deposit.getId(), null, TypeOperation.CREATE_ACCOUNT, LocalDate.now(), description);
             Ack ackBankAccount = new Ack(bankAccount.getId(), deposit.getId(), TypeOperation.TRANSFER, LocalDate.now(), description);

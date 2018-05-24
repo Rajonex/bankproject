@@ -14,7 +14,7 @@ public class SolveDepositOperationTest {
     @BeforeClass
     static public void newBankAccountTest() {
         bankAccount = new BankAccount(1000, 0);
-        deposit = new Deposit(bankAccount, 100, 0);
+        deposit = new Deposit(bankAccount, 100, 0, 1);
     }
 
 

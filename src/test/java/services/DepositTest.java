@@ -13,7 +13,7 @@ public class DepositTest {
     public void init()
     {
         BankAccount bankAccount = new BankAccount(1 );
-        deposit = new Deposit(bankAccount, 100.0 , 1);
+        deposit = new Deposit(bankAccount, 100.0 , 1, 1);
     }
 
     @Test
