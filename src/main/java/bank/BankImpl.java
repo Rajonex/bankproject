@@ -216,19 +216,6 @@ public class BankImpl implements Bank {
     }
 
     /**
-     * Checking if client's specific account exists
-     *
-     * @param clientId client's unique id
-     * @return
-     */
-    private boolean ifClientAccountExists(int clientId) {
-        if (ifClientExists(clientId))
-            return bankAccounts.stream().filter(account -> account.getOwnerId() == clientId).findFirst().isPresent();
-        else
-            return false;
-    }
-
-    /**
      * Getting specified bankAccount by id
      *
      * @param accountId bankAccount's unique id
@@ -303,16 +290,6 @@ public class BankImpl implements Bank {
             return true;
         }
         return false;
-    }
-
-    /**
-     * Checking if credit with specified id exists
-     *
-     * @param id unique id of credit
-     * @return true if credit exists
-     */
-    private boolean ifCreditExists(int id) {
-        return credits.stream().filter(credit -> credit.getId() == id).findFirst().isPresent();
     }
 
     /**
@@ -509,15 +486,6 @@ public class BankImpl implements Bank {
             return true;
         }
 
-    }
-    /**
-     * Checking if deposit with specified id exists
-     *
-     * @param id unique id of checking deposit
-     * @return true if deposit exists in bank
-     */
-    private boolean ifDepositExists(int id) {
-        return deposits.stream().filter(deposit -> deposit.getId() == id).findFirst().isPresent();
     }
 
     /**

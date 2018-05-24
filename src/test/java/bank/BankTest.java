@@ -16,6 +16,10 @@ import org.junit.Test;
 import services.BankAccount;
 import services.Credit;
 import services.Deposit;
+import services.Product;
+
+import java.time.LocalDate;
+import java.util.List;
 
 import static org.hamcrest.core.Is.is;
 
@@ -362,7 +366,7 @@ public class BankTest {
     }
 
     @Test
-    public void payCreditRateTest() throws NoSuchClientException, NoSuchAccountException, NoSuchCreditException {
+    public void payPartOfCreditRateTest() throws NoSuchClientException, NoSuchAccountException, NoSuchCreditException {
         bankA.addNewClient(clientA);
         bankA.addNewNormalAccount(clientA.getId());
         bankA.addNewCredit(bankA.getBankAccounts().get(0).getId(), 1_000, clientA.getId(), new InterestA());
@@ -372,6 +376,21 @@ public class BankTest {
         Assert.assertTrue(ifSucceeded);
         Assert.assertThat(credit.getBalance(), is(-700.0));
         Assert.assertThat(credit.getBankAccount().getBalance(), is(700.0));
+        Assert.assertThat(bankA.getCredits().size(), is(1));
+    }
+
+    @Test
+    public void payOfCreditRateTest() throws NoSuchClientException, NoSuchAccountException, NoSuchCreditException {
+        bankA.addNewClient(clientA);
+        bankA.addNewNormalAccount(clientA.getId());
+        bankA.addNewCredit(bankA.getBankAccounts().get(0).getId(), 1_000, clientA.getId(), new InterestA());
+        Credit credit = bankA.getCredits().get(0);
+        boolean ifSucceeded = bankA.payCreditRate(bankA.getCredits().get(0).getId(), 1001);
+
+        Assert.assertTrue(ifSucceeded);
+        Assert.assertThat(credit.getBalance(), is(0.0));
+        Assert.assertThat(credit.getBankAccount().getBalance(), is(0.0));
+        Assert.assertThat(bankA.getCredits().size(), is(0));
     }
 
     @Test(expected = NoSuchCreditException.class)
@@ -532,5 +551,47 @@ public class BankTest {
     @Test(expected = NoSuchAccountException.class)
     public void changeAccountPercentageNotExistingTest() throws NoSuchAccountException {
         bankA.changeAccountPercentage(99, new InterestC());
+    }
+
+    @Test
+    public void getBankAccountsByBalanceTest() throws NoSuchClientException, NoSuchAccountException {
+        bankA.addNewClient(clientA);
+        bankA.addNewNormalAccount(clientA.getId());
+        bankA.addNewNormalAccount(clientA.getId());
+        bankA.addNewNormalAccount(clientA.getId());
+        bankA.addNewNormalAccount(clientA.getId());
+        int account1Id = bankA.getBankAccounts().get(0).getId();
+        int account2Id = bankA.getBankAccounts().get(1).getId();
+        int account3Id = bankA.getBankAccounts().get(2).getId();
+        int account4Id = bankA.getBankAccounts().get(3).getId();
+        bankA.payment(account1Id, 2_000);
+        bankA.payment(account2Id, 6_000);
+        bankA.payment(account3Id, 1_000);
+        bankA.payment(account4Id, 2_000);
+        bankA.addNewCredit(account1Id, 2_000, clientA.getId(), new InterestA());
+        bankA.addNewDeposit(account2Id, 2_000, clientA.getId(), 2, new InterestA());
+        List<Product> products = bankA.getBankAccountsByBalance(1_000);
+
+        Assert.assertThat(products.size(), is(5));
+    }
+
+    @Test
+    public void getBankAccountsByDateTest() throws NoSuchClientException, NoSuchAccountException {
+        bankA.addNewClient(clientA);
+        bankA.addNewNormalAccount(clientA.getId());
+        bankA.addNewNormalAccount(clientA.getId());
+        bankA.addNewNormalAccount(clientA.getId());
+        bankA.addNewNormalAccount(clientA.getId());
+        int account1Id = bankA.getBankAccounts().get(0).getId();
+        int account2Id = bankA.getBankAccounts().get(1).getId();
+        int account3Id = bankA.getBankAccounts().get(2).getId();
+        int account4Id = bankA.getBankAccounts().get(3).getId();
+        bankA.payment(account1Id, 2_000);
+        bankA.payment(account2Id, 6_000);
+        bankA.addNewCredit(account1Id, 2_000, clientA.getId(), new InterestA());
+        bankA.addNewDeposit(account2Id, 2_000, clientA.getId(), 2, new InterestA());
+        List<Product> products = bankA.getBankAccountsByDate(LocalDate.of(2020, 01, 01));
+
+        Assert.assertThat(products.size(), is(6));
     }
 }
