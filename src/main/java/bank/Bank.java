@@ -20,11 +20,7 @@ public interface Bank {
 
     boolean addNewNormalAccount(int ownerId) throws NoSuchClientException;
 
-//    boolean addNewNormalAccount(int ownerId, double balance, double percentage);
-
-    boolean addNewDebetAccount(int ownerId, double limit, double debet, double percentage) throws NoSuchClientException;
-
-//    boolean makeAccountNormal(int accountId) throws NoSuchClientException, NoSuchAccountException;
+    boolean addNewDebetAccount(int ownerId, double limit, double debet, InterestsMechanism interestsMechanism) throws NoSuchClientException;
 
     boolean makeAccountDebet(int accountId, double limit, double debet) throws NoSuchClientException, NoSuchAccountException;
 

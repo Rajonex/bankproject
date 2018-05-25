@@ -184,13 +184,13 @@ public class BankImpl implements Bank {
      *
      * @param ownerId    client's unique id
      * @param limit      account's limit
-     * @param percentage account's percentage
+     * @param interestsMechanism new interest mechanism
      * @return true if operation succeeded
      */
     @Override
-    public boolean addNewDebetAccount(int ownerId, double limit, double debet, double percentage) throws NoSuchClientException {
+    public boolean addNewDebetAccount(int ownerId, double limit, double debet, InterestsMechanism interestsMechanism) throws NoSuchClientException {
         // check if ownerId is correct and if client with this id exists
-        String description = "Client " + getClientById(ownerId) + " added new debet account with " + limit + " and " + percentage * 100 + " percentage";
+        String description = "Client " + getClientById(ownerId) + " added new debet account with " + limit + " and " + interestsMechanism + " percentage";
         BankAccount bankAccount = new BankAccount(ownerId);
         DebetAccountDecorator debetAccountDecorator = new DebetAccountDecorator(limit, debet, bankAccount);
         boolean ifSucceeded = bankAccounts.add(debetAccountDecorator);
@@ -304,7 +304,6 @@ public class BankImpl implements Bank {
             throw new NoSuchCreditException("There is no credit with id=" + id);
         return credit;
     }
-
 
     // -------------------------------------------------------------------------------- BankAccountOperations
 

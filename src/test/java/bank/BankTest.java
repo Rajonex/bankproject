@@ -24,7 +24,6 @@ import java.util.List;
 import static org.hamcrest.core.Is.is;
 
 public class BankTest {
-    private PaymentSystemInfrastructure paymentSystemInfrastructure;
     private BankImpl bankA;
     private BankImpl bankB;
     private Client clientA;
@@ -32,7 +31,7 @@ public class BankTest {
 
     @Before
     public void initial() {
-        paymentSystemInfrastructure = new PaymentSystemInfrastructure();
+        PaymentSystemInfrastructure paymentSystemInfrastructure = new PaymentSystemInfrastructure();
         bankA = paymentSystemInfrastructure.createNewBank();
         bankB = paymentSystemInfrastructure.createNewBank();
         clientA = new Client("Jan", "Kowalski", "12345678912");
@@ -95,9 +94,9 @@ public class BankTest {
 
     @Test
     public void deleteClientByIdNotExistingTest() throws NoSuchClientException {
-        boolean ifSuccedded = bankA.deleteClientById(1000);
+        boolean ifSucceeded = bankA.deleteClientById(1000);
 
-        Assert.assertFalse(ifSuccedded);
+        Assert.assertFalse(ifSucceeded);
     }
 
     @Test
@@ -111,7 +110,7 @@ public class BankTest {
 
     @Test(expected = NoSuchClientException.class)
     public void addNewNormalAccountWithoutClientTest() throws NoSuchClientException {
-        boolean ifSucceeded = bankA.addNewNormalAccount(0);
+        bankA.addNewNormalAccount(0);
     }
 
     @Test
@@ -127,21 +126,21 @@ public class BankTest {
 
     @Test(expected = NoSuchAccountException.class)
     public void makeAccountDebetNotExistingAccount() throws NoSuchAccountException, NoSuchClientException {
-        boolean ifSucceeded = bankA.makeAccountDebet(1000, 10_000, 2_000);
+        bankA.makeAccountDebet(1000, 10_000, 2_000);
     }
 
     @Test
     public void addNewDebetAccountSuccessTest() throws NoSuchClientException {
         bankA.addNewClient(clientA);
         int clientId = bankA.getClients().get(0).getId();
-        boolean ifSucceeded = bankA.addNewDebetAccount(clientId, 10_000, 2_000, 5);
+        boolean ifSucceeded = bankA.addNewDebetAccount(clientId, 10_000, 2_000, new InterestA());
 
         Assert.assertTrue(ifSucceeded);
     }
 
     @Test(expected = NoSuchClientException.class)
     public void addNewDebetAccountWithoutClientTest() throws NoSuchClientException {
-        boolean ifSucceeded = bankA.addNewDebetAccount(0, 10_000, 2_000, 5);
+        bankA.addNewDebetAccount(0, 10_000, 2_000, new InterestA());
     }
 
     @Test
@@ -149,7 +148,6 @@ public class BankTest {
         bankA.addNewClient(clientA);
         bankA.addNewNormalAccount(clientA.getId());
         int accountId = bankA.getBankAccounts().get(0).getId();
-        BankAccount bankAccount = (BankAccount)bankA.getProductById(accountId);
         bankA.payment(accountId, 15_000);
         boolean ifSucceeded = bankA.addNewDeposit(accountId, 10_000, clientA.getId(), 2, new InterestA());
 
@@ -168,7 +166,7 @@ public class BankTest {
 
     @Test(expected = NoSuchClientException.class)
     public void addNewDepositWithoutClientTest() throws NoSuchClientException, NoSuchAccountException {
-        boolean ifSucceeded = bankA.addNewDeposit(0, 10_000, 0, 2, new InterestA());
+        bankA.addNewDeposit(0, 10_000, 0, 2, new InterestA());
     }
 
     @Test(expected = NoSuchAccountException.class)
@@ -189,7 +187,7 @@ public class BankTest {
 
     @Test(expected = NoSuchClientException.class)
     public void addNewCreditWithoutClientTest() throws NoSuchClientException, NoSuchAccountException {
-        boolean ifSucceeded = bankA.addNewCredit(0, 10_000, 0, new InterestA());
+        bankA.addNewCredit(0, 10_000, 0, new InterestA());
     }
 
     @Test
@@ -241,8 +239,8 @@ public class BankTest {
 
         BankAccount bankAccountFrom = (BankAccount) bankA.getProductById(accountId1);
         BankAccount bankAccountTo = (BankAccount) bankA.getProductById(accountId2);
-        Assert.assertEquals(bankAccountFrom.getBalance(), 3_000, 1);
-        Assert.assertEquals(bankAccountTo.getBalance(), 7_000, 1);
+        Assert.assertEquals(bankAccountFrom.getBalance(), 3_000, 0.1);
+        Assert.assertEquals(bankAccountTo.getBalance(), 7_000, 0.1);
     }
 
     @Test
@@ -260,8 +258,8 @@ public class BankTest {
 
         BankAccount bankAccountFrom = (BankAccount) bankA.getProductById(accountId1);
         BankAccount bankAccountTo = (BankAccount) bankA.getProductById(accountId2);
-        Assert.assertEquals(bankAccountFrom.getBalance(), 3_000, 1);
-        Assert.assertEquals(bankAccountTo.getBalance(), 7_000, 1);
+        Assert.assertEquals(bankAccountFrom.getBalance(), 3_000, 0.1);
+        Assert.assertEquals(bankAccountTo.getBalance(), 7_000, 0.1);
     }
 
     @Test(expected = NoSuchAccountException.class)
@@ -338,7 +336,6 @@ public class BankTest {
         int accountId = bankA.getBankAccounts().get(0).getId();
         bankA.payment(accountId, 10_000);
 
-        // TODO - assertEquals...
         BankAccount bankAccount = (BankAccount) bankA.getProductById(accountId);
         Assert.assertThat(bankAccount.getBalance(), is(10_000.0));
     }
@@ -395,7 +392,7 @@ public class BankTest {
 
     @Test(expected = NoSuchCreditException.class)
     public void payCreditRateNotExistingTest() throws NoSuchCreditException, NoSuchClientException {
-        boolean ifSucceeded = bankA.payCreditRate(999, 3_000);
+        bankA.payCreditRate(999, 3_000);
     }
 
     @Test
@@ -528,14 +525,11 @@ public class BankTest {
         Assert.assertTrue(credit.getInterestsMechanism() instanceof InterestC);
     }
 
-    // TODO - pecentage wywalić, dć mechnizm!!!!
-
     @Test
     public void changeDepositPercentageTest() throws NoSuchClientException, NoSuchAccountException, NoSuchCreditException, NoSuchDepositException {
         bankA.addNewClient(clientA);
         bankA.addNewNormalAccount(clientA.getId());
         int accountId = bankA.getBankAccounts().get(0).getId();
-        BankAccount bankAccount = (BankAccount)bankA.getProductById(accountId);
         bankA.payment(accountId, 10_000);
         bankA.addNewDeposit(accountId, 5_000, clientA.getId(), 2, new InterestA());
         Deposit deposit = bankA.getDeposits().get(0);
@@ -584,13 +578,11 @@ public class BankTest {
         bankA.addNewNormalAccount(clientA.getId());
         int account1Id = bankA.getBankAccounts().get(0).getId();
         int account2Id = bankA.getBankAccounts().get(1).getId();
-        int account3Id = bankA.getBankAccounts().get(2).getId();
-        int account4Id = bankA.getBankAccounts().get(3).getId();
         bankA.payment(account1Id, 2_000);
         bankA.payment(account2Id, 6_000);
         bankA.addNewCredit(account1Id, 2_000, clientA.getId(), new InterestA());
         bankA.addNewDeposit(account2Id, 2_000, clientA.getId(), 2, new InterestA());
-        List<Product> products = bankA.getBankAccountsByDate(LocalDate.of(2020, 01, 01));
+        List<Product> products = bankA.getBankAccountsByDate(LocalDate.of(2020, 1, 1));
 
         Assert.assertThat(products.size(), is(6));
     }
